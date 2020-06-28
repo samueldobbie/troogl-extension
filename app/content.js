@@ -1,1 +1,4 @@
-alert(1);
+// Parse response data
+var response = JSON.parse(response);
+
+alert(response);

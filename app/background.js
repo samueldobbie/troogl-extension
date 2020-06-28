@@ -6,12 +6,19 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
     var tabUrl = activeTab.url;
     
     // Construct url for api query
-    var queryUrl = apiUrl + '/query/' + tabUrl + '/';
+    var queryUrl = apiUrl + '/analyse/' + tabUrl;
     
 	// Send API query
     var request = new XMLHttpRequest();
     request.open('GET', queryUrl, true);
     request.send();
 	
-	// To-do: Validate that the url is a valid news article
+    // To-do: Validate that the url is a valid news article
+    
+    request.onload = function() {
+        // Pass api response data to the content script
+        chrome.tabs.executeScript(tab.id, {code: "var response = " + JSON.stringify(request.responseText)}, function() {
+            chrome.tabs.executeScript(tab.id, {file: 'content.js'});
+        });
+    }
 });
