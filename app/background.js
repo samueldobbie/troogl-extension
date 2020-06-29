@@ -5,6 +5,9 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
     var tabId = activeTab.id;
     var tabUrl = activeTab.url;
     
+    // Inject core CSS
+    chrome.tabs.insertCSS(tabId, {file: 'background.css'});
+
     // Construct url for api query
     var queryUrl = apiUrl + '/analyse/' + tabUrl;
     
