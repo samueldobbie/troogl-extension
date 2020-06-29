@@ -1,18 +1,18 @@
-function updateSentenceClasses(classes, isInitial) {
+function updateSentenceClasses(sentences, classes, isInitial) {
     
     enablePageEditing();
 
     if (isInitial) {
-        insertSentenceContainers(classes);
+        insertSentenceContainers(sentences, classes);
     } else {
-        updateSentenceContainers(classes);
+        updateSentenceContainers(sentences, classes);
     }
 
     disablePageEditing();
 }
 
 
-function insertSentenceContainers(classes) {
+function insertSentenceContainers(sentences, classes) {
     for (var i = 0; i < sentences.length; i++) {
         // Find sentence within page
         window.find(sentences[i]);
@@ -34,7 +34,10 @@ function insertSentenceContainers(classes) {
         });
 
         // Insert constructed sentence into article
-        range.insertNode(container);   
+        range.insertNode(container);
+
+        // Return selection cursor to beginning of document
+        window.getSelection().collapse(document.body, 0);
     }
 }
 
@@ -55,12 +58,12 @@ function updateSentenceContainers(classes) {
 
 
 function enablePageEditing() {
+    // Enable editing of article
+    document.designMode = 'on';
+
     // Get original scroll positioning within page
     pageXOffset = window.pageXOffset;
     pageYOffset = window.pageYOffset;
-    
-    // Enable editing of article
-    document.designMode = 'on';
 }
 
 
@@ -68,11 +71,11 @@ function disablePageEditing() {
     // Disable editing of article
     document.designMode = 'off';
 
-    // Return page scroll to original positioning
-    window.scrollTo(pageXOffset, pageYOffset);
-
     // Remove final sentence selection
     window.getSelection().collapse(document.body, 0);
+
+    // Return page scroll to original positioning
+    window.scrollTo(pageXOffset, pageYOffset);
 }
 
 var pageXOffset, pageYOffset;
@@ -82,4 +85,4 @@ var response = JSON.parse(response);
 var sentences = response['sentences'];
 var sentenceClasses = response['general_sentiment_classes'];
 
-updateSentenceClasses(sentenceClasses, true);
+updateSentenceClasses(sentences, sentenceClasses, true);
