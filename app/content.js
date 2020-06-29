@@ -22,14 +22,21 @@ for (var i = 0; i < sentences.length; i++) {
     // Get selected sentence range
     var range = window.getSelection().getRangeAt(0);
 
-    // Construct sentence with sentiment classes
-    var span = document.createElement('span');
-    span.classList.add(generalSentimentClasses[i]);
-    span.classList.add('troogl-sentence');
-    span.appendChild(range.extractContents());
+    // Construct sentence container
+    var container = document.createElement('span');
+
+    // Add sentiment classes to container
+    container.classList.add(generalSentimentClasses[i]);
+    container.classList.add('troogl-sentence');
+    container.appendChild(range.extractContents());
+
+    // Add popup to container (to-do: placeholder for now)
+    container.addEventListener('click', function() {
+        alert(2);
+    });
 
     // Add constructed sentence to article
-    range.insertNode(span);
+    range.insertNode(container);
 }
 
 // Disable editing of article

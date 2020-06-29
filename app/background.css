@@ -19,6 +19,11 @@
 
 .troogl-sentence {
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.troogl-sentence:hover {
+    filter: brightness(95%);
 }
 
 .troogl-negative {
