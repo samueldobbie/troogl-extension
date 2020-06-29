@@ -78,6 +78,30 @@ function disablePageEditing() {
     window.scrollTo(pageXOffset, pageYOffset);
 }
 
+
+function insertDashboard() {
+    // Construct dashboard popup button
+    var popupButton = document.createElement('button');
+    popupButton.classList.add('troogl-dashboard-popup-button');
+    popupButton.innerText = 'Troogl Dashboard';
+    popupButton.style.position = 'fixed';
+    popupButton.style.bottom = '25px';
+    popupButton.style.right = '25px';
+    popupButton.style.fontSize = '18px';
+    popupButton.style.fontWeight = 'bold';
+    popupButton.style.color = 'white';
+    popupButton.style.backgroundColor = '#5555FF';
+    popupButton.style.outline = 'none';
+    popupButton.style.boxShadow = '0 0 5px #333';
+    popupButton.style.border = 'none';
+    popupButton.style.borderRadius = '10px';
+    popupButton.style.padding = '10px';
+    popupButton.style.zIndex = 1000000;
+    
+    document.body.appendChild(popupButton);
+}
+
+
 var pageXOffset, pageYOffset;
 
 // Parse response data
@@ -86,3 +110,4 @@ var sentences = response['sentences'];
 var sentenceClasses = response['general_sentiment_classes'];
 
 updateSentenceClasses(sentences, sentenceClasses, true);
+insertDashboard();
