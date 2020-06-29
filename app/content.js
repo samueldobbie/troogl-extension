@@ -19,10 +19,17 @@ for (var i = 0; i < sentences.length; i++) {
     // Find sentence within page
     window.find(sentences[i]);
 
-    // Add class to each sentence
-    var sentenceElement = window.getSelection().baseNode.parentElement;
-    sentenceElement.classList.add(generalSentimentClasses[i]);
-    sentenceElement.classList.add('troogl-sentence');
+    // Get selected sentence range
+    var range = window.getSelection().getRangeAt(0);
+
+    // Construct sentence with sentiment classes
+    var span = document.createElement('span');
+    span.classList.add(generalSentimentClasses[i]);
+    span.classList.add('troogl-sentence');
+    span.appendChild(range.extractContents());
+
+    // Add constructed sentence to article
+    range.insertNode(span);
 }
 
 // Disable editing of article

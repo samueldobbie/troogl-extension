@@ -5,6 +5,7 @@ import random
 import fake_useragent
 import json
 import newspaper
+import spacy
 
 def analyse_article(request, url):
     '''
@@ -56,8 +57,8 @@ def get_newspaper_configuration():
 
 
 def get_article_sentences(text):
-    sentences = text.split('\n')
-    return sentences
+    doc = nlp(text)
+    return [str(s).strip() for s in doc.sents]
 
 
 def predict_general_sentiment_classes(sentences):
@@ -72,3 +73,4 @@ def predict_general_sentiment_classes(sentences):
 
 newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()
+nlp = spacy.load('en_core_web_md')
