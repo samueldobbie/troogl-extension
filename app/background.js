@@ -17,8 +17,8 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
     
     request.onload = function() {
         // Pass api response data to the content script
-        chrome.tabs.executeScript(tab.id, {code: "var response = " + JSON.stringify(request.responseText)}, function() {
-            chrome.tabs.executeScript(tab.id, {file: 'content.js'});
+        chrome.tabs.executeScript(tabId, {code: "var response = " + JSON.stringify(request.responseText)}, function() {
+            chrome.tabs.executeScript(tabId, {file: 'content.js'});
         });
     }
 });
