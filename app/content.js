@@ -1,18 +1,7 @@
-function updateSentenceClasses(sentences, classes, isInitial) {
-    
+function prepareSentences(sentences) {
+
     enablePageEditing();
 
-    if (isInitial) {
-        insertSentenceContainers(sentences, classes);
-    } else {
-        updateSentenceContainers(sentences, classes);
-    }
-
-    disablePageEditing();
-}
-
-
-function insertSentenceContainers(sentences, classes) {
     for (var i = 0; i < sentences.length; i++) {
         // Find sentence within page
         window.find(sentences[i]);
@@ -25,10 +14,9 @@ function insertSentenceContainers(sentences, classes) {
 
         // Add sentiment classes to container
         container.classList.add('troogl-sentence');
-        container.classList.add(classes[i]);
         container.appendChild(range.extractContents());
 
-        // Add popup to container
+        // Add popup to sentence container
         container.addEventListener('click', function() {
             alert(2);
         });
@@ -39,21 +27,47 @@ function insertSentenceContainers(sentences, classes) {
         // Return selection cursor to beginning of document
         window.getSelection().collapse(document.body, 0);
     }
+
+    disablePageEditing();
 }
 
 
-function updateSentenceContainers(classes) {
-    var trooglSentences = document.getElementsByClassName('troogl-sentences');
+function updateSentenceClasses(sentenceClasses) {
 
-    for (var i = 0; i < trooglSentences.length; i++) {
-        // Remove existing troogl class
-        trooglSentences[i].classList.remove('troogl-negative');
-        trooglSentences[i].classList.remove('troogl-neutral');
-        trooglSentences[i].classList.remove('troogl-positive');
+    enablePageEditing();
 
-        // Add updated troogl class
-        trooglSentences[i].classList.remove(classes[i]);
+    var sentences = document.getElementsByClassName('troogl-sentence');
+
+    // Return sentences to default state
+    for (var i = 0; i < sentences.length; i++) {
+        
+        // Remove existing sentiment class
+        stripSentimentClass(sentences[i]);
+
+        // Add default sentiment class
+        sentences[i].classList.add('troogl-neutral');
     }
+
+    // Update sentences based on entity sentiments
+    for (var i = 0; i < sentenceClasses.length; i++) {
+        var sentenceIndex = sentenceClasses[i][0];
+        var updatedClass = sentenceClasses[i][1];
+
+        // Remove existing sentiment class
+        stripSentimentClass(sentences[sentenceIndex]);
+
+        // Add updated sentiment class 
+        sentences[sentenceIndex].classList.add(updatedClass);
+    }
+
+    disablePageEditing();
+}
+
+
+function stripSentimentClass(sentence) {
+    sentence.classList.remove('troogl-negative');
+    sentence.classList.remove('troogl-neutral');
+    sentence.classList.remove('troogl-positive');
 }
 
 
@@ -106,6 +120,7 @@ function insertDashboard(sentenceClasses) {
     perspectiveDropdown.style.fontSize = '16px';
     perspectiveDropdown.style.marginLeft = '2%';
     perspectiveDropdown.style.outline = 'none';
+    perspectiveDropdown.style.cursor = 'pointer';
 
     // Populate perspective dropdown
     for (var key in sentenceClasses) {
@@ -114,104 +129,15 @@ function insertDashboard(sentenceClasses) {
         perspectiveDropdown.appendChild(perspectiveOption);
     }
 
+    // Update sentence classes upon changing perspective
+    perspectiveDropdown.addEventListener('change', function () {
+        updateSentenceClasses(sentenceClasses[perspectiveDropdown.value]);
+    });
+
     // Inject dashboard into page
     dashboardBar.appendChild(perspectiveDropdown);
     dashboardContainer.appendChild(dashboardBar);
     document.body.appendChild(dashboardContainer);
-
-    /*
-    // Construct and add dashboard container
-    var dashboardContainer = document.createElement('div');
-    dashboardContainer.id = 'troogl-dashboard-container';
-    dashboardContainer.style.position = 'fixed';
-    dashboardContainer.style.bottom = '0px';
-    dashboardContainer.style.left = '0px';
-    dashboardContainer.style.width = '100%';
-    dashboardContainer.style.zIndex = 1000000;
-
-    // Construct and add dashboard button
-    var dashboardButton = document.createElement('div');
-    dashboardButton.id = 'troogl-dashboard-button';
-    dashboardButton.innerText = 'Troogl Dashboard +';
-    dashboardButton.style.fontSize = '18px';
-    dashboardButton.style.fontWeight = 'bold';
-    dashboardButton.style.color = 'white';
-    dashboardButton.style.backgroundColor = '#5555FF';
-    dashboardButton.style.outline = 'none';
-    dashboardButton.style.border = 'none';
-    dashboardButton.style.textAlign = 'center';
-    dashboardButton.style.borderTopRightRadius = '100%';
-    dashboardButton.style.borderTopLeftRadius = '100%';
-    dashboardButton.style.transition = 'all 0.4s';
-    dashboardButton.style.padding = '7.5px';
-    dashboardButton.style.cursor = 'pointer';
-    dashboardButton.style.zIndex = 1000000;
-
-    // Construct and add dashboard content
-    var dashboardContent = document.createElement('div');
-    dashboardContent.id = 'troogl-dashboard-content';
-    dashboardContent.style.backgroundColor = '#F1F1F1';
-    dashboardContent.style.height = '40vh';
-    dashboardContent.style.maxHeight = '0px';
-    dashboardContent.style.transition = 'max-height 0.7s';
-    dashboardContent.style.borderLeft = '5px solid #5555FF';
-    dashboardContent.style.borderRight = '5px solid #5555FF';
-    dashboardContent.style.zIndex = 1000000;
-
-    var dashboardContentItem = document.createElement('p');
-    var dashboardContentItemTitle = document.createElement('span');
-    dashboardContentItemTitle.style.color = '#333';
-    dashboardContentItemTitle.style.fontWeight = 'bold';
-    dashboardContentItemTitle.style.fontSize = '18px';
-    dashboardContentItemTitle.innerText = 'Perspective';
-
-    var br = document.createElement('br');
-
-    dashboardContentItem.appendChild(dashboardContentItemTitle);
-    dashboardContentItem.appendChild(br);
-
-    // Add perspective dropdown to dashboard content    
-    var perspectiveDropdown = document.createElement('select');
-    perspectiveDropdown.style.padding = '5px';
-    perspectiveDropdown.style.borderRadius = '5px';
-    perspectiveDropdown.style.marginTop = '5px';
-    perspectiveDropdown.style.fontSize = '15px';
-    for (var i = 0; i < 100; i++) {
-        var perspectiveOption = document.createElement('option');
-        perspectiveOption.innerText = i.toString();
-        perspectiveDropdown.appendChild(perspectiveOption);
-    }
-
-    dashboardContentItem.appendChild(perspectiveDropdown);
-
-    // Construct dashboard
-    dashboardContent.appendChild(dashboardContentItem);
-    dashboardContainer.appendChild(dashboardButton);
-    dashboardContainer.appendChild(dashboardContent);
-
-    // Inject dashboard into article
-    document.body.appendChild(dashboardContainer)
-
-    // Enable dashboard to expand and collapse upon click
-    document.getElementById('troogl-dashboard-button').addEventListener('click', function () {
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight == '40vh'){
-            content.style.maxHeight = '0px';
-            content.style.padding = '0px';       
-            content.style.borderBottom = 'none';
-            this.innerText = 'Troogl Dashboard +';
-            this.style.borderTopRightRadius = '100%';
-            this.style.borderTopLeftRadius = '100%';
-        } else {
-            content.style.maxHeight = '40vh';
-            content.style.padding = '25px';
-            content.style.borderBottom = '5px solid #5555FF';
-            this.innerText = 'Troogl Dashboard -';
-            this.style.borderTopRightRadius = '0px';
-            this.style.borderTopLeftRadius = '0px';
-        }
-    });
-    */
 }
 
 
@@ -222,5 +148,6 @@ var response = JSON.parse(response);
 var sentences = response['sentences'];
 var sentenceClasses = response['sentence_sentiment_classes'];
 
-updateSentenceClasses(sentences, sentenceClasses, true);
+prepareSentences(sentences);
+updateSentenceClasses(sentenceClasses['Everyday News Reader']);
 insertDashboard(sentenceClasses);
