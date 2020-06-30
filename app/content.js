@@ -98,35 +98,54 @@ function insertDashboard() {
     dashboardButton.style.color = 'white';
     dashboardButton.style.backgroundColor = '#5555FF';
     dashboardButton.style.outline = 'none';
-    dashboardButton.style.boxShadow = '0 0 3px #333';
     dashboardButton.style.border = 'none';
     dashboardButton.style.textAlign = 'center';
     dashboardButton.style.borderTopRightRadius = '100%';
     dashboardButton.style.borderTopLeftRadius = '100%';
-    dashboardButton.style.transition = 'all 0.7s';
-    dashboardButton.style.padding = '5px';
+    dashboardButton.style.transition = 'all 0.4s';
+    dashboardButton.style.padding = '7.5px';
     dashboardButton.style.cursor = 'pointer';
     dashboardButton.style.zIndex = 1000000;
 
     // Construct and add dashboard content
     var dashboardContent = document.createElement('div');
     dashboardContent.id = 'troogl-dashboard-content';
-    dashboardContent.style.backgroundColor = 'white';
+    dashboardContent.style.backgroundColor = '#F1F1F1';
     dashboardContent.style.height = '40vh';
     dashboardContent.style.maxHeight = '0px';
     dashboardContent.style.transition = 'max-height 0.7s';
+    dashboardContent.style.borderLeft = '5px solid #5555FF';
+    dashboardContent.style.borderRight = '5px solid #5555FF';
     dashboardContent.style.zIndex = 1000000;
+
+    var dashboardContentItem = document.createElement('p');
+    var dashboardContentItemTitle = document.createElement('span');
+    dashboardContentItemTitle.style.color = '#333';
+    dashboardContentItemTitle.style.fontWeight = 'bold';
+    dashboardContentItemTitle.style.fontSize = '18px';
+    dashboardContentItemTitle.innerText = 'Perspective';
+
+    var br = document.createElement('br');
+
+    dashboardContentItem.appendChild(dashboardContentItemTitle);
+    dashboardContentItem.appendChild(br);
 
     // Add perspective dropdown to dashboard content    
     var perspectiveDropdown = document.createElement('select');
+    perspectiveDropdown.style.padding = '5px';
+    perspectiveDropdown.style.borderRadius = '5px';
+    perspectiveDropdown.style.marginTop = '5px';
+    perspectiveDropdown.style.fontSize = '15px';
     for (var i = 0; i < 100; i++) {
         var perspectiveOption = document.createElement('option');
         perspectiveOption.innerText = i.toString();
         perspectiveDropdown.appendChild(perspectiveOption);
     }
 
+    dashboardContentItem.appendChild(perspectiveDropdown);
+
     // Construct dashboard
-    dashboardContent.appendChild(perspectiveDropdown);
+    dashboardContent.appendChild(dashboardContentItem);
     dashboardContainer.appendChild(dashboardButton);
     dashboardContainer.appendChild(dashboardContent);
 
@@ -137,12 +156,16 @@ function insertDashboard() {
     document.getElementById('troogl-dashboard-button').addEventListener('click', function () {
         var content = this.nextElementSibling;
         if (content.style.maxHeight == '40vh'){
-            content.style.maxHeight = '0px';        
+            content.style.maxHeight = '0px';
+            content.style.padding = '0px';       
+            content.style.borderBottom = 'none';
             this.innerText = 'Troogl Dashboard +';
             this.style.borderTopRightRadius = '100%';
             this.style.borderTopLeftRadius = '100%';
         } else {
             content.style.maxHeight = '40vh';
+            content.style.padding = '25px';
+            content.style.borderBottom = '5px solid #5555FF';
             this.innerText = 'Troogl Dashboard -';
             this.style.borderTopRightRadius = '0px';
             this.style.borderTopLeftRadius = '0px';
