@@ -80,25 +80,74 @@ function disablePageEditing() {
 
 
 function insertDashboard() {
-    // Construct dashboard popup button
-    var popupButton = document.createElement('button');
-    popupButton.classList.add('troogl-dashboard-popup-button');
-    popupButton.innerText = 'Troogl Dashboard';
-    popupButton.style.position = 'fixed';
-    popupButton.style.bottom = '25px';
-    popupButton.style.right = '25px';
-    popupButton.style.fontSize = '18px';
-    popupButton.style.fontWeight = 'bold';
-    popupButton.style.color = 'white';
-    popupButton.style.backgroundColor = '#5555FF';
-    popupButton.style.outline = 'none';
-    popupButton.style.boxShadow = '0 0 5px #333';
-    popupButton.style.border = 'none';
-    popupButton.style.borderRadius = '10px';
-    popupButton.style.padding = '10px';
-    popupButton.style.zIndex = 1000000;
-    
-    document.body.appendChild(popupButton);
+    // Construct and add dashboard container
+    var dashboardContainer = document.createElement('div');
+    dashboardContainer.id = 'troogl-dashboard-container';
+    dashboardContainer.style.position = 'fixed';
+    dashboardContainer.style.bottom = '0px';
+    dashboardContainer.style.left = '0px';
+    dashboardContainer.style.width = '100%';
+    dashboardContainer.style.zIndex = 1000000;
+
+    // Construct and add dashboard button
+    var dashboardButton = document.createElement('div');
+    dashboardButton.id = 'troogl-dashboard-button';
+    dashboardButton.innerText = 'Troogl Dashboard +';
+    dashboardButton.style.fontSize = '18px';
+    dashboardButton.style.fontWeight = 'bold';
+    dashboardButton.style.color = 'white';
+    dashboardButton.style.backgroundColor = '#5555FF';
+    dashboardButton.style.outline = 'none';
+    dashboardButton.style.boxShadow = '0 0 3px #333';
+    dashboardButton.style.border = 'none';
+    dashboardButton.style.textAlign = 'center';
+    dashboardButton.style.borderTopRightRadius = '100%';
+    dashboardButton.style.borderTopLeftRadius = '100%';
+    dashboardButton.style.transition = 'all 0.7s';
+    dashboardButton.style.padding = '5px';
+    dashboardButton.style.cursor = 'pointer';
+    dashboardButton.style.zIndex = 1000000;
+
+    // Construct and add dashboard content
+    var dashboardContent = document.createElement('div');
+    dashboardContent.id = 'troogl-dashboard-content';
+    dashboardContent.style.backgroundColor = 'white';
+    dashboardContent.style.height = '40vh';
+    dashboardContent.style.maxHeight = '0px';
+    dashboardContent.style.transition = 'max-height 0.7s';
+    dashboardContent.style.zIndex = 1000000;
+
+    // Add perspective dropdown to dashboard content    
+    var perspectiveDropdown = document.createElement('select');
+    for (var i = 0; i < 100; i++) {
+        var perspectiveOption = document.createElement('option');
+        perspectiveOption.innerText = i.toString();
+        perspectiveDropdown.appendChild(perspectiveOption);
+    }
+
+    // Construct dashboard
+    dashboardContent.appendChild(perspectiveDropdown);
+    dashboardContainer.appendChild(dashboardButton);
+    dashboardContainer.appendChild(dashboardContent);
+
+    // Inject dashboard into article
+    document.body.appendChild(dashboardContainer)
+
+    // Enable dashboard to expand and collapse upon click
+    document.getElementById('troogl-dashboard-button').addEventListener('click', function () {
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight == '40vh'){
+            content.style.maxHeight = '0px';        
+            this.innerText = 'Troogl Dashboard +';
+            this.style.borderTopRightRadius = '100%';
+            this.style.borderTopLeftRadius = '100%';
+        } else {
+            content.style.maxHeight = '40vh';
+            this.innerText = 'Troogl Dashboard -';
+            this.style.borderTopRightRadius = '0px';
+            this.style.borderTopLeftRadius = '0px';
+        }
+    });
 }
 
 
