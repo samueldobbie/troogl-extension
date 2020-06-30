@@ -79,7 +79,47 @@ function disablePageEditing() {
 }
 
 
-function insertDashboard() {
+function insertDashboard(sentenceClasses) {
+    var dashboardContainer = document.createElement('div');
+    dashboardContainer.style.position = 'fixed';
+    dashboardContainer.style.bottom = '0';
+    dashboardContainer.style.left = '0';
+    dashboardContainer.style.width = '100%';
+    dashboardContainer.style.borderBottom = '1vh solid #333';
+    dashboardContainer.style.height = '7vh';
+    dashboardContainer.style.lineHeight = '8vh';
+    dashboardContainer.style.zIndex = 1000000;
+
+    var dashboardBar = document.createElement('div');
+    dashboardBar.id = 'troogl-dashboard-bar';
+    dashboardBar.style.backgroundColor = '#5555FF';
+    dashboardBar.style.borderTopLeftRadius = '4px';
+    dashboardBar.style.borderTopRightRadius = '4px';
+    dashboardBar.style.width = '100%';
+    dashboardBar.style.margin = '0 auto';
+    dashboardBar.style.zIndex = 1000000;
+
+    // Add perspective dropdown to dashboard content    
+    var perspectiveDropdown = document.createElement('select');
+    perspectiveDropdown.style.padding = '5px';
+    perspectiveDropdown.style.borderRadius = '7.5px';
+    perspectiveDropdown.style.fontSize = '16px';
+    perspectiveDropdown.style.marginLeft = '2%';
+    perspectiveDropdown.style.outline = 'none';
+
+    // Populate perspective dropdown
+    for (var key in sentenceClasses) {
+        perspectiveOption = document.createElement('option');
+        perspectiveOption.innerText = key;
+        perspectiveDropdown.appendChild(perspectiveOption);
+    }
+
+    // Inject dashboard into page
+    dashboardBar.appendChild(perspectiveDropdown);
+    dashboardContainer.appendChild(dashboardBar);
+    document.body.appendChild(dashboardContainer);
+
+    /*
     // Construct and add dashboard container
     var dashboardContainer = document.createElement('div');
     dashboardContainer.id = 'troogl-dashboard-container';
@@ -171,6 +211,7 @@ function insertDashboard() {
             this.style.borderTopLeftRadius = '0px';
         }
     });
+    */
 }
 
 
@@ -179,7 +220,7 @@ var pageXOffset, pageYOffset;
 // Parse response data
 var response = JSON.parse(response);
 var sentences = response['sentences'];
-var sentenceClasses = response['general_sentiment_classes'];
+var sentenceClasses = response['sentence_sentiment_classes'];
 
 updateSentenceClasses(sentences, sentenceClasses, true);
-insertDashboard();
+insertDashboard(sentenceClasses);

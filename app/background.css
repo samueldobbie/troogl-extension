@@ -40,6 +40,6 @@
 
 /* Dashboard */
 
-#troogl-dashboard-button:hover {
+#troogl-dashboard-bar:hover {
     filter: brightness(110%);
 }
