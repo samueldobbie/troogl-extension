@@ -17,14 +17,18 @@ def analyse_article(request, url):
     # Extract article data
     body, sentences, sentence_offsets = extract_article_data_from_url(url)
 
+    # Define default entity name
+    default_entity_name = 'Everyday News Reader'
+
     # Get sentence sentiments for all entities (incl. general)
-    sentence_sentiment_classes = predict_sentence_sentiment_classes(body, sentence_offsets)
+    sentence_sentiment_classes = predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_name)
 
     # Construct response
     context = {}
 
     context['sentences'] = sentences
     context['sentence_sentiment_classes'] = sentence_sentiment_classes
+    context['default_entity_name'] = default_entity_name
 
     return HttpResponse(json.dumps(context))
 
@@ -65,41 +69,59 @@ def get_article_sentences(text):
     return [str(s).strip() for s in doc.sents]
 
 
-def predict_sentence_sentiment_classes(body, sentence_offsets):
+def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_name):
+    '''
+    Predict sentiment for each entity within article
+    and map to corresponding sentence class 
+    '''
+
     document = {'content': body, 'type': enums.Document.Type.PLAIN_TEXT, 'language': 'en'}
     response = client.analyze_entity_sentiment(document, encoding_type=enums.EncodingType.UTF8)
     
-    class_options = ['troogl-negative', 'troogl-neutral', 'troogl-positive']
+    class_options = ['troogl-negative', 'troogl-positive']
 
     sentence_sentiment_classes = {}
 
-    sentence_sentiment_classes['Everyday News Reader'] = []
+    # Generate random sentiment classes for default view (temporarily)
+    sentence_sentiment_classes[default_entity_name] = []
     for i in range(len(sentence_offsets)):
-        sentence_sentiment_classes['Everyday News Reader'].append((i, class_options[random.randint(0, 2)]))
+        sentence_sentiment_classes[default_entity_name].append({
+            'sentence_index': i,
+            'sentence_class': class_options[random.randint(0, len(class_options) - 1)]
+        })
 
     for entity in response.entities:
+        entity_name = entity.name.strip().title()
+
         if entity.name not in sentence_sentiment_classes:
-            entity_name = entity.name.strip().title()
             sentence_sentiment_classes[entity_name] = []
 
         for mention in entity.mentions:
-            sentiment_class = ''
-            if mention.sentiment.score < -0.25:
-                sentiment_class = class_options[0]
-            elif mention.sentiment.score >= -0.25 and mention.sentiment.score <= 0.25:
-                sentiment_class = class_options[1]
-            elif mention.sentiment.score > 0.25:
-                sentiment_class = class_options[2]
+            sentence_class = ''
+            if mention.sentiment.score < -0.25 and mention.sentiment.magnitude > 0.4:
+                sentence_class = class_options[0]
+            elif mention.sentiment.score > 0.25 and mention.sentiment.magnitude > 0.4:
+                sentence_class = class_options[1]
 
-            sentence_index = 0
-            for offset_index in range(len(sentence_offsets)):
-                if mention.text.begin_offset >= sentence_offsets[offset_index][0] and mention.text.begin_offset <= sentence_offsets[offset_index][1]:
-                    sentence_index = offset_index
-                    break
+            if sentence_class != '':
+                sentence_index = 0
+                for offset_index in range(len(sentence_offsets)):
+                    if mention.text.begin_offset >= sentence_offsets[offset_index][0] and mention.text.begin_offset <= sentence_offsets[offset_index][1]:
+                        sentence_index = offset_index
+                        break
 
-            sentence_sentiment_classes[entity_name].append((sentence_index, sentiment_class))
+                sentence_sentiment_classes[entity_name].append({
+                    'sentence_index': sentence_index,
+                    'sentence_class': sentence_class
+                })
 
-    return sentence_sentiment_classes
+    # Restrict perspectives to those that include at least one non-neutral sentence
+    relevant_sentence_sentiment_classes = {}
+    for k, v in sentence_sentiment_classes.items():
+        if len(v) > 0 or k == default_entity_name:
+            relevant_sentence_sentiment_classes[k] = v
+
+    return relevant_sentence_sentiment_classes
 
 newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()

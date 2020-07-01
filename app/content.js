@@ -50,14 +50,16 @@ function updateSentenceClasses(sentenceClasses) {
 
     // Update sentences based on entity sentiments
     for (var i = 0; i < sentenceClasses.length; i++) {
-        var sentenceIndex = sentenceClasses[i][0];
-        var updatedClass = sentenceClasses[i][1];
+        var sentenceIndex = sentenceClasses[i]['sentence_index'];
+        var sentenceClass = sentenceClasses[i]['sentence_class'];
+
+        console.log(sentenceIndex, sentenceClass);
 
         // Remove existing sentiment class
         stripSentimentClass(sentences[sentenceIndex]);
 
         // Add updated sentiment class 
-        sentences[sentenceIndex].classList.add(updatedClass);
+        sentences[sentenceIndex].classList.add(sentenceClass);
     }
 
     disablePageEditing();
@@ -149,5 +151,5 @@ var sentences = response['sentences'];
 var sentenceClasses = response['sentence_sentiment_classes'];
 
 prepareSentences(sentences);
-updateSentenceClasses(sentenceClasses['Everyday News Reader']);
+updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
 insertDashboard(sentenceClasses);
