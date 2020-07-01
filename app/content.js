@@ -53,8 +53,6 @@ function updateSentenceClasses(sentenceClasses) {
         var sentenceIndex = sentenceClasses[i]['sentence_index'];
         var sentenceClass = sentenceClasses[i]['sentence_class'];
 
-        console.log(sentenceIndex, sentenceClass);
-
         // Remove existing sentiment class
         stripSentimentClass(sentences[sentenceIndex]);
 
@@ -141,7 +139,6 @@ function insertDashboard(sentenceClasses) {
     dashboardContainer.appendChild(dashboardBar);
     document.body.appendChild(dashboardContainer);
 }
-
 
 var pageXOffset, pageYOffset;
 
