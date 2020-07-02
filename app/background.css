@@ -37,9 +37,3 @@
 .troogl-positive {
     background-color: rgb(182, 255, 200);
 }
-
-/* Dashboard */
-
-#troogl-dashboard-bar:hover {
-    filter: brightness(110%);
-}

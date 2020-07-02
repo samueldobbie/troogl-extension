@@ -95,30 +95,37 @@ function disablePageEditing() {
 
 function insertDashboard(sentenceClasses) {
     var dashboardContainer = document.createElement('div');
-    dashboardContainer.style.position = 'fixed';
-    dashboardContainer.style.bottom = '0';
-    dashboardContainer.style.left = '0';
+    dashboardContainer.style.position = 'relative';
     dashboardContainer.style.width = '100%';
-    dashboardContainer.style.borderBottom = '1vh solid #333';
-    dashboardContainer.style.height = '7vh';
-    dashboardContainer.style.lineHeight = '8vh';
-    dashboardContainer.style.zIndex = 1000000;
+    dashboardContainer.style.height = '12.5vh';
+    dashboardContainer.style.zIndex = 1000000000000;
 
     var dashboardBar = document.createElement('div');
-    dashboardBar.id = 'troogl-dashboard-bar';
-    dashboardBar.style.backgroundColor = '#5555FF';
-    dashboardBar.style.borderTopLeftRadius = '4px';
-    dashboardBar.style.borderTopRightRadius = '4px';
+    dashboardBar.style.display = 'flex';
+    dashboardBar.style.position = 'fixed';
     dashboardBar.style.width = '100%';
-    dashboardBar.style.margin = '0 auto';
-    dashboardBar.style.zIndex = 1000000;
+    dashboardBar.style.height = '12.5vh';
+    dashboardBar.style.padding = '0 5%';
+    dashboardBar.style.alignContent = 'space-around';
+    dashboardBar.style.backgroundColor = '#5555FF';
+    dashboardBar.style.boxShadow = '0 0 5px #333';
 
-    // Add perspective dropdown to dashboard content    
+    var perspectiveContainer = document.createElement('span');
+    perspectiveContainer.style.flexGrow = 1;
+    perspectiveContainer.style.padding = '1.5% 0';
+
+    var perspectiveHeader = document.createElement('span');
+    perspectiveHeader.innerText = 'Perspective';
+    perspectiveHeader.style.color = 'white';
+    perspectiveHeader.style.fontSize = '18px';
+    perspectiveHeader.style.fontWeight = 'bold';
+
+    var linebreak = document.createElement('br');
+
     var perspectiveDropdown = document.createElement('select');
     perspectiveDropdown.style.padding = '5px';
     perspectiveDropdown.style.borderRadius = '7.5px';
     perspectiveDropdown.style.fontSize = '16px';
-    perspectiveDropdown.style.marginLeft = '2%';
     perspectiveDropdown.style.outline = 'none';
     perspectiveDropdown.style.cursor = 'pointer';
 
@@ -134,24 +141,51 @@ function insertDashboard(sentenceClasses) {
         updateSentenceClasses(sentenceClasses[perspectiveDropdown.value]);
     });
 
+    perspectiveContainer.appendChild(perspectiveHeader);
+    perspectiveContainer.appendChild(linebreak);
+    perspectiveContainer.appendChild(perspectiveDropdown);
+
+    var sparklineContainer = document.createElement('span');
+    sparklineContainer.style.flexGrow = 2;
+    sparklineContainer.style.padding = '1.5% 0';
+
     var sparklineChart = document.createElement('span');
     sparklineChart.id = 'troogl-sparkline';
-    sparklineChart.style.zIndex = 1000000000000000;
+
+    sparklineContainer.appendChild(sparklineChart);
 
     // Inject dashboard into page
-    dashboardBar.appendChild(perspectiveDropdown);
-    dashboardBar.appendChild(sparklineChart);
+    dashboardBar.appendChild(perspectiveContainer);
+    dashboardBar.appendChild(sparklineContainer);
     dashboardContainer.appendChild(dashboardBar);
-    document.body.appendChild(dashboardContainer);
+
+    document.body.insertBefore(dashboardContainer, document.body.firstChild);
+    //document.body.appendChild(dashboardContainer);
     
+    // Populate sparkline with article sentiments
+    /*
     $('#troogl-sparkline').sparkline([0, 0, -1, -1, -1, -1, 1, 1, 1, 0, 1, 1, -1, 0, 0, 1, 1], {
-        type: 'bar',
-        height: '40',
-        barWidth: 5,
-        barSpacing: 2,
-        barColor: '#00d800',
-        negBarColor: '#ff0000',
-        zeroColor: '#000000'
+        type: 'tristate',
+        height: '35',
+        barWidth: 7.5,
+        barSpacing: 2.5,
+        zeroAxis: false
+    });
+    */
+
+    $('#troogl-sparkline').sparkline([0, 0, -1, -1, -1, -1, 1, 1, 1, 0, 1, 1, -1, 0, 0, 1, 1], {
+        type: 'line',
+        width: '400',
+        height: '50',
+        lineColor: 'white',
+        fillColor: 'rgba(0, 0, 0, 0)',
+        lineWidth: 4,
+        spotColor: '#333',
+        minSpotColor: '#333',
+        maxSpotColor: '#333',
+        highlightSpotColor: '#333',
+        highlightLineColor: '#333',
+        spotRadius: 5
     });
 }
 
