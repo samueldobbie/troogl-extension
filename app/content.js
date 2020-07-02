@@ -64,9 +64,6 @@ function updateSentenceClasses(sentenceClasses) {
     }
 
     disablePageEditing();
-
-    // Update sparkline in dashboard
-    populateSparkLine();
 }
 
 
@@ -115,15 +112,16 @@ function insertDashboard(sentenceClasses) {
     dashboardBar.style.alignContent = 'space-around';
     dashboardBar.style.backgroundColor = '#5555FF';
     dashboardBar.style.boxShadow = '0 0 5px #333';
+    dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
     var perspectiveContainer = document.createElement('span');
     perspectiveContainer.style.flexGrow = 1;
     perspectiveContainer.style.padding = '1.5% 0';
 
     var perspectiveHeader = document.createElement('span');
-    perspectiveHeader.innerText = 'Perspective';
+    perspectiveHeader.innerText = 'PERSPECTIVE';
     perspectiveHeader.style.color = 'white';
-    perspectiveHeader.style.fontSize = '18px';
+    perspectiveHeader.style.fontSize = '12px';
     perspectiveHeader.style.fontWeight = 'bold';
 
     var linebreak = document.createElement('br');
@@ -145,6 +143,7 @@ function insertDashboard(sentenceClasses) {
     // Update sentence classes upon changing perspective
     perspectiveDropdown.addEventListener('change', function () {
         updateSentenceClasses(sentenceClasses[perspectiveDropdown.value]);
+        updateSparkLine();
     });
 
     perspectiveContainer.appendChild(perspectiveHeader);
@@ -152,7 +151,7 @@ function insertDashboard(sentenceClasses) {
     perspectiveContainer.appendChild(perspectiveDropdown);
 
     var sparklineContainer = document.createElement('span');
-    sparklineContainer.style.flexGrow = 2;
+    sparklineContainer.style.flexGrow = 1;
     sparklineContainer.style.padding = '1.5% 0';
 
     var sparklineChart = document.createElement('span');
@@ -167,10 +166,10 @@ function insertDashboard(sentenceClasses) {
     document.body.insertBefore(dashboardContainer, document.body.firstChild);
     
     // Populate sparkline with article sentiments
-    populateSparkLine();
+    updateSparkLine();
 }
 
-function populateSparkLine() {
+function updateSparkLine() {
     var sentences = document.getElementsByClassName('troogl-sentence');
 
     var sparklineValues = [];
@@ -178,6 +177,7 @@ function populateSparkLine() {
         sparklineValues.push(sentences[i].getAttribute('troogl-class-value'));
     }
 
+    /*
     $('#troogl-sparkline').sparkline(sparklineValues, {
         type: 'line',
         width: '400',
@@ -192,6 +192,18 @@ function populateSparkLine() {
         highlightSpotColor: '#333',
         highlightLineColor: '#333'
     });
+    */
+
+    $('#troogl-sparkline').sparkline(sparklineValues, {
+        type: 'tristate',
+        height: '50',
+        barWidth: 10
+    });
+
+    var sparklineCanvas = document.getElementById('troogl-sparkline').childNodes[0];
+    sparklineCanvas.style.backgroundColor = '#2a2abd';
+    sparklineCanvas.style.padding = '5px';
+    sparklineCanvas.style.borderRadius = '5px';
 }
 
 var pageXOffset, pageYOffset;
