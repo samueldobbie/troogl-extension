@@ -80,48 +80,53 @@ def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_na
     
     class_options = ['troogl-negative', 'troogl-positive']
 
-    sentence_sentiment_classes = {}
+    sentence_data = {}
 
     # Generate random sentiment classes for default view (temporarily)
-    sentence_sentiment_classes[default_entity_name] = []
+    sentence_data[default_entity_name] = []
     for i in range(len(sentence_offsets)):
-        sentence_sentiment_classes[default_entity_name].append({
+        sentence_data[default_entity_name].append({
             'sentence_index': i,
-            'sentence_class': class_options[random.randint(0, len(class_options) - 1)]
+            'sentence_class_string': class_options[random.randint(0, len(class_options) - 1)],
+            'sentence_class_value': random.randint(-1, 1)
         })
 
     for entity in response.entities:
         entity_name = entity.name.strip().title()
 
-        if entity.name not in sentence_sentiment_classes:
-            sentence_sentiment_classes[entity_name] = []
+        if entity.name not in sentence_data:
+            sentence_data[entity_name] = []
 
         for mention in entity.mentions:
-            sentence_class = ''
+            sentence_class_string = None
+            sentence_class_value = None
             if mention.sentiment.score < -0.25 and mention.sentiment.magnitude > 0.4:
-                sentence_class = class_options[0]
+                sentence_class_string = class_options[0]
+                sentence_class_value = -1
             elif mention.sentiment.score > 0.25 and mention.sentiment.magnitude > 0.4:
-                sentence_class = class_options[1]
+                sentence_class_string = class_options[1]
+                sentence_class_value = 1
 
-            if sentence_class != '':
+            if sentence_class_string is not None:
                 sentence_index = 0
                 for offset_index in range(len(sentence_offsets)):
                     if mention.text.begin_offset >= sentence_offsets[offset_index][0] and mention.text.begin_offset <= sentence_offsets[offset_index][1]:
                         sentence_index = offset_index
                         break
 
-                sentence_sentiment_classes[entity_name].append({
+                sentence_data[entity_name].append({
                     'sentence_index': sentence_index,
-                    'sentence_class': sentence_class
+                    'sentence_class_string': sentence_class_string,
+                    'sentence_class_value': sentence_class_value
                 })
 
     # Restrict perspectives to those that include at least one non-neutral sentence
-    relevant_sentence_sentiment_classes = {}
-    for k, v in sentence_sentiment_classes.items():
-        if len(v) > 0 or k == default_entity_name:
-            relevant_sentence_sentiment_classes[k] = v
+    updated_sentence_data = {}
+    for key, value in sentence_data.items():
+        if len(value) > 0 or key == default_entity_name:
+            updated_sentence_data[key] = value
 
-    return relevant_sentence_sentiment_classes
+    return updated_sentence_data
 
 newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()

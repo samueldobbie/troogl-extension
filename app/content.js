@@ -42,29 +42,35 @@ function updateSentenceClasses(sentenceClasses) {
     for (var i = 0; i < sentences.length; i++) {
         
         // Remove existing sentiment class
-        stripSentimentClass(sentences[i]);
+        stripSentence(sentences[i]);
 
-        // Add default sentiment class
+        // Set default sentence values
         sentences[i].classList.add('troogl-neutral');
+        sentences[i].setAttribute('troogl-class-value', 0);
     }
 
     // Update sentences based on entity sentiments
     for (var i = 0; i < sentenceClasses.length; i++) {
         var sentenceIndex = sentenceClasses[i]['sentence_index'];
-        var sentenceClass = sentenceClasses[i]['sentence_class'];
+        var sentenceClassString = sentenceClasses[i]['sentence_class_string'];
+        var sentenceClassValue = sentenceClasses[i]['sentence_class_value'];
 
         // Remove existing sentiment class
-        stripSentimentClass(sentences[sentenceIndex]);
+        stripSentence(sentences[sentenceIndex]);
 
-        // Add updated sentiment class 
-        sentences[sentenceIndex].classList.add(sentenceClass);
+        // Update sentence values
+        sentences[sentenceIndex].classList.add(sentenceClassString);
+        sentences[sentenceIndex].setAttribute('troogl-class-value', sentenceClassValue);
     }
 
     disablePageEditing();
+
+    // Update sparkline in dashboard
+    populateSparkLine();
 }
 
 
-function stripSentimentClass(sentence) {
+function stripSentence(sentence) {
     sentence.classList.remove('troogl-negative');
     sentence.classList.remove('troogl-neutral');
     sentence.classList.remove('troogl-positive');
@@ -158,34 +164,33 @@ function insertDashboard(sentenceClasses) {
     dashboardBar.appendChild(perspectiveContainer);
     dashboardBar.appendChild(sparklineContainer);
     dashboardContainer.appendChild(dashboardBar);
-
     document.body.insertBefore(dashboardContainer, document.body.firstChild);
-    //document.body.appendChild(dashboardContainer);
     
     // Populate sparkline with article sentiments
-    /*
-    $('#troogl-sparkline').sparkline([0, 0, -1, -1, -1, -1, 1, 1, 1, 0, 1, 1, -1, 0, 0, 1, 1], {
-        type: 'tristate',
-        height: '35',
-        barWidth: 7.5,
-        barSpacing: 2.5,
-        zeroAxis: false
-    });
-    */
+    populateSparkLine();
+}
 
-    $('#troogl-sparkline').sparkline([0, 0, -1, -1, -1, -1, 1, 1, 1, 0, 1, 1, -1, 0, 0, 1, 1], {
+function populateSparkLine() {
+    var sentences = document.getElementsByClassName('troogl-sentence');
+
+    var sparklineValues = [];
+    for (var i = 0; i < sentences.length; i++) {
+        sparklineValues.push(sentences[i].getAttribute('troogl-class-value'));
+    }
+
+    $('#troogl-sparkline').sparkline(sparklineValues, {
         type: 'line',
         width: '400',
         height: '50',
         lineColor: 'white',
         fillColor: 'rgba(0, 0, 0, 0)',
         lineWidth: 4,
-        spotColor: '#333',
-        minSpotColor: '#333',
-        maxSpotColor: '#333',
+        spotRadius: 4,
+        spotColor: '#f1f1f1',
+        minSpotColor: '#f1f1f1',
+        maxSpotColor: '#f1f1f1',
         highlightSpotColor: '#333',
-        highlightLineColor: '#333',
-        spotRadius: 5
+        highlightLineColor: '#333'
     });
 }
 
