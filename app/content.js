@@ -134,10 +134,25 @@ function insertDashboard(sentenceClasses) {
         updateSentenceClasses(sentenceClasses[perspectiveDropdown.value]);
     });
 
+    var sparklineChart = document.createElement('span');
+    sparklineChart.id = 'troogl-sparkline';
+    sparklineChart.style.zIndex = 1000000000000000;
+
     // Inject dashboard into page
     dashboardBar.appendChild(perspectiveDropdown);
+    dashboardBar.appendChild(sparklineChart);
     dashboardContainer.appendChild(dashboardBar);
     document.body.appendChild(dashboardContainer);
+    
+    $('#troogl-sparkline').sparkline([0, 0, -1, -1, -1, -1, 1, 1, 1, 0, 1, 1, -1, 0, 0, 1, 1], {
+        type: 'bar',
+        height: '40',
+        barWidth: 5,
+        barSpacing: 2,
+        barColor: '#00d800',
+        negBarColor: '#ff0000',
+        zeroColor: '#000000'
+    });
 }
 
 var pageXOffset, pageYOffset;
