@@ -121,9 +121,8 @@ function insertDashboard(sentenceClasses) {
     perspectiveContainer.style.flexGrow = 1;
 
     var perspectiveHeader = document.createElement('span');
-    perspectiveHeader.innerText = 'PERSPECTIVE';
+    perspectiveHeader.innerText = 'Perspective';
     perspectiveHeader.style.color = 'white';
-    perspectiveHeader.style.fontSize = '12px';
     perspectiveHeader.style.fontWeight = 'bold';
     perspectiveHeader.style.marginLeft = '0.5%';
 
@@ -149,8 +148,8 @@ function insertDashboard(sentenceClasses) {
         updateGraphs();
     });
 
-    perspectiveContainer.appendChild(perspectiveHeader);
-    perspectiveContainer.appendChild(linebreak);
+    // perspectiveContainer.appendChild(perspectiveHeader);
+    // perspectiveContainer.appendChild(linebreak);
     perspectiveContainer.appendChild(perspectiveDropdown);
 
     var graphContainer = document.createElement('span');
@@ -173,18 +172,50 @@ function insertDashboard(sentenceClasses) {
     hideButton.innerText = 'Collapse';
     hideButton.style.color = '#2a2abd';
     hideButton.style.cursor = 'pointer';
+    hideButton.style.fontWeight = 'bold';
     hideButton.style.textDecoration = 'underline';
     hideButton.style.flexGrow = 1;
+
+    var expandButton = document.createElement('button');
+    expandButton.id = 'troogl-expand-button';
+    expandButton.innerText = 'Show Troogl Dashboard';
+    expandButton.style.backgroundColor = '#5555FF';
+    expandButton.style.cursor = 'pointer';
+    expandButton.style.color = 'white';
+    expandButton.style.borderBottomLeftRadius = '5px';
+    expandButton.style.borderBottomRightRadius = '5px';
+    expandButton.style.top = 0;
+    expandButton.style.right = 0;
+    expandButton.style.padding = '5px';
+    expandButton.style.marginRight = '5%';
+    expandButton.style.outline = 'none';
+    expandButton.style.display = 'none';
+    expandButton.style.position = 'fixed';
+    expandButton.style.border = 'none';
+    expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
+    expandButton.style.zIndex = 1000000000000;
 
     // Inject dashboard into page
     dashboardBar.appendChild(perspectiveContainer);
     dashboardBar.appendChild(graphContainer);
     dashboardBar.appendChild(hideButton);
     dashboardContainer.appendChild(dashboardBar);
+    document.body.insertBefore(expandButton, document.body.firstChild);
     document.body.insertBefore(dashboardContainer, document.body.firstChild);
     
     // Populate sparkline and piechart with article sentiments
     updateGraphs();
+
+    // Enable collapsing of dashboard bar
+    $('#troogl-collapse-button').click(function () {
+        $('#troogl-dashboard-container').fadeOut();
+        $('#troogl-expand-button').fadeIn();
+    });
+
+    $('#troogl-expand-button').click(function () {
+        $('#troogl-expand-button').fadeOut();
+        $('#troogl-dashboard-container').fadeIn();
+    });
 }
 
 
