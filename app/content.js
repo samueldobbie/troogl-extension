@@ -98,31 +98,34 @@ function disablePageEditing() {
 
 function insertDashboard(sentenceClasses) {
     var dashboardContainer = document.createElement('div');
+    dashboardContainer.id = 'troogl-dashboard-container';
     dashboardContainer.style.position = 'relative';
     dashboardContainer.style.width = '100%';
     dashboardContainer.style.height = '12.5vh';
     dashboardContainer.style.zIndex = 1000000000000;
 
     var dashboardBar = document.createElement('div');
-    dashboardBar.style.display = 'flex';
     dashboardBar.style.position = 'fixed';
     dashboardBar.style.width = '100%';
     dashboardBar.style.height = '12.5vh';
-    dashboardBar.style.padding = '0 5%';
-    dashboardBar.style.alignContent = 'space-around';
+    dashboardBar.style.display = 'flex';
+    dashboardBar.style.flexWrap = 'nowrap';
+    dashboardBar.style.alignItems = 'center'; 
+    dashboardBar.style.justifyContent = 'center';
     dashboardBar.style.backgroundColor = '#5555FF';
     dashboardBar.style.boxShadow = '0 0 5px #333';
+    dashboardBar.style.padding = '0 5%';
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
     var perspectiveContainer = document.createElement('span');
     perspectiveContainer.style.flexGrow = 1;
-    perspectiveContainer.style.padding = '1.5% 0';
 
     var perspectiveHeader = document.createElement('span');
     perspectiveHeader.innerText = 'PERSPECTIVE';
     perspectiveHeader.style.color = 'white';
     perspectiveHeader.style.fontSize = '12px';
     perspectiveHeader.style.fontWeight = 'bold';
+    perspectiveHeader.style.marginLeft = '0.5%';
 
     var linebreak = document.createElement('br');
 
@@ -143,67 +146,97 @@ function insertDashboard(sentenceClasses) {
     // Update sentence classes upon changing perspective
     perspectiveDropdown.addEventListener('change', function () {
         updateSentenceClasses(sentenceClasses[perspectiveDropdown.value]);
-        updateSparkLine();
+        updateGraphs();
     });
 
     perspectiveContainer.appendChild(perspectiveHeader);
     perspectiveContainer.appendChild(linebreak);
     perspectiveContainer.appendChild(perspectiveDropdown);
 
-    var sparklineContainer = document.createElement('span');
-    sparklineContainer.style.flexGrow = 1;
-    sparklineContainer.style.padding = '1.5% 0';
+    var graphContainer = document.createElement('span');
+    graphContainer.style.flexGrow = 2;
 
+    // Sparkline
     var sparklineChart = document.createElement('span');
     sparklineChart.id = 'troogl-sparkline';
 
-    sparklineContainer.appendChild(sparklineChart);
+    // Piechart
+    var piechartChart = document.createElement('span');
+    piechartChart.id = 'troogl-piechart';
+    piechartChart.style.marginLeft = '0.5%';
+
+    graphContainer.appendChild(sparklineChart);
+    graphContainer.appendChild(piechartChart);
+
+    var hideButton = document.createElement('span');
+    hideButton.id = 'troogl-collapse-button';
+    hideButton.innerText = 'Collapse';
+    hideButton.style.color = '#2a2abd';
+    hideButton.style.cursor = 'pointer';
+    hideButton.style.textDecoration = 'underline';
+    hideButton.style.flexGrow = 1;
 
     // Inject dashboard into page
     dashboardBar.appendChild(perspectiveContainer);
-    dashboardBar.appendChild(sparklineContainer);
+    dashboardBar.appendChild(graphContainer);
+    dashboardBar.appendChild(hideButton);
     dashboardContainer.appendChild(dashboardBar);
     document.body.insertBefore(dashboardContainer, document.body.firstChild);
     
-    // Populate sparkline with article sentiments
-    updateSparkLine();
+    // Populate sparkline and piechart with article sentiments
+    updateGraphs();
 }
 
-function updateSparkLine() {
+
+function updateGraphs() {
     var sentences = document.getElementsByClassName('troogl-sentence');
 
     var sparklineValues = [];
+    var piechartValues = [0, 0, 0];
     for (var i = 0; i < sentences.length; i++) {
-        sparklineValues.push(sentences[i].getAttribute('troogl-class-value'));
+        var sentenceValue = sentences[i].getAttribute('troogl-class-value');
+        sparklineValues.push(sentenceValue);
+
+        if (sentenceValue == -1) {
+            piechartValues[0] = piechartValues[0] + 1;
+        } else if (sentenceValue == 0) {
+            piechartValues[1] = piechartValues[1] + 1;
+        } else if (sentenceValue == 1) {
+            piechartValues[2] = piechartValues[2] + 1;
+        }
     }
 
-    /*
-    $('#troogl-sparkline').sparkline(sparklineValues, {
-        type: 'line',
-        width: '400',
-        height: '50',
-        lineColor: 'white',
-        fillColor: 'rgba(0, 0, 0, 0)',
-        lineWidth: 4,
-        spotRadius: 4,
-        spotColor: '#f1f1f1',
-        minSpotColor: '#f1f1f1',
-        maxSpotColor: '#f1f1f1',
-        highlightSpotColor: '#333',
-        highlightLineColor: '#333'
-    });
-    */
+    populateSparkLine(sparklineValues);
+    populatePiechart(piechartValues);
+}
 
+
+function populateSparkLine(sparklineValues) {
     $('#troogl-sparkline').sparkline(sparklineValues, {
         type: 'tristate',
-        height: '50',
-        barWidth: 10
+        height: '4vw',
+        barWidth: 8
     });
 
     var sparklineCanvas = document.getElementById('troogl-sparkline').childNodes[0];
     sparklineCanvas.style.backgroundColor = '#2a2abd';
     sparklineCanvas.style.padding = '5px';
     sparklineCanvas.style.borderRadius = '5px';
+}
+
+
+function populatePiechart(piechartValues) {
+    $("#troogl-piechart").sparkline(piechartValues, {
+        type: 'pie',
+        width: '4vw',
+        height: '4vw',
+        sliceColors: ['#FF4444','#999999', '#66FF66']
+    });
+
+    var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
+    piechartCanvas.style.backgroundColor = '#2a2abd';
+    piechartCanvas.style.padding = '5px';
+    piechartCanvas.style.borderRadius = '5px';
 }
 
 var pageXOffset, pageYOffset;
