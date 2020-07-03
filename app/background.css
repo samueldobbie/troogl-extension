@@ -37,3 +37,50 @@
 .troogl-positive {
     background-color: rgb(182, 255, 200);
 }
+
+
+/*** Loader / overlay ***/
+
+.troogl-loader-container {
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000000000;
+    background-color: black;
+    opacity: 0.55;
+    position: fixed;
+}
+
+.troogl-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -36.66667px;
+    margin-left: -36.66667px;
+    width: 73.33333px;
+    height: 20px;
+}
+
+.troogl-loader:after {
+    content: "";
+    position: absolute;
+    left: 26.66667px;
+    height: 20px;
+    width: 20px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: -26.66667px 0 0 0 white, 26.66667px 0 0 0 white;
+    animation: alter 1s ease-in-out infinite;
+}
+
+@keyframes alter {
+    0%,
+    100% {
+        background-color: rgba(255, 255, 255, 0.5);
+        box-shadow: -26.66667px 0 0 0 white, 26.66667px 0 0 0 white;
+    }
+
+    50% {
+        background-color: white;
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5), 0 0 0 0 rgba(255, 255, 255, 0.5);
+    }
+}

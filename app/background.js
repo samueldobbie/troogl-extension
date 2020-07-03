@@ -11,6 +11,9 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
             // Inject CSS
             chrome.tabs.insertCSS(tabId, {file: 'background.css'});
 
+            // Inject overlay and loader
+            chrome.tabs.executeScript(tabId, {file: 'loader.js'});
+
             // Construct URL for API query
             var queryUrl = apiUrl + '/analyse/' + tabUrl;
             

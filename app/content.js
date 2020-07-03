@@ -200,8 +200,8 @@ function insertDashboard(sentenceClasses) {
     dashboardBar.appendChild(graphContainer);
     dashboardBar.appendChild(hideButton);
     dashboardContainer.appendChild(dashboardBar);
-    document.body.insertBefore(expandButton, document.body.firstChild);
-    document.body.insertBefore(dashboardContainer, document.body.firstChild);
+    document.body.prepend(expandButton);
+    document.body.prepend(dashboardContainer);
     
     // Populate sparkline and piechart with article sentiments
     updateGraphs();
@@ -277,6 +277,10 @@ var response = JSON.parse(response);
 var sentences = response['sentences'];
 var sentenceClasses = response['sentence_sentiment_classes'];
 
+// Display data within article
 prepareSentences(sentences);
 updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
 insertDashboard(sentenceClasses);
+
+// Remove overlay and loader
+document.body.removeChild(document.getElementById('troogl-loader'));
