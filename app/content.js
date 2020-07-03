@@ -167,14 +167,25 @@ function insertDashboard(sentenceClasses) {
     graphContainer.appendChild(sparklineChart);
     graphContainer.appendChild(piechartChart);
 
+    // #2a2abd
+    var optionContainer = document.createElement('span');
+    optionContainer.style.cursor = 'pointer';
+    optionContainer.style.fontWeight = 'bold';
+    optionContainer.style.fontSize = '13px';
+    optionContainer.style.flexGrow = 1;
+
+    var fullDashboardbutton = document.createElement('span');
+    fullDashboardbutton.id = 'troogl-full-dashboard-button';
+    fullDashboardbutton.innerText = 'View Full Dashboard ';
+    fullDashboardbutton.style.color = 'white';
+
     var hideButton = document.createElement('span');
     hideButton.id = 'troogl-collapse-button';
-    hideButton.innerText = 'Collapse';
+    hideButton.innerText = ' Collapse';
     hideButton.style.color = '#2a2abd';
-    hideButton.style.cursor = 'pointer';
-    hideButton.style.fontWeight = 'bold';
-    hideButton.style.textDecoration = 'underline';
-    hideButton.style.flexGrow = 1;
+
+    optionContainer.appendChild(fullDashboardbutton);
+    optionContainer.appendChild(hideButton);
 
     var expandButton = document.createElement('button');
     expandButton.id = 'troogl-expand-button';
@@ -195,16 +206,74 @@ function insertDashboard(sentenceClasses) {
     expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
     expandButton.style.zIndex = 1000000000000;
 
+    var fullDashboardContainer = document.createElement('div');
+    fullDashboardContainer.id = 'troogl-full-dashboard-container';
+    fullDashboardContainer.style.position = 'fixed';
+    fullDashboardContainer.style.width = '100vw';
+    fullDashboardContainer.style.height = '100vw';
+    fullDashboardContainer.style.backgroundColor = '#f1f1f1';
+    fullDashboardContainer.style.display = 'none';
+    fullDashboardContainer.style.padding = '5%';
+    fullDashboardContainer.style.zIndex = 1000000000000;
+
+    var returnToArticleButton = document.createElement('p');
+    returnToArticleButton.id = 'troogl-return-to-article-button';
+    returnToArticleButton.innerText = 'Return to article';
+    returnToArticleButton.style.cursor = 'pointer';
+
+    var readTime = document.createElement('p');
+    readTime.innerText = 'X min Y secs';
+
+    var readibility = document.createElement('p');
+    readibility.innerText = 'Professor Level';
+
+    var summaryBulletPoints = document.createElement('ul');
+    for (var i = 0; i < 3; i++) {
+        var summaryBulletPoint = document.createElement('li');
+        summaryBulletPoint.innerText = 'test' + i;
+        summaryBulletPoints.appendChild(summaryBulletPoint);
+    }
+
+    var isClickbait = document.createElement('p');
+    isClickbait.innerText = 'False';
+
+    var positiveTowardsList = document.createElement('p');
+    positiveTowardsList.innerText = 'A, B, C';
+
+    var negativeTowardsList = document.createElement('p');
+    negativeTowardsList.innerText = 'X, Y, Z';
+
+    fullDashboardContainer.appendChild(returnToArticleButton);
+    fullDashboardContainer.appendChild(readTime);
+    fullDashboardContainer.appendChild(readibility);
+    fullDashboardContainer.appendChild(summaryBulletPoints);
+    fullDashboardContainer.appendChild(isClickbait);
+    fullDashboardContainer.appendChild(positiveTowardsList);
+    fullDashboardContainer.appendChild(negativeTowardsList);
+
     // Inject dashboard into page
     dashboardBar.appendChild(perspectiveContainer);
     dashboardBar.appendChild(graphContainer);
-    dashboardBar.appendChild(hideButton);
+    dashboardBar.appendChild(optionContainer);
     dashboardContainer.appendChild(dashboardBar);
     document.body.prepend(expandButton);
     document.body.prepend(dashboardContainer);
+    document.body.prepend(fullDashboardContainer);
     
     // Populate sparkline and piechart with article sentiments
     updateGraphs();
+
+    // Enable opening of full dashboard
+    $('#troogl-full-dashboard-button').click(function () {
+        $('#troogl-dashboard-container').fadeOut();
+        $('#troogl-full-dashboard-container').fadeIn();
+    });
+
+    // Enable exiting from full dashboard
+    $('#troogl-return-to-article-button').click(function () {
+        $('#troogl-full-dashboard-container').fadeOut();
+        $('#troogl-dashboard-container').fadeIn();
+    });
 
     // Enable collapsing of dashboard bar
     $('#troogl-collapse-button').click(function () {
@@ -212,6 +281,7 @@ function insertDashboard(sentenceClasses) {
         $('#troogl-expand-button').fadeIn();
     });
 
+    // Enable expansion of dashboard bar
     $('#troogl-expand-button').click(function () {
         $('#troogl-expand-button').fadeOut();
         $('#troogl-dashboard-container').fadeIn();
