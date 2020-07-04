@@ -30,11 +30,15 @@ def analyse_article(request, url):
     article_data['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
-    article_data['sentence_sentiment_classes'] = predict_sentence_sentiment_classes(
+    sentence_sentiment_classes, positive_entities, negative_entities = predict_sentence_sentiment_classes(
         article_data['body'],
         article_data['sentence_offsets'],
         article_data['default_entity_name']
     )
+
+    article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
+    article_data['positive_entities'] = positive_entities
+    article_data['negative_entities'] = negative_entities
 
     return HttpResponse(json.dumps(article_data))
 
@@ -173,8 +177,20 @@ def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_na
             'sentence_class_value': random.randint(-1, 1)
         })
 
+    positive_entities = {}
+    negative_entities = {}
+
     for entity in response.entities:
         entity_name = entity.name.strip().title()
+
+        if entity.sentiment.score > 0:
+            positive_entities[entity_name] = {
+                'type': enums.Entity.Type(entity.type).name
+            }
+        elif entity.sentiment.score < 0:
+            negative_entities[entity_name] = {
+                'type': enums.Entity.Type(entity.type).name
+            }
 
         if entity.name not in sentence_data:
             sentence_data[entity_name] = []
@@ -211,7 +227,7 @@ def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_na
         if len(value) > 0 or key == default_entity_name:
             updated_sentence_data[key] = value
 
-    return updated_sentence_data
+    return updated_sentence_data, positive_entities, negative_entities
 
 newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()

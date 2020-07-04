@@ -18,7 +18,7 @@ function prepareSentences(sentences) {
 
         // Add popup to sentence container
         container.addEventListener('click', function() {
-            alert(2);
+            alert('Ability to vote and share coming soon!');
         });
 
         // Insert constructed sentence into article
@@ -99,12 +99,12 @@ function disablePageEditing() {
 }
 
 
-function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel) {
+function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities) {
     // Create and inject dashboard snippet bar
     injectPartialDashboard(sentenceClasses);
 
     // Create and inject full page dashboard
-    injectCompleteDashboard(summarySentences, readTime, readibilityLevel);
+    injectCompleteDashboard(summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities);
     
     // Populate sparkline and piechart with article sentiments
     updateGraphs();
@@ -226,23 +226,25 @@ function injectPartialDashboard(sentenceClasses) {
 }
 
 
-function injectCompleteDashboard(summarySentences, readTime, readibilityLevel) {
+function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities) {
     var fullDashboardContainer = document.createElement('div');
     fullDashboardContainer.id = 'troogl-full-dashboard-container';
     fullDashboardContainer.style.position = 'fixed';
-    fullDashboardContainer.style.width = '100vw';
-    fullDashboardContainer.style.height = '100vw';
+    fullDashboardContainer.style.width = '100%';
+    fullDashboardContainer.style.height = '100%';
+    fullDashboardContainer.style.overflow = 'scroll';
     fullDashboardContainer.style.backgroundColor = '#f1f1f1';
     fullDashboardContainer.style.display = 'none';
-    fullDashboardContainer.style.padding = '5%';
+    fullDashboardContainer.style.padding = '3% 15%';
     fullDashboardContainer.style.zIndex = 2147483647;
 
-    var returnToArticleButton = document.createElement('p');
+    var returnToArticleButton = document.createElement('span');
     returnToArticleButton.id = 'troogl-return-to-article-button';
     returnToArticleButton.innerText = 'Return to article';
     returnToArticleButton.style.cursor = 'pointer';
-    returnToArticleButton.style.margin = '2%';
+    returnToArticleButton.style.display = 'block';
 
+    /*
     var readTimeContainer = document.createElement('p');
     readTimeContainer.style.margin = '2%';
 
@@ -272,14 +274,16 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel) {
 
     readibilityLevelContainer.appendChild(readibilityHeader);
     readibilityLevelContainer.appendChild(readibilityLevelContent);
+    */
 
-    var summaryContainer = document.createElement('p');
+    var summaryContainer = document.createElement('span');
     summaryContainer.style.margin = '2%';
 
-    var summaryHeader = document.createElement('p');
+    var summaryHeader = document.createElement('span');
     summaryHeader.innerText = 'TL;DR';
     summaryHeader.style.color  = '#5555FF';
     summaryHeader.style.fontWeight = 'bold';
+    summaryHeader.style.display = 'block';
 
     var summaryContent = document.createElement('ul');
     for (var i = 0; i < summarySentences.length; i++) {
@@ -287,6 +291,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel) {
         summaryBulletPoint.innerText = summarySentences[i];
         summaryBulletPoint.style.display = 'list-item';
         summaryBulletPoint.style.listStyleType = 'circle';
+        summaryBulletPoint.style.maxWidth = '50vw';
         summaryBulletPoint.style.margin = '2%';
         summaryContent.appendChild(summaryBulletPoint);
     }
@@ -294,39 +299,101 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel) {
     summaryContainer.appendChild(summaryHeader);
     summaryContainer.appendChild(summaryContent);
 
-    var positiveTowardsContainer = document.createElement('p');
+    var positiveTowardsContainer = document.createElement('span');
     positiveTowardsContainer.style.margin = '2%';
 
-    var positiveTowardsHeader = document.createElement('p');
+    var positiveTowardsHeader = document.createElement('span');
     positiveTowardsHeader.innerText = 'Positive Towards';
     positiveTowardsHeader.style.color  = '#5555FF';
     positiveTowardsHeader.style.fontWeight = 'bold';
+    positiveTowardsHeader.style.display = 'block';
 
-    var positiveTowardsContent = document.createElement('p');
-    positiveTowardsContent.innerText = 'A, B, C';
+    var positiveTowardsContent = document.createElement('span');
     positiveTowardsContent.style.margin = '2%';
+    positiveTowardsContent.style.maxWidth = '50vw';
+    positiveTowardsContent.style.display = 'block';
+
+    for (var key in positiveEntities) {
+        var positiveEntity = document.createElement('span');
+        positiveEntity.innerText = key;
+        positiveEntity.style.fontWeight = 'bold';
+        positiveEntity.style.padding = '5px';
+        positiveEntity.style.borderRadius = '5px';
+        positiveEntity.style.display = 'inline-block';
+        positiveEntity.style.margin = '3px 5px';
+        positiveEntity.style.color = '#333';
+
+        if (positiveEntities[key]['type'] == 'PERSON') {
+            positiveEntity.style.backgroundColor = '#fffbb5';
+        } else if (positiveEntities[key]['type'] == 'ORGANIZATION') {
+            positiveEntity.style.backgroundColor = '#ceffb5';
+        } else if (positiveEntities[key]['type'] == 'OTHER') {
+            positiveEntity.style.backgroundColor = '#ffefcf';
+        } else if (positiveEntities[key]['type'] == 'EVENT') {
+            positiveEntity.style.backgroundColor = '#dab5ff';
+        } else if (positiveEntities[key]['type'] == 'LOCATION') {
+            positiveEntity.style.backgroundColor = '#ffb5c3';
+        } else if (positiveEntities[key]['type'] == 'WORK_OF_ART') {
+            positiveEntity.style.backgroundColor = '#fcccfb';
+        } else if (positiveEntities[key]['type'] == 'CONSUMER_GOOD') {
+            positiveEntity.style.backgroundColor = '#c2d1ff';
+        }
+
+        positiveTowardsContent.appendChild(positiveEntity);
+    }
 
     positiveTowardsContainer.appendChild(positiveTowardsHeader);
     positiveTowardsContainer.appendChild(positiveTowardsContent);
 
-    var negativeTowardsContainer = document.createElement('p');
+    var negativeTowardsContainer = document.createElement('span');
     negativeTowardsContainer.style.margin = '2%';
 
-    var negativeTowardsHeader = document.createElement('p');
+    var negativeTowardsHeader = document.createElement('span');
     negativeTowardsHeader.innerText = 'Negative Towards';
     negativeTowardsHeader.style.color  = '#5555FF';
     negativeTowardsHeader.style.fontWeight = 'bold';
+    negativeTowardsHeader.style.display = 'block';
 
-    var negativeTowardsContent = document.createElement('p');
-    negativeTowardsContent.innerText = 'X, Y, Z';
+    var negativeTowardsContent = document.createElement('span');
     negativeTowardsContent.style.margin = '2%';
+    negativeTowardsContent.style.maxWidth = '50vw';
+    negativeTowardsContent.style.display = 'block';
+
+    for (var key in negativeEntities) {
+        var negativeEntity = document.createElement('span');
+        negativeEntity.innerText = key;
+        negativeEntity.style.fontWeight = 'bold';
+        negativeEntity.style.display = 'inline-block';
+        negativeEntity.style.padding = '5px';
+        negativeEntity.style.borderRadius = '5px';
+        negativeEntity.style.margin = '3px 5px';
+        negativeEntity.style.color = '#333';
+
+        if (negativeEntities[key]['type'] == 'PERSON') {
+            negativeEntity.style.backgroundColor = '#fffbb5';
+        } else if (negativeEntities[key]['type'] == 'ORGANIZATION') {
+            negativeEntity.style.backgroundColor = '#ceffb5';
+        } else if (negativeEntities[key]['type'] == 'OTHER') {
+            negativeEntity.style.backgroundColor = '#ffefcf';
+        } else if (negativeEntities[key]['type'] == 'EVENT') {
+            negativeEntity.style.backgroundColor = '#dab5ff';
+        } else if (negativeEntities[key]['type'] == 'LOCATION') {
+            negativeEntity.style.backgroundColor = '#ffb5c3';
+        } else if (negativeEntities[key]['type'] == 'WORK_OF_ART') {
+            negativeEntity.style.backgroundColor = '#fcccfb';
+        } else if (negativeEntities[key]['type'] == 'CONSUMER_GOOD') {
+            negativeEntity.style.backgroundColor = '#c2d1ff';
+        }
+
+        negativeTowardsContent.appendChild(negativeEntity);
+    }
 
     negativeTowardsContainer.appendChild(negativeTowardsHeader);
     negativeTowardsContainer.appendChild(negativeTowardsContent);
 
     fullDashboardContainer.appendChild(returnToArticleButton);
-    fullDashboardContainer.appendChild(readTimeContainer);
-    fullDashboardContainer.appendChild(readibilityLevelContainer);
+    // fullDashboardContainer.appendChild(readTimeContainer);
+    // fullDashboardContainer.appendChild(readibilityLevelContainer);
     fullDashboardContainer.appendChild(summaryContainer);
     fullDashboardContainer.appendChild(positiveTowardsContainer);
     fullDashboardContainer.appendChild(negativeTowardsContainer);
@@ -420,6 +487,8 @@ var pageXOffset, pageYOffset;
 var response = JSON.parse(response);
 var sentences = response['sentences'];
 var sentenceClasses = response['sentence_sentiment_classes'];
+var positiveEntities = response['positive_entities'];
+var negativeEntities = response['negative_entities'];
 var summarySentences = response['summary_sentences'];
 var readTime = response['read_time'];
 var readibilityLevel = response['readability_level'];
@@ -427,7 +496,7 @@ var readibilityLevel = response['readability_level'];
 // Display data within article
 prepareSentences(sentences);
 updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
-insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel);
+insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities);
 
 // Remove overlay and loader
 document.body.removeChild(document.getElementById('troogl-loader'));

@@ -20,6 +20,7 @@
 .troogl-sentence {
     border-radius: 5px;
     cursor: pointer;
+    color: #333;
 }
 
 .troogl-sentence:hover {
