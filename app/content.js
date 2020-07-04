@@ -101,10 +101,10 @@ function disablePageEditing() {
 
 function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel) {
     // Create and inject dashboard snippet bar
-    constructDashboardSnippet(sentenceClasses);
+    injectPartialDashboard(sentenceClasses);
 
     // Create and inject full page dashboard
-    constructDashboardFull(summarySentences, readTime, readibilityLevel);
+    injectCompleteDashboard(summarySentences, readTime, readibilityLevel);
     
     // Populate sparkline and piechart with article sentiments
     updateGraphs();
@@ -114,9 +114,9 @@ function insertDashboard(sentenceClasses, summarySentences, readTime, readibilit
 }
 
 
-function constructDashboardSnippet(sentenceClasses) {    
+function injectPartialDashboard(sentenceClasses) {
     var dashboardContainer = document.createElement('div');
-    dashboardContainer.id = 'troogl-dashboard-container';
+    dashboardContainer.id = 'troogl-partial-dashboard-container';
     dashboardContainer.style.position = 'relative';
     dashboardContainer.style.width = '100%';
     dashboardContainer.style.height = '12.5vh';
@@ -227,7 +227,7 @@ function constructDashboardSnippet(sentenceClasses) {
 }
 
 
-function constructDashboardFull(summarySentences, readTime, readibilityLevel) {
+function injectCompleteDashboard(summarySentences, readTime, readibilityLevel) {
     var fullDashboardContainer = document.createElement('div');
     fullDashboardContainer.id = 'troogl-full-dashboard-container';
     fullDashboardContainer.style.position = 'fixed';
@@ -273,29 +273,30 @@ function constructDashboardFull(summarySentences, readTime, readibilityLevel) {
 }
 
 
+
 function bindDashboardEvents() {
     // Enable opening of full dashboard
     $('#troogl-full-dashboard-button').click(function () {
-        $('#troogl-dashboard-container').fadeOut();
+        $('#troogl-partial-dashboard-container').fadeOut();
         $('#troogl-full-dashboard-container').fadeIn();
     });
 
     // Enable exiting from full dashboard
     $('#troogl-return-to-article-button').click(function () {
         $('#troogl-full-dashboard-container').fadeOut();
-        $('#troogl-dashboard-container').fadeIn();
+        $('#troogl-partial-dashboard-container').fadeIn();
     });
 
     // Enable collapsing of dashboard bar
     $('#troogl-collapse-button').click(function () {
-        $('#troogl-dashboard-container').fadeOut();
+        $('#troogl-partial-dashboard-container').fadeOut();
         $('#troogl-expand-button').fadeIn();
     });
 
     // Enable expansion of dashboard bar
     $('#troogl-expand-button').click(function () {
         $('#troogl-expand-button').fadeOut();
-        $('#troogl-dashboard-container').fadeIn();
+        $('#troogl-partial-dashboard-container').fadeIn();
     });
 }
 

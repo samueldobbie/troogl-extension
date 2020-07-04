@@ -1,11 +1,11 @@
-var apiUrl = 'http://127.0.0.1:8000';
+var apiUrl = 'http://127.0.0.1:8000/analyse/';
 
 chrome.browserAction.onClicked.addListener(function(activeTab) {
     // Get id and url of active tab
     var tabId = activeTab.id;
     var tabUrl = activeTab.url;
 
-    // Ensure that url is a news article and that it hasn't already been analysed
+    // Ensure that url is a news article that hasn't already been analysed
     chrome.tabs.executeScript(tabId, {file: 'validate-url.js'}, function (result) {
         if (result[0]) {
             // Inject CSS
@@ -15,7 +15,7 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
             chrome.tabs.executeScript(tabId, {file: 'loader.js'});
 
             // Construct URL for API query
-            var queryUrl = apiUrl + '/analyse/' + tabUrl;
+            var queryUrl = apiUrl + tabUrl;
             
             // Send API query
             var request = new XMLHttpRequest();

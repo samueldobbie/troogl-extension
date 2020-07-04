@@ -23,22 +23,18 @@ def analyse_article(request, url):
     to be displayed by the troogl extension
     '''
 
-    # Extract article data from specified url
+    # Extract core article data from specified url
     article_data = extract_article_data_from_url(url)
 
     # Define default entity name
-    default_entity_name = 'Everyday News Reader'
+    article_data['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
-    sentence_sentiment_classes = predict_sentence_sentiment_classes(
+    article_data['sentence_sentiment_classes'] = predict_sentence_sentiment_classes(
         article_data['body'],
         article_data['sentence_offsets'],
-        default_entity_name
+        article_data['default_entity_name']
     )
-
-    # Construct response data
-    article_data['default_entity_name'] = default_entity_name
-    article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
 
     return HttpResponse(json.dumps(article_data))
 
