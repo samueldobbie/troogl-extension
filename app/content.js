@@ -47,6 +47,7 @@ function updateSentenceClasses(sentenceClasses) {
         // Set default sentence values
         sentences[i].classList.add('troogl-neutral');
         sentences[i].setAttribute('troogl-class-value', 0);
+        sentences[i].setAttribute('title', 'Neutral');
     }
 
     // Update sentences based on entity sentiments
@@ -54,6 +55,7 @@ function updateSentenceClasses(sentenceClasses) {
         var sentenceIndex = sentenceClasses[i]['sentence_index'];
         var sentenceClassString = sentenceClasses[i]['sentence_class_string'];
         var sentenceClassValue = sentenceClasses[i]['sentence_class_value'];
+        var sentenceClassTitle = sentenceClasses[i]['sentence_class_title'];
 
         // Remove existing sentiment class
         stripSentence(sentences[sentenceIndex]);
@@ -61,6 +63,7 @@ function updateSentenceClasses(sentenceClasses) {
         // Update sentence values
         sentences[sentenceIndex].classList.add(sentenceClassString);
         sentences[sentenceIndex].setAttribute('troogl-class-value', sentenceClassValue);
+        sentences[sentenceIndex].setAttribute('title', sentenceClassTitle);
     }
 
     disablePageEditing();
@@ -96,7 +99,22 @@ function disablePageEditing() {
 }
 
 
-function insertDashboard(sentenceClasses) {
+function insertDashboard(sentenceClasses, summarySentences) {
+    // Create and inject dashboard snippet bar
+    constructDashboardSnippet(sentenceClasses);
+
+    // Create and inject full page dashboard
+    constructDashboardFull(summarySentences);
+    
+    // Populate sparkline and piechart with article sentiments
+    updateGraphs();
+
+    // Add clickable events to both dashboards
+    bindDashboardEvents();
+}
+
+
+function constructDashboardSnippet(sentenceClasses) {    
     var dashboardContainer = document.createElement('div');
     dashboardContainer.id = 'troogl-dashboard-container';
     dashboardContainer.style.position = 'relative';
@@ -114,19 +132,12 @@ function insertDashboard(sentenceClasses) {
     dashboardBar.style.justifyContent = 'center';
     dashboardBar.style.backgroundColor = '#5555FF';
     dashboardBar.style.boxShadow = '0 0 5px #333';
-    dashboardBar.style.padding = '0 5%';
+    dashboardBar.style.padding = '0 2%';
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
+    // Construct dropdown for switching between perspectives
     var perspectiveContainer = document.createElement('span');
     perspectiveContainer.style.flexGrow = 1;
-
-    var perspectiveHeader = document.createElement('span');
-    perspectiveHeader.innerText = 'Perspective';
-    perspectiveHeader.style.color = 'white';
-    perspectiveHeader.style.fontWeight = 'bold';
-    perspectiveHeader.style.marginLeft = '0.5%';
-
-    var linebreak = document.createElement('br');
 
     var perspectiveDropdown = document.createElement('select');
     perspectiveDropdown.style.padding = '5px';
@@ -148,18 +159,17 @@ function insertDashboard(sentenceClasses) {
         updateGraphs();
     });
 
-    // perspectiveContainer.appendChild(perspectiveHeader);
-    // perspectiveContainer.appendChild(linebreak);
     perspectiveContainer.appendChild(perspectiveDropdown);
 
+    // Construct graph container
     var graphContainer = document.createElement('span');
     graphContainer.style.flexGrow = 2;
 
-    // Sparkline
+    // Create sparkline container
     var sparklineChart = document.createElement('span');
     sparklineChart.id = 'troogl-sparkline';
 
-    // Piechart
+    // Create piechart container
     var piechartChart = document.createElement('span');
     piechartChart.id = 'troogl-piechart';
     piechartChart.style.marginLeft = '0.5%';
@@ -167,7 +177,6 @@ function insertDashboard(sentenceClasses) {
     graphContainer.appendChild(sparklineChart);
     graphContainer.appendChild(piechartChart);
 
-    // #2a2abd
     var optionContainer = document.createElement('span');
     optionContainer.style.cursor = 'pointer';
     optionContainer.style.fontWeight = 'bold';
@@ -206,6 +215,19 @@ function insertDashboard(sentenceClasses) {
     expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
     expandButton.style.zIndex = 1000000000000;
 
+    // Populate dashboard bar
+    dashboardBar.appendChild(perspectiveContainer);
+    dashboardBar.appendChild(graphContainer);
+    dashboardBar.appendChild(optionContainer);
+    dashboardContainer.appendChild(dashboardBar);
+
+    // Inject dashboard into page
+    document.body.prepend(expandButton);
+    document.body.prepend(dashboardContainer);
+}
+
+
+function constructDashboardFull(summarySentences) {
     var fullDashboardContainer = document.createElement('div');
     fullDashboardContainer.id = 'troogl-full-dashboard-container';
     fullDashboardContainer.style.position = 'fixed';
@@ -228,14 +250,11 @@ function insertDashboard(sentenceClasses) {
     readibility.innerText = 'Professor Level';
 
     var summaryBulletPoints = document.createElement('ul');
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < summarySentences.length; i++) {
         var summaryBulletPoint = document.createElement('li');
-        summaryBulletPoint.innerText = 'test' + i;
+        summaryBulletPoint.innerText = summarySentences[i];
         summaryBulletPoints.appendChild(summaryBulletPoint);
     }
-
-    var isClickbait = document.createElement('p');
-    isClickbait.innerText = 'False';
 
     var positiveTowardsList = document.createElement('p');
     positiveTowardsList.innerText = 'A, B, C';
@@ -247,22 +266,14 @@ function insertDashboard(sentenceClasses) {
     fullDashboardContainer.appendChild(readTime);
     fullDashboardContainer.appendChild(readibility);
     fullDashboardContainer.appendChild(summaryBulletPoints);
-    fullDashboardContainer.appendChild(isClickbait);
     fullDashboardContainer.appendChild(positiveTowardsList);
     fullDashboardContainer.appendChild(negativeTowardsList);
 
-    // Inject dashboard into page
-    dashboardBar.appendChild(perspectiveContainer);
-    dashboardBar.appendChild(graphContainer);
-    dashboardBar.appendChild(optionContainer);
-    dashboardContainer.appendChild(dashboardBar);
-    document.body.prepend(expandButton);
-    document.body.prepend(dashboardContainer);
     document.body.prepend(fullDashboardContainer);
-    
-    // Populate sparkline and piechart with article sentiments
-    updateGraphs();
+}
 
+
+function bindDashboardEvents() {
     // Enable opening of full dashboard
     $('#troogl-full-dashboard-button').click(function () {
         $('#troogl-dashboard-container').fadeOut();
@@ -346,11 +357,12 @@ var pageXOffset, pageYOffset;
 var response = JSON.parse(response);
 var sentences = response['sentences'];
 var sentenceClasses = response['sentence_sentiment_classes'];
+var summarySentences = response['summary_sentences'];
 
 // Display data within article
 prepareSentences(sentences);
 updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
-insertDashboard(sentenceClasses);
+insertDashboard(sentenceClasses, summarySentences);
 
 // Remove overlay and loader
 document.body.removeChild(document.getElementById('troogl-loader'));
