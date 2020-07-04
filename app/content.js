@@ -120,7 +120,7 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardContainer.style.position = 'relative';
     dashboardContainer.style.width = '100%';
     dashboardContainer.style.height = '12.5vh';
-    dashboardContainer.style.zIndex = 1000000000000;
+    dashboardContainer.style.zIndex = 2147483647;
 
     var dashboardBar = document.createElement('div');
     dashboardBar.style.position = 'fixed';
@@ -128,8 +128,7 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.height = '12.5vh';
     dashboardBar.style.display = 'flex';
     dashboardBar.style.flexWrap = 'nowrap';
-    dashboardBar.style.alignItems = 'center'; 
-    dashboardBar.style.justifyContent = 'center';
+    dashboardBar.style.alignItems = 'center';
     dashboardBar.style.backgroundColor = '#5555FF';
     dashboardBar.style.boxShadow = '0 0 5px #333';
     dashboardBar.style.padding = '0 2%';
@@ -213,7 +212,7 @@ function injectPartialDashboard(sentenceClasses) {
     expandButton.style.position = 'fixed';
     expandButton.style.border = 'none';
     expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
-    expandButton.style.zIndex = 1000000000000;
+    expandButton.style.zIndex = 2147483647;
 
     // Populate dashboard bar
     dashboardBar.appendChild(perspectiveContainer);
@@ -236,38 +235,101 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel) {
     fullDashboardContainer.style.backgroundColor = '#f1f1f1';
     fullDashboardContainer.style.display = 'none';
     fullDashboardContainer.style.padding = '5%';
-    fullDashboardContainer.style.zIndex = 1000000000000;
+    fullDashboardContainer.style.zIndex = 2147483647;
 
     var returnToArticleButton = document.createElement('p');
     returnToArticleButton.id = 'troogl-return-to-article-button';
     returnToArticleButton.innerText = 'Return to article';
     returnToArticleButton.style.cursor = 'pointer';
+    returnToArticleButton.style.margin = '2%';
 
     var readTimeContainer = document.createElement('p');
-    readTimeContainer.innerText = readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs';
+    readTimeContainer.style.margin = '2%';
+
+    var readTimeHeader = document.createElement('p');
+    readTimeHeader.innerText = 'Read Time';
+    readTimeHeader.style.color  = '#5555FF';
+    readTimeHeader.style.fontWeight = 'bold';
+    
+    var readTimeContent = document.createElement('p');
+    readTimeContent.innerText = readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs';
+    readTimeContent.style.margin = '2%';
+
+    readTimeContainer.appendChild(readTimeHeader);
+    readTimeContainer.appendChild(readTimeContent);
 
     var readibilityLevelContainer = document.createElement('p');
-    readibilityLevelContainer.innerText = readibilityLevel;
+    readibilityLevelContainer.style.margin = '2%';
 
-    var summaryBulletPoints = document.createElement('ul');
+    var readibilityHeader = document.createElement('p');
+    readibilityHeader.innerText = 'Readibility';
+    readibilityHeader.style.color  = '#5555FF';
+    readibilityHeader.style.fontWeight = 'bold';
+
+    var readibilityLevelContent = document.createElement('p');
+    readibilityLevelContent.innerText = readibilityLevel;
+    readibilityLevelContent.style.margin = '2%';
+
+    readibilityLevelContainer.appendChild(readibilityHeader);
+    readibilityLevelContainer.appendChild(readibilityLevelContent);
+
+    var summaryContainer = document.createElement('p');
+    summaryContainer.style.margin = '2%';
+
+    var summaryHeader = document.createElement('p');
+    summaryHeader.innerText = 'TL;DR';
+    summaryHeader.style.color  = '#5555FF';
+    summaryHeader.style.fontWeight = 'bold';
+
+    var summaryContent = document.createElement('ul');
     for (var i = 0; i < summarySentences.length; i++) {
         var summaryBulletPoint = document.createElement('li');
         summaryBulletPoint.innerText = summarySentences[i];
-        summaryBulletPoints.appendChild(summaryBulletPoint);
+        summaryBulletPoint.style.display = 'list-item';
+        summaryBulletPoint.style.listStyleType = 'circle';
+        summaryBulletPoint.style.margin = '2%';
+        summaryContent.appendChild(summaryBulletPoint);
     }
 
-    var positiveTowardsList = document.createElement('p');
-    positiveTowardsList.innerText = 'A, B, C';
+    summaryContainer.appendChild(summaryHeader);
+    summaryContainer.appendChild(summaryContent);
 
-    var negativeTowardsList = document.createElement('p');
-    negativeTowardsList.innerText = 'X, Y, Z';
+    var positiveTowardsContainer = document.createElement('p');
+    positiveTowardsContainer.style.margin = '2%';
+
+    var positiveTowardsHeader = document.createElement('p');
+    positiveTowardsHeader.innerText = 'Positive Towards';
+    positiveTowardsHeader.style.color  = '#5555FF';
+    positiveTowardsHeader.style.fontWeight = 'bold';
+
+    var positiveTowardsContent = document.createElement('p');
+    positiveTowardsContent.innerText = 'A, B, C';
+    positiveTowardsContent.style.margin = '2%';
+
+    positiveTowardsContainer.appendChild(positiveTowardsHeader);
+    positiveTowardsContainer.appendChild(positiveTowardsContent);
+
+    var negativeTowardsContainer = document.createElement('p');
+    negativeTowardsContainer.style.margin = '2%';
+
+    var negativeTowardsHeader = document.createElement('p');
+    negativeTowardsHeader.innerText = 'Negative Towards';
+    negativeTowardsHeader.style.color  = '#5555FF';
+    negativeTowardsHeader.style.fontWeight = 'bold';
+
+    var negativeTowardsContent = document.createElement('p');
+    negativeTowardsContent.innerText = 'X, Y, Z';
+    negativeTowardsContent.style.margin = '2%';
+
+    negativeTowardsContainer.appendChild(negativeTowardsHeader);
+    negativeTowardsContainer.appendChild(negativeTowardsContent);
 
     fullDashboardContainer.appendChild(returnToArticleButton);
     fullDashboardContainer.appendChild(readTimeContainer);
     fullDashboardContainer.appendChild(readibilityLevelContainer);
-    fullDashboardContainer.appendChild(summaryBulletPoints);
-    fullDashboardContainer.appendChild(positiveTowardsList);
-    fullDashboardContainer.appendChild(negativeTowardsList);
+    fullDashboardContainer.appendChild(summaryContainer);
+    fullDashboardContainer.appendChild(positiveTowardsContainer);
+    fullDashboardContainer.appendChild(negativeTowardsContainer);
 
     document.body.prepend(fullDashboardContainer);
 }
