@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 
+import math
 import random
 
 from google.cloud import language_v1
@@ -22,29 +23,29 @@ def analyse_article(request, url):
     to be displayed by the troogl extension
     '''
 
-    # Extract article data
-    body, sentences, sentence_offsets, summary_sentences = extract_article_data_from_url(url)
+    # Extract article data from specified url
+    article_data = extract_article_data_from_url(url)
 
     # Define default entity name
     default_entity_name = 'Everyday News Reader'
 
-    # Get sentence sentiments for all entities (incl. general)
-    sentence_sentiment_classes = predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_name)
+    # Get sentence sentiments for all entity perspectives
+    sentence_sentiment_classes = predict_sentence_sentiment_classes(
+        article_data['body'],
+        article_data['sentence_offsets'],
+        default_entity_name
+    )
 
-    # Construct response
-    context = {}
+    # Construct response data
+    article_data['default_entity_name'] = default_entity_name
+    article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
 
-    context['summary_sentences'] = summary_sentences
-    context['sentences'] = sentences
-    context['sentence_sentiment_classes'] = sentence_sentiment_classes
-    context['default_entity_name'] = default_entity_name
-
-    return HttpResponse(json.dumps(context))
+    return HttpResponse(json.dumps(article_data))
 
 
 def extract_article_data_from_url(url):
     '''
-    Extact headline and body from specified article URL
+    Extact core data from specified article URL
     '''
 
     article = newspaper.Article(url=url, config=get_newspaper_configuration())
@@ -53,17 +54,40 @@ def extract_article_data_from_url(url):
 
     sentences = get_article_sentences(article.text)
     sentences.insert(0, article.title)
+
     body = ' '.join(sentences)
 
+    # Get neutralized summary of article
+    summary_sentences = get_article_summary(body, 'english', 3)
+
+    # Calculate start and end indicies of each sentence within article body
     sentence_offsets = []
     current_offset = 0
     for sentence in sentences:
         sentence_offsets.append((current_offset, current_offset + len(sentence) - 1))
         current_offset += len(sentence)
 
-    summary_sentences = get_article_summary(body, 'english', 3)
+    # Get sentence, word and character counts
+    sentence_count = len(sentences)
+    word_count = len(body.split(' '))
+    character_count = len(body)
 
-    return body, sentences, sentence_offsets, summary_sentences
+    # Get read time of article in minutes and seconds
+    read_time = get_read_time(word_count)
+
+    # Get readability level of article
+    readability_level = get_readability_level(sentence_count, word_count, character_count)
+
+    # Construct return data
+    article_data = {}
+    article_data['body'] = body
+    article_data['sentences'] = sentences
+    article_data['sentence_offsets'] = sentence_offsets
+    article_data['summary_sentences'] = summary_sentences
+    article_data['read_time'] = read_time
+    article_data['readability_level'] = readability_level
+
+    return article_data
 
 
 def get_newspaper_configuration():
@@ -95,6 +119,38 @@ def get_article_summary(text, LANGUAGE, MAX_SUMMARY_SENTENCE_COUNT):
     # Neutralize bias within summary sentences
 
     return summary_sentences
+
+
+def get_read_time(word_count):
+    minutes = int(word_count / 250)
+    seconds = int(((word_count / 250) % 1) * 60)
+    return {'minutes': minutes, 'seconds': seconds}
+
+
+def get_readability_level(sent_count, word_count, character_count):
+    '''
+    Calculate readibility rating of article using
+    Automated Readibility Index (ARI) score
+    '''
+
+    # Calculate ARI score
+    ari_score = math.ceil((4.71 * (character_count / word_count)) +
+                          (0.5 * (word_count / sent_count)) - 21.43)
+
+    # Map ARI score to readibility rating
+    readability_level = ''
+    if ari_score <= 5:
+        readability_level = 'Elementary Level'
+    elif ari_score <= 8:
+        readability_level = 'Middle School Level'
+    elif ari_score <= 12:
+        readability_level = 'High School Level'
+    elif ari_score <= 13:
+        readability_level = 'College Level'
+    else:
+        readability_level = 'Professor Level'
+
+    return readability_level
 
 
 def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_name):

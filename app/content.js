@@ -99,12 +99,12 @@ function disablePageEditing() {
 }
 
 
-function insertDashboard(sentenceClasses, summarySentences) {
+function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel) {
     // Create and inject dashboard snippet bar
     constructDashboardSnippet(sentenceClasses);
 
     // Create and inject full page dashboard
-    constructDashboardFull(summarySentences);
+    constructDashboardFull(summarySentences, readTime, readibilityLevel);
     
     // Populate sparkline and piechart with article sentiments
     updateGraphs();
@@ -227,7 +227,7 @@ function constructDashboardSnippet(sentenceClasses) {
 }
 
 
-function constructDashboardFull(summarySentences) {
+function constructDashboardFull(summarySentences, readTime, readibilityLevel) {
     var fullDashboardContainer = document.createElement('div');
     fullDashboardContainer.id = 'troogl-full-dashboard-container';
     fullDashboardContainer.style.position = 'fixed';
@@ -243,11 +243,11 @@ function constructDashboardFull(summarySentences) {
     returnToArticleButton.innerText = 'Return to article';
     returnToArticleButton.style.cursor = 'pointer';
 
-    var readTime = document.createElement('p');
-    readTime.innerText = 'X min Y secs';
+    var readTimeContainer = document.createElement('p');
+    readTimeContainer.innerText = readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs';
 
-    var readibility = document.createElement('p');
-    readibility.innerText = 'Professor Level';
+    var readibilityLevelContainer = document.createElement('p');
+    readibilityLevelContainer.innerText = readibilityLevel;
 
     var summaryBulletPoints = document.createElement('ul');
     for (var i = 0; i < summarySentences.length; i++) {
@@ -263,8 +263,8 @@ function constructDashboardFull(summarySentences) {
     negativeTowardsList.innerText = 'X, Y, Z';
 
     fullDashboardContainer.appendChild(returnToArticleButton);
-    fullDashboardContainer.appendChild(readTime);
-    fullDashboardContainer.appendChild(readibility);
+    fullDashboardContainer.appendChild(readTimeContainer);
+    fullDashboardContainer.appendChild(readibilityLevelContainer);
     fullDashboardContainer.appendChild(summaryBulletPoints);
     fullDashboardContainer.appendChild(positiveTowardsList);
     fullDashboardContainer.appendChild(negativeTowardsList);
@@ -358,11 +358,13 @@ var response = JSON.parse(response);
 var sentences = response['sentences'];
 var sentenceClasses = response['sentence_sentiment_classes'];
 var summarySentences = response['summary_sentences'];
+var readTime = response['read_time'];
+var readibilityLevel = response['readability_level'];
 
 // Display data within article
 prepareSentences(sentences);
 updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
-insertDashboard(sentenceClasses, summarySentences);
+insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel);
 
 // Remove overlay and loader
 document.body.removeChild(document.getElementById('troogl-loader'));
