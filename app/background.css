@@ -15,6 +15,11 @@
     background: #5555FF;
 }
 
+html {
+    scroll-behavior: smooth !important;
+    scroll-padding-top: 13vh !important;
+}
+
 /* Sentence Styling */
 
 .troogl-sentence {
@@ -38,7 +43,6 @@
 .troogl-positive {
     background-color: rgb(182, 255, 200);
 }
-
 
 /*** Loader / overlay ***/
 

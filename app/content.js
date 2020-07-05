@@ -89,8 +89,8 @@ function enablePageEditing() {
     document.designMode = 'on';
 
     // Get original scroll positioning within page
-    pageXOffset = window.pageXOffset;
-    pageYOffset = window.pageYOffset;
+    //pageXOffset = window.pageXOffset;
+    //pageYOffset = window.pageYOffset;
 }
 
 
@@ -102,7 +102,7 @@ function disablePageEditing() {
     window.getSelection().collapse(document.body, 0);
 
     // Return page scroll to original positioning
-    window.scrollTo(pageXOffset, pageYOffset);
+    //window.scrollTo(pageXOffset, pageYOffset);
 }
 
 
@@ -251,7 +251,6 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     returnToArticleButton.style.cursor = 'pointer';
     returnToArticleButton.style.display = 'block';
 
-    /*
     var readTimeContainer = document.createElement('p');
     readTimeContainer.style.margin = '2%';
 
@@ -281,7 +280,6 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
 
     readibilityLevelContainer.appendChild(readibilityHeader);
     readibilityLevelContainer.appendChild(readibilityLevelContent);
-    */
 
     var summaryContainer = document.createElement('span');
     summaryContainer.style.margin = '2%';
@@ -399,8 +397,8 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     negativeTowardsContainer.appendChild(negativeTowardsContent);
 
     fullDashboardContainer.appendChild(returnToArticleButton);
-    // fullDashboardContainer.appendChild(readTimeContainer);
-    // fullDashboardContainer.appendChild(readibilityLevelContainer);
+    fullDashboardContainer.appendChild(readTimeContainer);
+    fullDashboardContainer.appendChild(readibilityLevelContainer);
     fullDashboardContainer.appendChild(summaryContainer);
     fullDashboardContainer.appendChild(positiveTowardsContainer);
     fullDashboardContainer.appendChild(negativeTowardsContainer);
@@ -447,11 +445,11 @@ function updateGraphs() {
         sparklineValues.push(sentenceValue);
 
         if (sentenceValue == -1) {
-            piechartValues[0] = piechartValues[0] + 1;
+            piechartValues[0]++;
         } else if (sentenceValue == 0) {
-            piechartValues[1] = piechartValues[1] + 1;
+            piechartValues[1]++;
         } else if (sentenceValue == 1) {
-            piechartValues[2] = piechartValues[2] + 1;
+            piechartValues[2]++;
         }
     }
 
@@ -462,13 +460,24 @@ function updateGraphs() {
 
 function populateSparkLine(sparklineValues) {
     $('#troogl-sparkline').sparkline(sparklineValues, {
-        type: 'tristate',
-        height: '4vw',
-        barWidth: 8
-    }).on('sparklineClick', function(event) {
-        var sparkline = event.sparklines[0];
+        type: 'line',
+        width: '450',
+        height: '8vh',
+        lineColor: '#e5e5e5',
+        highlightSpotColor: '#66FF66',
+        highlightLineColor: '#5555FF',
+        lineWidth: 4,
+        spotRadius: 5,
+        fillColor: null,
+        spotColor: null,
+        minSpotColor: null,
+        maxSpotColor: null
+    }).bind('sparklineRegionChange', function(ev) {
+        var sparkline = ev.sparklines[0];
         var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
-        location.replace('#troogl-sentence-' + sentenceIndex);
+        if (sentenceIndex) {
+            location.replace('#troogl-sentence-' + sentenceIndex);
+        }
     });
 
     var sparklineCanvas = document.getElementById('troogl-sparkline').childNodes[0];
@@ -481,9 +490,10 @@ function populateSparkLine(sparklineValues) {
 function populatePiechart(piechartValues) {
     $("#troogl-piechart").sparkline(piechartValues, {
         type: 'pie',
-        width: '4vw',
-        height: '4vw',
-        sliceColors: ['#FF4444','#999999', '#66FF66']
+        width: '8vh',
+        height: '8vh',
+        sliceColors: ['#FF4444','#999999', '#66FF66'],
+        disableTooltips: true
     });
 
     var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
