@@ -12,6 +12,8 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
+from textblob import TextBlob
+
 import fake_useragent
 import json
 import newspaper
@@ -32,6 +34,7 @@ def analyse_article(request, url):
     # Get sentence sentiments for all entity perspectives
     sentence_sentiment_classes, positive_entities, negative_entities = predict_sentence_sentiment_classes(
         article_data['body'],
+        article_data['sentences'],
         article_data['sentence_offsets'],
         article_data['default_entity_name']
     )
@@ -153,7 +156,7 @@ def get_readability_level(sent_count, word_count, character_count):
     return readability_level
 
 
-def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_name):
+def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, default_entity_name):
     '''
     Predict sentiment for each entity within article
     and map to corresponding sentence class 
@@ -169,13 +172,24 @@ def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_na
 
     # Generate random sentiment classes for default view (temporarily)
     sentence_data[default_entity_name] = []
-    for i in range(len(sentence_offsets)):
-        sentence_data[default_entity_name].append({
-            'sentence_index': i,
-            'sentence_class_string': class_string_options[random.randint(0, len(class_string_options) - 1)],
-            'sentence_class_title': class_title_options[random.randint(0, len(class_title_options) - 1)],
-            'sentence_class_value': random.randint(-1, 1)
-        })
+    for sentence_index in range(len(sentences)):
+        blob = TextBlob(sentences[sentence_index])
+        sentence_sentiment = blob.polarity
+        # sentence_subjectivity = blob.subjectivity
+        if sentence_sentiment < -0.25:
+            sentence_data[default_entity_name].append({
+                'sentence_index': sentence_index,
+                'sentence_class_string': class_string_options[0],
+                'sentence_class_title': class_title_options[0],
+                'sentence_class_value': -1
+            })
+        elif sentence_sentiment > 0.25:
+            sentence_data[default_entity_name].append({
+                'sentence_index': sentence_index,
+                'sentence_class_string': class_string_options[1],
+                'sentence_class_title': class_title_options[1],
+                'sentence_class_value': 1
+            })
 
     positive_entities = {}
     negative_entities = {}
@@ -183,12 +197,12 @@ def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_na
     for entity in response.entities:
         entity_name = entity.name.strip().title()
 
-        if entity.sentiment.score > 0:
-            positive_entities[entity_name] = {
+        if entity.sentiment.score < -0.25 and entity.sentiment.magnitude > 0.4 and entity.salience > 0:
+            negative_entities[entity_name] = {
                 'type': enums.Entity.Type(entity.type).name
             }
-        elif entity.sentiment.score < 0:
-            negative_entities[entity_name] = {
+        elif entity.sentiment.score > 0.25 and entity.sentiment.magnitude > 0.4 and entity.salience > 0:
+            positive_entities[entity_name] = {
                 'type': enums.Entity.Type(entity.type).name
             }
 
@@ -197,12 +211,13 @@ def predict_sentence_sentiment_classes(body, sentence_offsets, default_entity_na
 
         for mention in entity.mentions:
             sentence_class_string = None
+            sentence_class_title = None
             sentence_class_value = None
-            if mention.sentiment.score < -0.25 and mention.sentiment.magnitude > 0.4:
+            if mention.sentiment.score < -0.05 and mention.sentiment.magnitude > 0.05:
                 sentence_class_string = class_string_options[0]
                 sentence_class_title = class_title_options[0]
                 sentence_class_value = -1
-            elif mention.sentiment.score > 0.25 and mention.sentiment.magnitude > 0.4:
+            elif mention.sentiment.score > 0.05 and mention.sentiment.magnitude > 0.05:
                 sentence_class_string = class_string_options[1]
                 sentence_class_title = class_title_options[1]
                 sentence_class_value = 1
