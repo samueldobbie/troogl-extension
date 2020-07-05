@@ -193,13 +193,20 @@ function injectPartialDashboard(sentenceClasses) {
 
     var fullDashboardbutton = document.createElement('span');
     fullDashboardbutton.id = 'troogl-full-dashboard-button';
-    fullDashboardbutton.innerText = 'View Full Dashboard ';
-    fullDashboardbutton.style.color = 'white';
+    fullDashboardbutton.innerText = 'View Full Dashboard';
+    fullDashboardbutton.style.backgroundColor = 'white';
+    fullDashboardbutton.style.color = '#333';
+    fullDashboardbutton.style.padding = '5px';
+    fullDashboardbutton.style.borderRadius = '5px';
 
     var hideButton = document.createElement('span');
     hideButton.id = 'troogl-collapse-button';
-    hideButton.innerText = ' Collapse';
-    hideButton.style.color = '#2a2abd';
+    hideButton.innerText = 'Collapse';
+    hideButton.style.color = 'white';
+    hideButton.style.backgroundColor = '#2a2abd';
+    hideButton.style.padding = '5px';
+    hideButton.style.borderRadius = '5px';
+    hideButton.style.marginLeft = '1%';
 
     optionContainer.appendChild(fullDashboardbutton);
     optionContainer.appendChild(hideButton);
@@ -210,6 +217,7 @@ function injectPartialDashboard(sentenceClasses) {
     expandButton.style.backgroundColor = '#5555FF';
     expandButton.style.cursor = 'pointer';
     expandButton.style.color = 'white';
+    expandButton.style.fontWeight = 'bold';
     expandButton.style.borderBottomLeftRadius = '5px';
     expandButton.style.borderBottomRightRadius = '5px';
     expandButton.style.top = 0;
@@ -218,6 +226,7 @@ function injectPartialDashboard(sentenceClasses) {
     expandButton.style.marginRight = '5%';
     expandButton.style.outline = 'none';
     expandButton.style.display = 'none';
+    expandButton.style.fontSize = '13px';
     expandButton.style.position = 'fixed';
     expandButton.style.border = 'none';
     expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
@@ -243,6 +252,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     fullDashboardContainer.style.height = '100%';
     fullDashboardContainer.style.overflow = 'scroll';
     fullDashboardContainer.style.backgroundColor = '#f1f1f1';
+    fullDashboardContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
     fullDashboardContainer.style.display = 'none';
     fullDashboardContainer.style.padding = '3% 15%';
     fullDashboardContainer.style.zIndex = 2147483647;
@@ -253,6 +263,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     returnToArticleButton.style.cursor = 'pointer';
     returnToArticleButton.style.display = 'block';
 
+    /*
     var readTimeContainer = document.createElement('p');
     readTimeContainer.style.margin = '2%';
 
@@ -282,9 +293,10 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
 
     readibilityLevelContainer.appendChild(readibilityHeader);
     readibilityLevelContainer.appendChild(readibilityLevelContent);
+    */
 
     var summaryContainer = document.createElement('span');
-    summaryContainer.style.margin = '2%';
+    summaryContainer.style.margin = '1%';
 
     var summaryHeader = document.createElement('span');
     summaryHeader.innerText = 'TL;DR';
@@ -307,7 +319,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     summaryContainer.appendChild(summaryContent);
 
     var positiveTowardsContainer = document.createElement('span');
-    positiveTowardsContainer.style.margin = '2%';
+    positiveTowardsContainer.style.margin = '1%';
 
     var positiveTowardsHeader = document.createElement('span');
     positiveTowardsHeader.innerText = 'Positive Towards';
@@ -316,7 +328,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     positiveTowardsHeader.style.display = 'block';
 
     var positiveTowardsContent = document.createElement('span');
-    positiveTowardsContent.style.margin = '2%';
+    positiveTowardsContent.style.margin = '1%';
     positiveTowardsContent.style.maxWidth = '50vw';
     positiveTowardsContent.style.display = 'block';
 
@@ -353,7 +365,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     positiveTowardsContainer.appendChild(positiveTowardsContent);
 
     var negativeTowardsContainer = document.createElement('span');
-    negativeTowardsContainer.style.margin = '2%';
+    negativeTowardsContainer.style.margin = '1%';
 
     var negativeTowardsHeader = document.createElement('span');
     negativeTowardsHeader.innerText = 'Negative Towards';
@@ -362,7 +374,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     negativeTowardsHeader.style.display = 'block';
 
     var negativeTowardsContent = document.createElement('span');
-    negativeTowardsContent.style.margin = '2%';
+    negativeTowardsContent.style.margin = '1%';
     negativeTowardsContent.style.maxWidth = '50vw';
     negativeTowardsContent.style.display = 'block';
 
@@ -399,8 +411,8 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     negativeTowardsContainer.appendChild(negativeTowardsContent);
 
     fullDashboardContainer.appendChild(returnToArticleButton);
-    fullDashboardContainer.appendChild(readTimeContainer);
-    fullDashboardContainer.appendChild(readibilityLevelContainer);
+    // fullDashboardContainer.appendChild(readTimeContainer);
+    // fullDashboardContainer.appendChild(readibilityLevelContainer);
     fullDashboardContainer.appendChild(summaryContainer);
     fullDashboardContainer.appendChild(positiveTowardsContainer);
     fullDashboardContainer.appendChild(negativeTowardsContainer);
@@ -470,6 +482,7 @@ function populateSparkLine(sparklineValues) {
         highlightLineColor: '#5555FF',
         lineWidth: 4,
         spotRadius: 5,
+        disableTooltips: true,
         fillColor: null,
         spotColor: null,
         minSpotColor: null,
@@ -495,7 +508,8 @@ function populatePiechart(piechartValues) {
         width: '8vh',
         height: '8vh',
         sliceColors: ['#FF4444','#999999', '#66FF66'],
-        disableTooltips: true
+        disableTooltips: true,
+        disableHighlight: true
     });
 
     var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
@@ -504,7 +518,7 @@ function populatePiechart(piechartValues) {
     piechartCanvas.style.borderRadius = '5px';
 }
 
-var pageXOffset, pageYOffset;
+// var pageXOffset, pageYOffset;
 
 // Parse response data
 var response = JSON.parse(response);
