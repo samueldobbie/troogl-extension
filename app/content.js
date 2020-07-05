@@ -9,10 +9,6 @@ function prepareSentences(sentences) {
         // Get selected sentence range
         var range = window.getSelection().getRangeAt(0);
 
-        // Construct link container (for sentence anchors)
-        var linkContainer = document.createElement('a');
-        linkContainer.name = 'troogl-sentence-' + i;
-
         // Construct sentence container
         var sentenceContainer = document.createElement('span');
 
@@ -25,17 +21,23 @@ function prepareSentences(sentences) {
             alert('Ability to vote and share coming soon!');
         });
 
-        // Surround sentence with anchor link
-        linkContainer.appendChild(sentenceContainer);
+        // Construct sentence anchor tag
+        var anchorTag = document.createElement('a');
+        anchorTag.name = 'troogl-sentence-' + i;
+
+        // Add anchor tag to sentece
+        sentenceContainer.appendChild(anchorTag);
 
         // Insert constructed sentence into article
-        range.insertNode(linkContainer);
+        range.insertNode(sentenceContainer);
 
         // Return selection cursor to beginning of document
         window.getSelection().collapse(document.body, 0);
     }
 
     disablePageEditing();
+
+    window.scrollTo(0, 0);
 }
 
 
