@@ -9,20 +9,27 @@ function prepareSentences(sentences) {
         // Get selected sentence range
         var range = window.getSelection().getRangeAt(0);
 
+        // Construct link container (for sentence anchors)
+        var linkContainer = document.createElement('a');
+        linkContainer.name = 'troogl-sentence-' + i;
+
         // Construct sentence container
-        var container = document.createElement('span');
+        var sentenceContainer = document.createElement('span');
 
         // Add sentiment classes to container
-        container.classList.add('troogl-sentence');
-        container.appendChild(range.extractContents());
+        sentenceContainer.classList.add('troogl-sentence');
+        sentenceContainer.appendChild(range.extractContents());
 
         // Add popup to sentence container
-        container.addEventListener('click', function() {
+        sentenceContainer.addEventListener('click', function() {
             alert('Ability to vote and share coming soon!');
         });
 
+        // Surround sentence with anchor link
+        linkContainer.appendChild(sentenceContainer);
+
         // Insert constructed sentence into article
-        range.insertNode(container);
+        range.insertNode(linkContainer);
 
         // Return selection cursor to beginning of document
         window.getSelection().collapse(document.body, 0);
@@ -458,6 +465,10 @@ function populateSparkLine(sparklineValues) {
         type: 'tristate',
         height: '4vw',
         barWidth: 8
+    }).on('sparklineClick', function(event) {
+        var sparkline = event.sparklines[0];
+        var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
+        location.replace('#troogl-sentence-' + sentenceIndex);
     });
 
     var sparklineCanvas = document.getElementById('troogl-sparkline').childNodes[0];
