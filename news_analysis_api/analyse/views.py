@@ -6,6 +6,8 @@ import random
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
 
+from nltk.tokenize import sent_tokenize
+
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer as Summarizer
@@ -103,8 +105,17 @@ def get_newspaper_configuration():
 
 
 def get_article_sentences(text):
-    doc = nlp(text)
-    return [str(s).strip() for s in doc.sents]
+    #doc = nlp(text)
+    #[str(s).strip() for s in doc.sents]
+    paragraphs = text.split('\n')
+    sentences = []
+    for paragraph in paragraphs:
+        for sentence in sent_tokenize(paragraph):
+            sentences.append(sentence.strip())
+
+    print(sentences)
+
+    return sentences
 
 
 def get_article_summary(text, LANGUAGE, MAX_SUMMARY_SENTENCE_COUNT):
