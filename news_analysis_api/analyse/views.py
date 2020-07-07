@@ -19,7 +19,6 @@ from textblob import TextBlob
 import fake_useragent
 import json
 import newspaper
-import spacy
 
 def analyse_article(request, url):
     '''
@@ -105,15 +104,21 @@ def get_newspaper_configuration():
 
 
 def get_article_sentences(text):
-    #doc = nlp(text)
-    #[str(s).strip() for s in doc.sents]
-    paragraphs = text.split('\n')
+    paragraphs = []
+    # Strip out paragraphs that include defined stopwords
+    for paragraph in text.split('\n'):
+        valid_sentence = True
+        for stopword in stopwords:
+            if stopword.lower() in paragraph.lower():
+                valid_sentence = False
+                break
+        if valid_sentence:
+            paragraphs.append(paragraph)
+
     sentences = []
     for paragraph in paragraphs:
         for sentence in sent_tokenize(paragraph):
             sentences.append(sentence.strip())
-
-    print(sentences)
 
     return sentences
 
@@ -258,4 +263,4 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
 newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()
 client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\Samuel\Desktop\Troogl Browser Extension\troogl_extension_env\Troogl Browser Extension\news_analysis_api\ce-v1-f594c3be6fc9.json')
-nlp = spacy.load('en_core_web_md')
+stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))
