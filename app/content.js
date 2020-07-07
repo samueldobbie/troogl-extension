@@ -332,6 +332,10 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     positiveTowardsContent.style.maxWidth = '50vw';
     positiveTowardsContent.style.display = 'block';
 
+    if (positiveEntities.length == 0) {
+        positiveTowardsContent.innerText = 'Article is not overly positive towards any entities.';
+    }
+
     for (var key in positiveEntities) {
         var positiveEntity = document.createElement('span');
         positiveEntity.innerText = key;
@@ -377,6 +381,10 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     negativeTowardsContent.style.margin = '1%';
     negativeTowardsContent.style.maxWidth = '50vw';
     negativeTowardsContent.style.display = 'block';
+
+    if (negativeEntities.length == 0) {
+        negativeTowardsContent.innerText = 'Article is not overly negative towards any entities.';
+    }
 
     for (var key in negativeEntities) {
         var negativeEntity = document.createElement('span');
@@ -482,6 +490,8 @@ function populateSparkLine(sparklineValues) {
         highlightLineColor: '#5555FF',
         lineWidth: 4,
         spotRadius: 5,
+        chartRangeMin: -1,
+        chartRangeMax: 1,
         disableTooltips: true,
         fillColor: null,
         spotColor: null,
