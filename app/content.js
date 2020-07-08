@@ -12,6 +12,13 @@ function prepareSentences(sentences) {
         // Construct sentence container
         var sentenceContainer = document.createElement('span');
 
+        // Construct sentence anchor tag
+        var anchorTag = document.createElement('a');
+        anchorTag.name = 'troogl-sentence-' + i;
+
+        // Add anchor tag to sentece
+        sentenceContainer.appendChild(anchorTag);
+
         // Add sentiment classes to container
         sentenceContainer.classList.add('troogl-sentence');
         sentenceContainer.appendChild(range.extractContents());
@@ -20,13 +27,6 @@ function prepareSentences(sentences) {
         sentenceContainer.addEventListener('click', function() {
             alert('Ability to vote and share coming soon!');
         });
-
-        // Construct sentence anchor tag
-        var anchorTag = document.createElement('a');
-        anchorTag.name = 'troogl-sentence-' + i;
-
-        // Add anchor tag to sentece
-        sentenceContainer.appendChild(anchorTag);
 
         // Insert constructed sentence into article
         range.insertNode(sentenceContainer);
@@ -332,7 +332,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     positiveTowardsContent.style.maxWidth = '50vw';
     positiveTowardsContent.style.display = 'block';
 
-    if (positiveEntities.length == 0) {
+    if (Object.keys(positiveEntities).length == 0) {
         positiveTowardsContent.innerText = 'Article is not overly positive towards any entities.';
     }
 
@@ -382,7 +382,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     negativeTowardsContent.style.maxWidth = '50vw';
     negativeTowardsContent.style.display = 'block';
 
-    if (negativeEntities.length == 0) {
+    if (Object.keys(negativeEntities).length == 0) {
         negativeTowardsContent.innerText = 'Article is not overly negative towards any entities.';
     }
 
@@ -498,6 +498,7 @@ function populateSparkLine(sparklineValues) {
         minSpotColor: null,
         maxSpotColor: null
     }).bind('sparklineRegionChange', function(ev) {
+        // Jump to the sentence that is being hovered over in the line graph
         var sparkline = ev.sparklines[0];
         var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
         if (sentenceIndex) {

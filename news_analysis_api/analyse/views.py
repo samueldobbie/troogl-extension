@@ -180,65 +180,69 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
 
     document = {'content': body, 'type': enums.Document.Type.PLAIN_TEXT, 'language': 'en'}
     response = client.analyze_entity_sentiment(document, encoding_type=enums.EncodingType.UTF8)
+
+    sentence_data = {}
+    positive_entities = {}
+    negative_entities = {}
     
     class_string_options = ['troogl-negative', 'troogl-positive']
     class_title_options = ['Negative', 'Positive']
+    class_value_options = [-1, 1]
 
-    sentence_data = {}
-
-    # Generate random sentiment classes for default view (temporarily)
+    # Predict sentiments from default view
     sentence_data[default_entity_name] = []
     for sentence_index in range(len(sentences)):
         blob = TextBlob(sentences[sentence_index])
         sentence_sentiment = blob.polarity
-        # sentence_subjectivity = blob.subjectivity
         if sentence_sentiment < -0.25:
             sentence_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[0],
                 'sentence_class_title': class_title_options[0],
-                'sentence_class_value': -1
+                'sentence_class_value': class_value_options[0]
             })
         elif sentence_sentiment > 0.25:
             sentence_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[1],
                 'sentence_class_title': class_title_options[1],
-                'sentence_class_value': 1
+                'sentence_class_value': class_value_options[1]
             })
 
-    positive_entities = {}
-    negative_entities = {}
-
+    # Predict sentiments from entity-level
     for entity in response.entities:
         entity_name = entity.name.strip().title()
+        entity_type = enums.Entity.Type(entity.type).name
+
+        if entity_type != 'PERSON':
+            continue
 
         if entity.sentiment.score < -0.25 and entity.sentiment.magnitude > 0.4 and entity.salience > 0:
             negative_entities[entity_name] = {
-                'type': enums.Entity.Type(entity.type).name
+                'type': entity_type
             }
         elif entity.sentiment.score > 0.25 and entity.sentiment.magnitude > 0.4 and entity.salience > 0:
             positive_entities[entity_name] = {
-                'type': enums.Entity.Type(entity.type).name
+                'type': entity_type
             }
 
         if entity.name not in sentence_data:
             sentence_data[entity_name] = []
 
         for mention in entity.mentions:
-            sentence_class_string = None
-            sentence_class_title = None
-            sentence_class_value = None
+            sentence_class_string = ''
+            sentence_class_title = ''
+            sentence_class_value = ''
             if mention.sentiment.score < -0.05 and mention.sentiment.magnitude > 0.05:
                 sentence_class_string = class_string_options[0]
                 sentence_class_title = class_title_options[0]
-                sentence_class_value = -1
+                sentence_class_value = class_value_options[0]
             elif mention.sentiment.score > 0.05 and mention.sentiment.magnitude > 0.05:
                 sentence_class_string = class_string_options[1]
                 sentence_class_title = class_title_options[1]
-                sentence_class_value = 1
+                sentence_class_value = class_value_options[1]
 
-            if sentence_class_string is not None:
+            if sentence_class_string != '':
                 sentence_index = 0
                 for offset_index in range(len(sentence_offsets)):
                     if mention.text.begin_offset >= sentence_offsets[offset_index][0] and mention.text.begin_offset <= sentence_offsets[offset_index][1]:
@@ -257,6 +261,9 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
     for key, value in sentence_data.items():
         if len(value) > 0 or key == default_entity_name:
             updated_sentence_data[key] = value
+
+    # Sort perspectives by count of non-neutral sentences
+    # sorted(updated_sentence_data, key=lambda k: len(updated_sentence_data[k]), reverse=True)
 
     return updated_sentence_data, positive_entities, negative_entities
 
