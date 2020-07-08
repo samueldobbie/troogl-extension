@@ -89,10 +89,6 @@ function stripSentence(sentence) {
 function enablePageEditing() {
     // Enable editing of article
     document.designMode = 'on';
-
-    // Get original scroll positioning within page
-    //pageXOffset = window.pageXOffset;
-    //pageYOffset = window.pageYOffset;
 }
 
 
@@ -102,9 +98,6 @@ function disablePageEditing() {
 
     // Remove final sentence selection
     window.getSelection().collapse(document.body, 0);
-
-    // Return page scroll to original positioning
-    //window.scrollTo(pageXOffset, pageYOffset);
 }
 
 
@@ -483,7 +476,7 @@ function updateGraphs() {
 function populateSparkLine(sparklineValues) {
     $('#troogl-sparkline').sparkline(sparklineValues, {
         type: 'line',
-        width: '450',
+        width: '30vw',
         height: '8vh',
         lineColor: '#e5e5e5',
         highlightSpotColor: '#66FF66',
@@ -502,7 +495,7 @@ function populateSparkLine(sparklineValues) {
             // Jump to the sentence that is being hovered over in the line graph
             var sparkline = ev.sparklines[0];
             var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
-            if (sentenceIndex) {
+            if (sentenceIndex != null) {
                 location.hash = '#troogl-sentence-' + sentenceIndex;
             }
         }, 150);
@@ -531,7 +524,10 @@ function populatePiechart(piechartValues) {
     piechartCanvas.style.borderRadius = '5px';
 }
 
-// var pageXOffset, pageYOffset;
+
+$(window).resize(function() {
+    updateGraphs();
+});
 
 // Parse response data
 var response = JSON.parse(response);
