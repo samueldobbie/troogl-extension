@@ -164,6 +164,7 @@ function injectPartialDashboard(sentenceClasses) {
 
     // Construct graph container
     var graphContainer = document.createElement('span');
+    graphContainer.id = 'troogl-graph-container';
     graphContainer.style.flexGrow = 2;
 
     // Create sparkline container
@@ -179,6 +180,7 @@ function injectPartialDashboard(sentenceClasses) {
     graphContainer.appendChild(piechartChart);
 
     var optionContainer = document.createElement('span');
+    optionContainer.id = 'troogl-option-container';
     optionContainer.style.cursor = 'pointer';
     optionContainer.style.fontWeight = 'bold';
     optionContainer.style.fontSize = '13px';
@@ -526,7 +528,20 @@ function populatePiechart(piechartValues) {
 
 
 $(window).resize(function() {
+    // Resize graphs
     updateGraphs();
+
+    /*
+    var mediaQuery = window.matchMedia('(max-width: 750px)');
+    if (mediaQuery.matches) {
+        document.getElementById('troogl-graph-container').style.display = 'none';
+        document.getElementById('troogl-option-container').style.display = 'none';
+    }
+    else {
+        document.getElementById('troogl-graph-container').style.display = '';
+        document.getElementById('troogl-option-container').style.display = '';
+    }
+    */
 });
 
 // Parse response data
