@@ -498,12 +498,14 @@ function populateSparkLine(sparklineValues) {
         minSpotColor: null,
         maxSpotColor: null
     }).bind('sparklineRegionChange', function(ev) {
-        // Jump to the sentence that is being hovered over in the line graph
-        var sparkline = ev.sparklines[0];
-        var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
-        if (sentenceIndex) {
-            location.replace('#troogl-sentence-' + sentenceIndex);
-        }
+        setTimeout(function() {
+            // Jump to the sentence that is being hovered over in the line graph
+            var sparkline = ev.sparklines[0];
+            var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
+            if (sentenceIndex) {
+                location.hash = '#troogl-sentence-' + sentenceIndex;
+            }
+        }, 150);
     });
 
     var sparklineCanvas = document.getElementById('troogl-sparkline').childNodes[0];
