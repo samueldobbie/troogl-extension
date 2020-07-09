@@ -528,10 +528,7 @@ function populatePiechart(piechartValues) {
 
 
 $(window).resize(function() {
-    // Resize graphs
-    updateGraphs();
-
-    /*
+    // Hide graph and options if screensize too small
     var mediaQuery = window.matchMedia('(max-width: 750px)');
     if (mediaQuery.matches) {
         document.getElementById('troogl-graph-container').style.display = 'none';
@@ -541,7 +538,9 @@ $(window).resize(function() {
         document.getElementById('troogl-graph-container').style.display = '';
         document.getElementById('troogl-option-container').style.display = '';
     }
-    */
+
+    // Resize graphs
+    updateGraphs();
 });
 
 // Parse response data

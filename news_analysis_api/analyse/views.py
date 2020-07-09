@@ -260,7 +260,7 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
                 'type': entity_type
             }
 
-        if entity.name not in sentence_data:
+        if entity_name not in sentence_data:
             sentence_data[entity_name] = []
 
         for mention in entity.mentions:
