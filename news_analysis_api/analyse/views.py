@@ -19,6 +19,7 @@ from textblob import TextBlob
 import fake_useragent
 import json
 import newspaper
+import spacy
 
 def analyse_article(request, url):
     '''
@@ -178,6 +179,11 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
     and map to corresponding sentence class 
     '''
 
+    POSITIVE_SENTIMENT_THRESHOLD = 0.25
+    NEGATIVE_SENTIMENT_THRESHOLD = -0.25
+    MAGNITUDE_THRESHOLD = 0.4
+    SALIENCE_THRESHOLD = 0.1
+
     document = {'content': body, 'type': enums.Document.Type.PLAIN_TEXT, 'language': 'en'}
     response = client.analyze_entity_sentiment(document, encoding_type=enums.EncodingType.UTF8)
 
@@ -194,14 +200,14 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
     for sentence_index in range(len(sentences)):
         blob = TextBlob(sentences[sentence_index])
         sentence_sentiment = blob.polarity
-        if sentence_sentiment < -0.25:
+        if sentence_sentiment < NEGATIVE_SENTIMENT_THRESHOLD:
             sentence_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[0],
                 'sentence_class_title': class_title_options[0],
                 'sentence_class_value': class_value_options[0]
             })
-        elif sentence_sentiment > 0.25:
+        elif sentence_sentiment > POSITIVE_SENTIMENT_THRESHOLD:
             sentence_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[1],
@@ -209,19 +215,45 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
                 'sentence_class_value': class_value_options[1]
             })
 
+    '''
+    with open('abc.txt', 'w') as f:
+        for entity in response.entities:
+            f.write('entity.name: ' + entity.name + '\n')
+            f.write('entity.type: ' + enums.Entity.Type(entity.type).name + '\n')
+            f.write('entity.sentiment.score: ' + str(entity.sentiment.score) + '\n')
+            f.write('entity.sentiment.magnitude: ' + str(entity.sentiment.magnitude) + '\n')
+            f.write('entity.salience: ' + str(entity.salience) + '\n\n')
+
+            for mention in entity.mentions:
+                f.write('\tmention.text.content: ' + mention.text.content + '\n')
+                f.write('\tmention.type: ' + enums.Entity.Type(entity.type).name + '\n')
+                f.write('\tmention.sentiment.score: ' + str(mention.sentiment.score) + '\n')
+                f.write('\tmention.sentiment.magnitude: ' + str(mention.sentiment.magnitude) + '\n\n')
+            
+            f.write('\n\n\n\n')
+    '''
+
+    # Get list of all people and organizations (more accurate than GNLP)
+    spacy_document = nlp(body)
+    spacy_entities = set([
+        str(entity).strip().title() for entity in spacy_document.ents
+        if entity.label_ == 'PERSON' or entity.label_ == 'ORGANIZATION'
+    ])
+
     # Predict sentiments from entity-level
     for entity in response.entities:
         entity_name = entity.name.strip().title()
         entity_type = enums.Entity.Type(entity.type).name
 
-        if entity_type != 'PERSON':
+        # Ignore entities that haven't been detected by spaCy
+        if entity_name not in spacy_entities:
             continue
 
-        if entity.sentiment.score < -0.25 and entity.sentiment.magnitude > 0.4 and entity.salience > 0:
+        if entity.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD and entity.sentiment.magnitude > MAGNITUDE_THRESHOLD and entity.salience > SALIENCE_THRESHOLD:
             negative_entities[entity_name] = {
                 'type': entity_type
             }
-        elif entity.sentiment.score > 0.25 and entity.sentiment.magnitude > 0.4 and entity.salience > 0:
+        elif entity.sentiment.score > POSITIVE_SENTIMENT_THRESHOLD and entity.sentiment.magnitude > MAGNITUDE_THRESHOLD and entity.salience > SALIENCE_THRESHOLD:
             positive_entities[entity_name] = {
                 'type': entity_type
             }
@@ -233,11 +265,11 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
             sentence_class_string = ''
             sentence_class_title = ''
             sentence_class_value = ''
-            if mention.sentiment.score < -0.05 and mention.sentiment.magnitude > 0.05:
+            if mention.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD and mention.sentiment.magnitude > MAGNITUDE_THRESHOLD:
                 sentence_class_string = class_string_options[0]
                 sentence_class_title = class_title_options[0]
                 sentence_class_value = class_value_options[0]
-            elif mention.sentiment.score > 0.05 and mention.sentiment.magnitude > 0.05:
+            elif mention.sentiment.score > POSITIVE_SENTIMENT_THRESHOLD and mention.sentiment.magnitude > MAGNITUDE_THRESHOLD:
                 sentence_class_string = class_string_options[1]
                 sentence_class_title = class_title_options[1]
                 sentence_class_value = class_value_options[1]
@@ -271,3 +303,4 @@ newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()
 client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\Samuel\Desktop\Troogl Browser Extension\troogl_extension_env\Troogl Browser Extension\news_analysis_api\ce-v1-f594c3be6fc9.json')
 stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))
+nlp = spacy.load('en_core_web_md')

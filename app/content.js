@@ -182,8 +182,7 @@ function injectPartialDashboard(sentenceClasses) {
     var optionContainer = document.createElement('span');
     optionContainer.id = 'troogl-option-container';
     optionContainer.style.cursor = 'pointer';
-    optionContainer.style.fontWeight = 'bold';
-    optionContainer.style.fontSize = '13px';
+    optionContainer.style.fontSize = '16px';
     optionContainer.style.flexGrow = 1;
 
     var fullDashboardbutton = document.createElement('span');
@@ -221,7 +220,7 @@ function injectPartialDashboard(sentenceClasses) {
     expandButton.style.marginRight = '5%';
     expandButton.style.outline = 'none';
     expandButton.style.display = 'none';
-    expandButton.style.fontSize = '13px';
+    expandButton.style.fontSize = '16px';
     expandButton.style.position = 'fixed';
     expandButton.style.border = 'none';
     expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
@@ -247,6 +246,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     fullDashboardContainer.style.height = '100%';
     fullDashboardContainer.style.overflow = 'scroll';
     fullDashboardContainer.style.backgroundColor = '#f1f1f1';
+    fullDashboardContainer.style.fontSize = '16px';
     fullDashboardContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
     fullDashboardContainer.style.display = 'none';
     fullDashboardContainer.style.padding = '3% 15%';
