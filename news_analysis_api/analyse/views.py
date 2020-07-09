@@ -16,6 +16,8 @@ from sumy.utils import get_stop_words
 
 from textblob import TextBlob
 
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
 import fake_useragent
 import json
 import newspaper
@@ -179,10 +181,10 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
     and map to corresponding sentence class 
     '''
 
-    POSITIVE_SENTIMENT_THRESHOLD = 0.25
-    NEGATIVE_SENTIMENT_THRESHOLD = -0.25
-    MAGNITUDE_THRESHOLD = 0.4
-    SALIENCE_THRESHOLD = 0.1
+    POSITIVE_SENTIMENT_THRESHOLD = 0.15
+    NEGATIVE_SENTIMENT_THRESHOLD = -0.15
+    MAGNITUDE_THRESHOLD = 0.2
+    SALIENCE_THRESHOLD = 0
 
     document = {'content': body, 'type': enums.Document.Type.PLAIN_TEXT, 'language': 'en'}
     response = client.analyze_entity_sentiment(document, encoding_type=enums.EncodingType.UTF8)
@@ -198,16 +200,16 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
     # Predict sentiments from default view
     sentence_data[default_entity_name] = []
     for sentence_index in range(len(sentences)):
-        blob = TextBlob(sentences[sentence_index])
-        sentence_sentiment = blob.polarity
-        if sentence_sentiment < NEGATIVE_SENTIMENT_THRESHOLD:
+        sentence_sentiment = sentiment_analyzer.polarity_scores(sentences[sentence_index])
+
+        if -sentence_sentiment['neg'] < NEGATIVE_SENTIMENT_THRESHOLD:
             sentence_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[0],
                 'sentence_class_title': class_title_options[0],
                 'sentence_class_value': class_value_options[0]
             })
-        elif sentence_sentiment > POSITIVE_SENTIMENT_THRESHOLD:
+        elif sentence_sentiment['pos'] > POSITIVE_SENTIMENT_THRESHOLD:
             sentence_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[1],
@@ -304,3 +306,4 @@ user_agent_generator = fake_useragent.UserAgent()
 client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\Samuel\Desktop\Troogl Browser Extension\troogl_extension_env\Troogl Browser Extension\news_analysis_api\ce-v1-f594c3be6fc9.json')
 stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))
 nlp = spacy.load('en_core_web_md')
+sentiment_analyzer = SentimentIntensityAnalyzer()
