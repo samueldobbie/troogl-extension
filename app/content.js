@@ -101,12 +101,12 @@ function disablePageEditing() {
 }
 
 
-function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities) {
+function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities) {
     // Create and inject dashboard snippet bar
     injectPartialDashboard(sentenceClasses);
 
     // Create and inject full page dashboard
-    injectCompleteDashboard(summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities);
+    injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities);
     
     // Populate sparkline and piechart with article sentiments
     updateGraphs();
@@ -243,7 +243,6 @@ function injectPartialDashboard(sentenceClasses) {
     expandButton.style.backgroundColor = '#5555FF';
     expandButton.style.cursor = 'pointer';
     expandButton.style.color = 'white';
-    expandButton.style.fontWeight = 'bold';
     expandButton.style.borderBottomLeftRadius = '5px';
     expandButton.style.borderBottomRightRadius = '5px';
     expandButton.style.top = 0;
@@ -270,7 +269,7 @@ function injectPartialDashboard(sentenceClasses) {
 }
 
 
-function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities) {
+function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities) {
     // Container for all dashboard items
     var dashboardContainer = document.createElement('div');
     dashboardContainer.id = 'troogl-full-dashboard-container';
@@ -331,7 +330,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     // Container for readibility item
     var readibilityContainer = document.createElement('div');
     readibilityContainer.style.flexGrow = '1';
-    readibilityContainer.style.margin = '2.5% 2.5% 0.5% 0.5%';
+    readibilityContainer.style.margin = '2.5% 0.5% 0.5% 0.5%';
     readibilityContainer.style.backgroundColor = 'white';
     readibilityContainer.style.borderRadius = '5px';
     readibilityContainer.style.padding = '1%';
@@ -346,11 +345,33 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
 
     var readibilityContent = document.createElement('span');
     readibilityContent.innerText = readibilityLevel;
-    readibilityContent.style.margin = 'auto';
 
     readibilityContainer.appendChild(readibilityHeader);
     readibilityContainer.appendChild(readibilityContent);
     contentContainer.appendChild(readibilityContainer);
+
+    // Container for test item
+    var subjectivityContainer = document.createElement('div');
+    subjectivityContainer.style.flexGrow = '1';
+    subjectivityContainer.style.margin = '2.5% 2.5% 0.5% 0.5%';
+    subjectivityContainer.style.backgroundColor = 'white';
+    subjectivityContainer.style.borderRadius = '5px';
+    subjectivityContainer.style.padding = '1%';
+    subjectivityContainer.style.boxShadow = '0 0 2px #333';
+
+    var subjectivityHeader = document.createElement('span');
+    subjectivityHeader.innerText = 'Subjectivity';
+    subjectivityHeader.style.color = '#5555FF';
+    subjectivityHeader.style.fontWeight = 'bold';
+    subjectivityHeader.style.marginBottom = '0.5%';
+    subjectivityHeader.style.display = 'block';
+
+    var subjectivityContent = document.createElement('span');
+    subjectivityContent.innerText = subjectivity;
+
+    subjectivityContainer.appendChild(subjectivityHeader);
+    subjectivityContainer.appendChild(subjectivityContent);
+    contentContainer.appendChild(subjectivityContainer);
 
     // Container for summary content item
     var summaryContainer = document.createElement('div');
@@ -369,7 +390,8 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     summaryHeader.style.display = 'block';
 
     var summaryContent = document.createElement('ul');
-    summaryContent.style.listStyleType = 'disc'
+    summaryContent.style.listStyleType = 'disc';
+    summaryContent.style.margin = '1% 5%';
     for (var i = 0; i < summarySentences.length; i++) {
         var summaryBulletPoint = document.createElement('li');
         summaryBulletPoint.innerText = summarySentences[i];
@@ -399,6 +421,11 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     positiveEntitiesHeader.style.display = 'block';
 
     var positiveEntitiesContent = document.createElement('span');
+
+    if (Object.keys(positiveEntities).length == 0) {
+        positiveEntitiesContent.innerText = 'Not clearly positive towards any person / organization.';
+    }
+
     for (var key in positiveEntities) {
         var positiveEntity = document.createElement('span');
         positiveEntity.innerText = key;
@@ -447,6 +474,11 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     negativeEntitiesHeader.style.display = 'block';
 
     var negativeEntitiesContent = document.createElement('span');
+
+    if (Object.keys(negativeEntities).length == 0) {
+        negativeEntitiesContent.innerText = 'Not clearly negative towards any person / organization.';
+    }
+
     for (var key in negativeEntities) {
         var negativeEntity = document.createElement('span');
         negativeEntity.innerText = key;
@@ -613,11 +645,12 @@ var negativeEntities = response['negative_entities'];
 var summarySentences = response['summary_sentences'];
 var readTime = response['read_time'];
 var readibilityLevel = response['readability_level'];
+var subjectivity = response['subjectivity'];
 
 // Display data within article
 prepareSentences(sentences);
 updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
-insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities);
+insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities);
 
 // Remove overlay and loader
 document.body.removeChild(document.getElementById('troogl-loader'));

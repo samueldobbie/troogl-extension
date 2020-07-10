@@ -43,6 +43,8 @@ def analyse_article(request, url):
         article_data['default_entity_name']
     )
 
+    article_data['subjectivity'] = predict_subjectivity_class(article_data['body'])
+
     article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
     article_data['positive_entities'] = positive_entities
     article_data['negative_entities'] = negative_entities
@@ -286,6 +288,17 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
     all_perspective_data.update(updated_entity_perspective_data)
 
     return all_perspective_data, positive_entities, negative_entities
+
+
+def predict_subjectivity_class(body):
+    subjectivity = TextBlob(body).sentiment.subjectivity
+    if subjectivity < 0.25:
+        return 'Mostly objective'
+    elif subjectivity < 0.66:
+        return 'Somewhat opinionated'
+    else:
+        return 'Very opinionated'
+
 
 newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()
