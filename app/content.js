@@ -32,7 +32,7 @@ function prepareSentences(sentences) {
         range.insertNode(sentenceContainer);
 
         // Return selection cursor to beginning of document
-        window.getSelection().collapse(document.body, 0);
+        // window.getSelection().collapse(document.body, 0);
     }
 
     disablePageEditing();
@@ -49,7 +49,6 @@ function updateSentenceClasses(sentenceClasses) {
 
     // Return sentences to default state
     for (var i = 0; i < sentences.length; i++) {
-        
         // Remove existing sentiment class
         stripSentence(sentences[i]);
 

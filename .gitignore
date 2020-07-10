@@ -3,3 +3,5 @@
 *.ipynb_checkpoints
 *.pyc
 *.json
+
+testing-output.txt

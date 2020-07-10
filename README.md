@@ -1,11 +1,14 @@
 # troogl - a new way to read the news
 
-Screenshot
+![](demo.gif)
 
 ### Features
 
-Feature list
+- Highlight sentences based on sentiment
+- View sentiment from perspective of people and organizations mentioned within the article
+- View interactive charts of article sentiment from all perspectives
+- See summary of article
 
 ### Download
 
-Chrome Extension - link
+Chrome Web Store: here (add link)

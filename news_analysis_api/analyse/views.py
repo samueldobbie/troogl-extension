@@ -217,24 +217,6 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
                 'sentence_class_value': class_value_options[1]
             })
 
-    '''
-    with open('abc.txt', 'w') as f:
-        for entity in response.entities:
-            f.write('entity.name: ' + entity.name + '\n')
-            f.write('entity.type: ' + enums.Entity.Type(entity.type).name + '\n')
-            f.write('entity.sentiment.score: ' + str(entity.sentiment.score) + '\n')
-            f.write('entity.sentiment.magnitude: ' + str(entity.sentiment.magnitude) + '\n')
-            f.write('entity.salience: ' + str(entity.salience) + '\n\n')
-
-            for mention in entity.mentions:
-                f.write('\tmention.text.content: ' + mention.text.content + '\n')
-                f.write('\tmention.type: ' + enums.Entity.Type(entity.type).name + '\n')
-                f.write('\tmention.sentiment.score: ' + str(mention.sentiment.score) + '\n')
-                f.write('\tmention.sentiment.magnitude: ' + str(mention.sentiment.magnitude) + '\n\n')
-            
-            f.write('\n\n\n\n')
-    '''
-
     # Get list of all people and organizations (more accurate than GNLP)
     spacy_document = nlp(body)
     spacy_entities = set([
