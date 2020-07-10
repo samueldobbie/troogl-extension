@@ -37,6 +37,7 @@ function prepareSentences(sentences) {
 
     disablePageEditing();
 
+    // Move to top of article
     window.scrollTo(0, 0);
 }
 
@@ -134,6 +135,38 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.boxShadow = '0 0 5px #333';
     dashboardBar.style.padding = '0 2%';
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
+
+    /*
+    dashboardBar.addEventListener('mousedown', function() {
+        document.getElementsByTagName('body')[0].style.userSelect = 'none';
+        startDrag();
+    });
+
+
+    function startDrag() {
+        document.onmouseup = finishDrag;
+    
+        document.onmousemove = function(e) {
+            console.log(dashboardBar.offsetHeight + e.movementY);
+
+            // Move bar if within screen
+            if (dashboardBar.offsetTop + e.movementY >= 0 && dashboardBar.offsetTop + e.movementY <= screen.height) {
+                dashboardBar.style.top = (dashboardBar.offsetTop + e.movementY) + 'px';
+            }
+        }
+    }
+    
+    
+    function finishDrag() {
+        // Re-enable selection of text
+        document.getElementsByTagName('body')[0].style.userSelect = '';
+    
+        // Set events to default
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+    */
+
 
     // Construct dropdown for switching between perspectives
     var perspectiveContainer = document.createElement('span');
@@ -238,26 +271,47 @@ function injectPartialDashboard(sentenceClasses) {
 
 
 function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities) {
-    var fullDashboardContainer = document.createElement('div');
-    fullDashboardContainer.id = 'troogl-full-dashboard-container';
-    fullDashboardContainer.style.position = 'fixed';
-    fullDashboardContainer.style.width = '100%';
-    fullDashboardContainer.style.height = '100%';
-    fullDashboardContainer.style.overflow = 'scroll';
-    fullDashboardContainer.style.backgroundColor = '#f1f1f1';
-    fullDashboardContainer.style.fontSize = '16px';
-    fullDashboardContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
-    fullDashboardContainer.style.display = 'none';
-    fullDashboardContainer.style.padding = '3% 15%';
-    fullDashboardContainer.style.zIndex = 2147483647;
+    var dashboardContainer = document.createElement('div');
+    dashboardContainer.id = 'troogl-full-dashboard-container';
+    dashboardContainer.style.position = 'fixed';
+    dashboardContainer.style.width = '100vw';
+    dashboardContainer.style.height = '100vh';
+    dashboardContainer.style.display = 'none';
+    dashboardContainer.style.zIndex = 2147483647;
 
+    var overlay = document.createElement('div');
+    overlay.id = 'troogl-full-dashboard-overlay';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.backgroundColor = 'black';
+    overlay.style.opacity = 0.55;
+
+    dashboardContainer.appendChild(overlay);
+
+    var contentContainer = document.createElement('div');
+    contentContainer.style.position = 'absolute';
+    contentContainer.style.width = '95vw';
+    contentContainer.style.height = '90vh';
+    contentContainer.style.top = '50%';
+    contentContainer.style.left = '50%';
+    contentContainer.style.transform = 'translate(-50%, -50%)';
+    contentContainer.style.display = 'flex';
+    contentContainer.style.borderRadius = '5px';
+    contentContainer.style.backgroundColor = '#f1f1f1';
+    contentContainer.style.fontSize = '16px';
+    contentContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
+
+    dashboardContainer.appendChild(contentContainer);
+
+    document.body.prepend(dashboardContainer);
+
+    /*
     var returnToArticleButton = document.createElement('span');
     returnToArticleButton.id = 'troogl-return-to-article-button';
     returnToArticleButton.innerText = 'Return to article';
     returnToArticleButton.style.cursor = 'pointer';
     returnToArticleButton.style.display = 'block';
 
-    /*
     var readTimeContainer = document.createElement('p');
     readTimeContainer.style.margin = '2%';
 
@@ -287,7 +341,6 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
 
     readibilityLevelContainer.appendChild(readibilityHeader);
     readibilityLevelContainer.appendChild(readibilityLevelContent);
-    */
 
     var summaryContainer = document.createElement('span');
     summaryContainer.style.margin = '1%';
@@ -418,8 +471,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     fullDashboardContainer.appendChild(summaryContainer);
     fullDashboardContainer.appendChild(positiveTowardsContainer);
     fullDashboardContainer.appendChild(negativeTowardsContainer);
-
-    document.body.prepend(fullDashboardContainer);
+    */
 }
 
 
@@ -432,7 +484,7 @@ function bindDashboardEvents() {
     });
 
     // Enable exiting from full dashboard
-    $('#troogl-return-to-article-button').click(function () {
+    $('#troogl-full-dashboard-overlay').click(function () {
         $('#troogl-full-dashboard-container').fadeOut();
         $('#troogl-partial-dashboard-container').fadeIn();
     });
@@ -492,12 +544,15 @@ function populateSparkLine(sparklineValues) {
         minSpotColor: null,
         maxSpotColor: null
     }).bind('sparklineRegionChange', function(ev) {
+        // https://stackoverflow.com/questions/27046851/browser-back-button-does-not-work-for-anchor-links
+        var originalUrl = location.href;
         setTimeout(function() {
             // Jump to the sentence that is being hovered over in the line graph
             var sparkline = ev.sparklines[0];
             var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
             if (sentenceIndex != null) {
                 location.hash = '#troogl-sentence-' + sentenceIndex;
+                history.replaceState(null, null, originalUrl);
             }
         }, 150);
     });

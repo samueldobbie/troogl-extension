@@ -188,29 +188,26 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
 
     document = {'content': body, 'type': enums.Document.Type.PLAIN_TEXT, 'language': 'en'}
     response = client.analyze_entity_sentiment(document, encoding_type=enums.EncodingType.UTF8)
-
-    sentence_data = {}
-    positive_entities = {}
-    negative_entities = {}
     
     class_string_options = ['troogl-negative', 'troogl-positive']
     class_title_options = ['Negative', 'Positive']
     class_value_options = [-1, 1]
 
     # Predict sentiments from default view
-    sentence_data[default_entity_name] = []
+    default_perspective_data = {}
+    default_perspective_data[default_entity_name] = []
     for sentence_index in range(len(sentences)):
         sentence_sentiment = sentiment_analyzer.polarity_scores(sentences[sentence_index])
 
         if -sentence_sentiment['neg'] < NEGATIVE_SENTIMENT_THRESHOLD:
-            sentence_data[default_entity_name].append({
+            default_perspective_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[0],
                 'sentence_class_title': class_title_options[0],
                 'sentence_class_value': class_value_options[0]
             })
         elif sentence_sentiment['pos'] > POSITIVE_SENTIMENT_THRESHOLD:
-            sentence_data[default_entity_name].append({
+            default_perspective_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': class_string_options[1],
                 'sentence_class_title': class_title_options[1],
@@ -225,6 +222,9 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
     ])
 
     # Predict sentiments from entity-level
+    positive_entities = {}
+    negative_entities = {}
+    entity_perspective_data = {}
     for entity in response.entities:
         entity_name = entity.name.strip().title()
         entity_type = enums.Entity.Type(entity.type).name
@@ -242,8 +242,8 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
                 'type': entity_type
             }
 
-        if entity_name not in sentence_data:
-            sentence_data[entity_name] = []
+        if entity_name not in entity_perspective_data:
+            entity_perspective_data[entity_name] = []
 
         for mention in entity.mentions:
             sentence_class_string = ''
@@ -265,7 +265,7 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
                         sentence_index = offset_index
                         break
 
-                sentence_data[entity_name].append({
+                entity_perspective_data[entity_name].append({
                     'sentence_index': sentence_index,
                     'sentence_class_string': sentence_class_string,
                     'sentence_class_title': sentence_class_title,
@@ -273,15 +273,19 @@ def predict_sentence_sentiment_classes(body, sentences, sentence_offsets, defaul
                 })
 
     # Restrict perspectives to those that include at least one non-neutral sentence
-    updated_sentence_data = {}
-    for key, value in sentence_data.items():
-        if len(value) > 0 or key == default_entity_name:
-            updated_sentence_data[key] = value
+    updated_entity_perspective_data = {}
+    for key, value in entity_perspective_data.items():
+        if len(value) > 0:
+            updated_entity_perspective_data[key] = value
 
     # Sort perspectives by count of non-neutral sentences
-    # sorted(updated_sentence_data, key=lambda k: len(updated_sentence_data[k]), reverse=True)
+    sorted(updated_entity_perspective_data, key=lambda k: len(updated_entity_perspective_data[k]), reverse=True)
 
-    return updated_sentence_data, positive_entities, negative_entities
+    # Join default and entity perspectives
+    all_perspective_data = default_perspective_data.copy()
+    all_perspective_data.update(updated_entity_perspective_data)
+
+    return all_perspective_data, positive_entities, negative_entities
 
 newspaper_configuration = newspaper.Config()
 user_agent_generator = fake_useragent.UserAgent()
