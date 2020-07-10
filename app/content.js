@@ -122,7 +122,7 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardContainer.style.position = 'relative';
     dashboardContainer.style.width = '100%';
     dashboardContainer.style.height = '12.5vh';
-    dashboardContainer.style.zIndex = 2147483647;
+    dashboardContainer.style.zIndex = 2147483646;
 
     var dashboardBar = document.createElement('div');
     dashboardBar.style.position = 'fixed';
@@ -271,6 +271,7 @@ function injectPartialDashboard(sentenceClasses) {
 
 
 function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, positiveEntities, negativeEntities) {
+    // Container for all dashboard items
     var dashboardContainer = document.createElement('div');
     dashboardContainer.id = 'troogl-full-dashboard-container';
     dashboardContainer.style.position = 'fixed';
@@ -279,6 +280,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
     dashboardContainer.style.display = 'none';
     dashboardContainer.style.zIndex = 2147483647;
 
+    // Overlay that can be clicked to exit complete dashboard
     var overlay = document.createElement('div');
     overlay.id = 'troogl-full-dashboard-overlay';
     overlay.style.width = '100vw';
@@ -288,101 +290,115 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
 
     dashboardContainer.appendChild(overlay);
 
+    // Container for content-related dashboard items
     var contentContainer = document.createElement('div');
     contentContainer.style.position = 'absolute';
-    contentContainer.style.width = '95vw';
-    contentContainer.style.height = '90vh';
+    contentContainer.style.display = 'flex';
+    contentContainer.style.flexWrap = 'wrap';
+    contentContainer.style.width = '80vw';
     contentContainer.style.top = '50%';
     contentContainer.style.left = '50%';
+    contentContainer.style.overflowY = 'scroll';
     contentContainer.style.transform = 'translate(-50%, -50%)';
-    contentContainer.style.display = 'flex';
     contentContainer.style.borderRadius = '5px';
     contentContainer.style.backgroundColor = '#f1f1f1';
     contentContainer.style.fontSize = '16px';
     contentContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
-    dashboardContainer.appendChild(contentContainer);
+    // Container for read time item
+    var readTimeContainer = document.createElement('div');
+    readTimeContainer.style.flexGrow = '1';
+    readTimeContainer.style.margin = '2.5% 0.5% 0.5% 2.5%';
+    readTimeContainer.style.backgroundColor = 'white';
+    readTimeContainer.style.borderRadius = '5px';
+    readTimeContainer.style.padding = '1%';
+    readTimeContainer.style.boxShadow = '0 0 2px #333';
 
-    document.body.prepend(dashboardContainer);
-
-    /*
-    var returnToArticleButton = document.createElement('span');
-    returnToArticleButton.id = 'troogl-return-to-article-button';
-    returnToArticleButton.innerText = 'Return to article';
-    returnToArticleButton.style.cursor = 'pointer';
-    returnToArticleButton.style.display = 'block';
-
-    var readTimeContainer = document.createElement('p');
-    readTimeContainer.style.margin = '2%';
-
-    var readTimeHeader = document.createElement('p');
+    var readTimeHeader = document.createElement('span');
     readTimeHeader.innerText = 'Read Time';
-    readTimeHeader.style.color  = '#5555FF';
+    readTimeHeader.style.color = '#5555FF';
     readTimeHeader.style.fontWeight = 'bold';
-    
-    var readTimeContent = document.createElement('p');
+    readTimeHeader.style.marginBottom = '0.5%';
+    readTimeHeader.style.display = 'block';
+
+    var readTimeContent = document.createElement('span');
     readTimeContent.innerText = readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs';
-    readTimeContent.style.margin = '2%';
 
     readTimeContainer.appendChild(readTimeHeader);
     readTimeContainer.appendChild(readTimeContent);
+    contentContainer.appendChild(readTimeContainer);
 
-    var readibilityLevelContainer = document.createElement('p');
-    readibilityLevelContainer.style.margin = '2%';
+    // Container for readibility item
+    var readibilityContainer = document.createElement('div');
+    readibilityContainer.style.flexGrow = '1';
+    readibilityContainer.style.margin = '2.5% 2.5% 0.5% 0.5%';
+    readibilityContainer.style.backgroundColor = 'white';
+    readibilityContainer.style.borderRadius = '5px';
+    readibilityContainer.style.padding = '1%';
+    readibilityContainer.style.boxShadow = '0 0 2px #333';
 
-    var readibilityHeader = document.createElement('p');
+    var readibilityHeader = document.createElement('span');
     readibilityHeader.innerText = 'Readibility';
-    readibilityHeader.style.color  = '#5555FF';
+    readibilityHeader.style.color = '#5555FF';
     readibilityHeader.style.fontWeight = 'bold';
+    readibilityHeader.style.marginBottom = '0.5%';
+    readibilityHeader.style.display = 'block';
 
-    var readibilityLevelContent = document.createElement('p');
-    readibilityLevelContent.innerText = readibilityLevel;
-    readibilityLevelContent.style.margin = '2%';
+    var readibilityContent = document.createElement('span');
+    readibilityContent.innerText = readibilityLevel;
+    readibilityContent.style.margin = 'auto';
 
-    readibilityLevelContainer.appendChild(readibilityHeader);
-    readibilityLevelContainer.appendChild(readibilityLevelContent);
+    readibilityContainer.appendChild(readibilityHeader);
+    readibilityContainer.appendChild(readibilityContent);
+    contentContainer.appendChild(readibilityContainer);
 
-    var summaryContainer = document.createElement('span');
-    summaryContainer.style.margin = '1%';
+    // Container for summary content item
+    var summaryContainer = document.createElement('div');
+    summaryContainer.style.flexGrow = '2';
+    summaryContainer.style.margin = '0.5% 2.5% 0.5% 2.5%';
+    summaryContainer.style.backgroundColor = 'white';
+    summaryContainer.style.borderRadius = '5px';
+    summaryContainer.style.padding = '1%';
+    summaryContainer.style.boxShadow = '0 0 2px #333';
 
     var summaryHeader = document.createElement('span');
     summaryHeader.innerText = 'TL;DR';
-    summaryHeader.style.color  = '#5555FF';
+    summaryHeader.style.color = '#5555FF';
     summaryHeader.style.fontWeight = 'bold';
+    summaryHeader.style.marginBottom = '0.5%';
     summaryHeader.style.display = 'block';
 
     var summaryContent = document.createElement('ul');
+    summaryContent.style.listStyleType = 'disc'
     for (var i = 0; i < summarySentences.length; i++) {
         var summaryBulletPoint = document.createElement('li');
         summaryBulletPoint.innerText = summarySentences[i];
-        summaryBulletPoint.style.display = 'list-item';
-        summaryBulletPoint.style.listStyleType = 'circle';
-        summaryBulletPoint.style.maxWidth = '50vw';
-        summaryBulletPoint.style.margin = '2%';
+        if (i != (summarySentences.length - 1)) {
+            summaryBulletPoint.style.marginBottom = '1.5%';
+        }
         summaryContent.appendChild(summaryBulletPoint);
     }
-
     summaryContainer.appendChild(summaryHeader);
     summaryContainer.appendChild(summaryContent);
+    contentContainer.appendChild(summaryContainer);
 
-    var positiveTowardsContainer = document.createElement('span');
-    positiveTowardsContainer.style.margin = '1%';
+    // Container for positive entities
+    var positiveEntitiesContainer = document.createElement('div');
+    positiveEntitiesContainer.style.flexGrow = '1';
+    positiveEntitiesContainer.style.margin = '0.5% 0.5% 2.5% 2.5%';
+    positiveEntitiesContainer.style.backgroundColor = 'white';
+    positiveEntitiesContainer.style.borderRadius = '5px';
+    positiveEntitiesContainer.style.padding = '1%';
+    positiveEntitiesContainer.style.boxShadow = '0 0 2px #333';
 
-    var positiveTowardsHeader = document.createElement('span');
-    positiveTowardsHeader.innerText = 'Positive Towards';
-    positiveTowardsHeader.style.color  = '#5555FF';
-    positiveTowardsHeader.style.fontWeight = 'bold';
-    positiveTowardsHeader.style.display = 'block';
+    var positiveEntitiesHeader = document.createElement('span');
+    positiveEntitiesHeader.innerText = 'Positive Towards';
+    positiveEntitiesHeader.style.color = '#5555FF';
+    positiveEntitiesHeader.style.fontWeight = 'bold';
+    positiveEntitiesHeader.style.marginBottom = '0.5%';
+    positiveEntitiesHeader.style.display = 'block';
 
-    var positiveTowardsContent = document.createElement('span');
-    positiveTowardsContent.style.margin = '1%';
-    positiveTowardsContent.style.maxWidth = '50vw';
-    positiveTowardsContent.style.display = 'block';
-
-    if (Object.keys(positiveEntities).length == 0) {
-        positiveTowardsContent.innerText = 'Article is not overly positive towards any entities.';
-    }
-
+    var positiveEntitiesContent = document.createElement('span');
     for (var key in positiveEntities) {
         var positiveEntity = document.createElement('span');
         positiveEntity.innerText = key;
@@ -408,38 +424,36 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
         } else if (positiveEntities[key]['type'] == 'CONSUMER_GOOD') {
             positiveEntity.style.backgroundColor = '#c2d1ff';
         }
-
-        positiveTowardsContent.appendChild(positiveEntity);
+        positiveEntitiesContent.appendChild(positiveEntity);
     }
+    positiveEntitiesContainer.appendChild(positiveEntitiesHeader);
+    positiveEntitiesContainer.appendChild(positiveEntitiesContent);
+    contentContainer.appendChild(positiveEntitiesContainer);
 
-    positiveTowardsContainer.appendChild(positiveTowardsHeader);
-    positiveTowardsContainer.appendChild(positiveTowardsContent);
+    // Container for negative entities
+    var negativeEntitiesContainer = document.createElement('div');
+    negativeEntitiesContainer.style.flexGrow = '1';
+    negativeEntitiesContainer.style.margin = '0.5% 2.5% 2.5% 0.5%';
+    negativeEntitiesContainer.style.backgroundColor = 'white';
+    negativeEntitiesContainer.style.borderRadius = '5px';
+    negativeEntitiesContainer.style.padding = '1%';
+    negativeEntitiesContainer.style.boxShadow = '0 0 2px #333';
 
-    var negativeTowardsContainer = document.createElement('span');
-    negativeTowardsContainer.style.margin = '1%';
+    var negativeEntitiesHeader = document.createElement('span');
+    negativeEntitiesHeader.innerText = 'Negative Towards';
+    negativeEntitiesHeader.style.color = '#5555FF';
+    negativeEntitiesHeader.style.fontWeight = 'bold';
+    negativeEntitiesHeader.style.marginBottom = '0.5%';
+    negativeEntitiesHeader.style.display = 'block';
 
-    var negativeTowardsHeader = document.createElement('span');
-    negativeTowardsHeader.innerText = 'Negative Towards';
-    negativeTowardsHeader.style.color  = '#5555FF';
-    negativeTowardsHeader.style.fontWeight = 'bold';
-    negativeTowardsHeader.style.display = 'block';
-
-    var negativeTowardsContent = document.createElement('span');
-    negativeTowardsContent.style.margin = '1%';
-    negativeTowardsContent.style.maxWidth = '50vw';
-    negativeTowardsContent.style.display = 'block';
-
-    if (Object.keys(negativeEntities).length == 0) {
-        negativeTowardsContent.innerText = 'Article is not overly negative towards any entities.';
-    }
-
+    var negativeEntitiesContent = document.createElement('span');
     for (var key in negativeEntities) {
         var negativeEntity = document.createElement('span');
         negativeEntity.innerText = key;
         negativeEntity.style.fontWeight = 'bold';
-        negativeEntity.style.display = 'inline-block';
         negativeEntity.style.padding = '5px';
         negativeEntity.style.borderRadius = '5px';
+        negativeEntity.style.display = 'inline-block';
         negativeEntity.style.margin = '3px 5px';
         negativeEntity.style.color = '#333';
 
@@ -458,20 +472,15 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
         } else if (negativeEntities[key]['type'] == 'CONSUMER_GOOD') {
             negativeEntity.style.backgroundColor = '#c2d1ff';
         }
-
-        negativeTowardsContent.appendChild(negativeEntity);
+        negativeEntitiesContent.appendChild(negativeEntity);
     }
+    negativeEntitiesContainer.appendChild(negativeEntitiesHeader);
+    negativeEntitiesContainer.appendChild(negativeEntitiesContent);
+    contentContainer.appendChild(negativeEntitiesContainer);
 
-    negativeTowardsContainer.appendChild(negativeTowardsHeader);
-    negativeTowardsContainer.appendChild(negativeTowardsContent);
-
-    fullDashboardContainer.appendChild(returnToArticleButton);
-    // fullDashboardContainer.appendChild(readTimeContainer);
-    // fullDashboardContainer.appendChild(readibilityLevelContainer);
-    fullDashboardContainer.appendChild(summaryContainer);
-    fullDashboardContainer.appendChild(positiveTowardsContainer);
-    fullDashboardContainer.appendChild(negativeTowardsContainer);
-    */
+    // Inject dashboard into page
+    dashboardContainer.appendChild(contentContainer);
+    document.body.prepend(dashboardContainer);
 }
 
 
@@ -479,14 +488,12 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, p
 function bindDashboardEvents() {
     // Enable opening of full dashboard
     $('#troogl-full-dashboard-button').click(function () {
-        $('#troogl-partial-dashboard-container').fadeOut();
         $('#troogl-full-dashboard-container').fadeIn();
     });
 
     // Enable exiting from full dashboard
     $('#troogl-full-dashboard-overlay').click(function () {
         $('#troogl-full-dashboard-container').fadeOut();
-        $('#troogl-partial-dashboard-container').fadeIn();
     });
 
     // Enable collapsing of dashboard bar
