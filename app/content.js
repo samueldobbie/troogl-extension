@@ -136,20 +136,31 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.padding = '0 2%';
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
-    /*
-    dashboardBar.addEventListener('mousedown', function() {
+    var dragBarButton = document.createElement('span');
+    dragBarButton.id = 'troogl-draggable-button';
+    dragBarButton.innerText = '. .\n. .\n. .';
+    dragBarButton.style.fontSize = '20px';
+    dragBarButton.style.fontWeight = 'bold';
+    dragBarButton.style.color = '#2a2abd';
+    dragBarButton.style.cursor = 'grab';
+    dragBarButton.style.lineHeight = '15px';
+    dragBarButton.style.marginRight = '2.5%';
+
+    // Enable bar to be repositioned
+    dragBarButton.addEventListener('mousedown', function() {
+        dragBarButton.style.cursor = 'grabbing';
+
+        // Disable selection of text while dragging
         document.getElementsByTagName('body')[0].style.userSelect = 'none';
         startDrag();
     });
 
-
     function startDrag() {
+        // Stop dragging
         document.onmouseup = finishDrag;
-    
-        document.onmousemove = function(e) {
-            console.log(dashboardBar.offsetHeight + e.movementY);
 
-            // Move bar if within screen
+        document.onmousemove = function(e) {
+            // Move bar within screen view
             if (dashboardBar.offsetTop + e.movementY >= 0 && dashboardBar.offsetTop + e.movementY <= screen.height) {
                 dashboardBar.style.top = (dashboardBar.offsetTop + e.movementY) + 'px';
             }
@@ -158,14 +169,17 @@ function injectPartialDashboard(sentenceClasses) {
     
     
     function finishDrag() {
+        dragBarButton.style.cursor = 'grab';
+
         // Re-enable selection of text
         document.getElementsByTagName('body')[0].style.userSelect = '';
     
-        // Set events to default
+        // Set events to default state
         document.onmouseup = null;
         document.onmousemove = null;
     }
-    */
+    
+    dashboardBar.appendChild(dragBarButton);
 
     // Construct dropdown for switching between perspectives
     var perspectiveContainer = document.createElement('span');
@@ -663,10 +677,12 @@ $(window).resize(function() {
     if (mediaQuery.matches) {
         document.getElementById('troogl-graph-container').style.display = 'none';
         document.getElementById('troogl-option-container').style.display = 'none';
+        document.getElementById('troogl-draggable-button').style.display = 'none';
     }
     else {
         document.getElementById('troogl-graph-container').style.display = '';
         document.getElementById('troogl-option-container').style.display = '';
+        document.getElementById('troogl-draggable-button').style.display = '';
     }
 
     // Resize graphs
