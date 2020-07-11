@@ -167,7 +167,6 @@ function injectPartialDashboard(sentenceClasses) {
     }
     */
 
-
     // Construct dropdown for switching between perspectives
     var perspectiveContainer = document.createElement('span');
     perspectiveContainer.style.flexGrow = 1;
@@ -297,7 +296,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     contentContainer.style.width = '80vw';
     contentContainer.style.top = '50%';
     contentContainer.style.left = '50%';
-    contentContainer.style.overflowY = 'scroll';
+    contentContainer.style.overflowY = 'auto';
     contentContainer.style.transform = 'translate(-50%, -50%)';
     contentContainer.style.borderRadius = '5px';
     contentContainer.style.backgroundColor = '#f1f1f1';
@@ -350,7 +349,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     readibilityContainer.appendChild(readibilityContent);
     contentContainer.appendChild(readibilityContainer);
 
-    // Container for test item
+    // Container for subjectivity item
     var subjectivityContainer = document.createElement('div');
     subjectivityContainer.style.flexGrow = '1';
     subjectivityContainer.style.margin = '2.5% 2.5% 0.5% 0.5%';
@@ -373,7 +372,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     subjectivityContainer.appendChild(subjectivityContent);
     contentContainer.appendChild(subjectivityContainer);
 
-    // Container for summary content item
+    // Container for summary item
     var summaryContainer = document.createElement('div');
     summaryContainer.style.flexGrow = '2';
     summaryContainer.style.margin = '0.5% 2.5% 0.5% 2.5%';
@@ -407,7 +406,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     // Container for positive entities
     var positiveEntitiesContainer = document.createElement('div');
     positiveEntitiesContainer.style.flexGrow = '1';
-    positiveEntitiesContainer.style.margin = '0.5% 0.5% 2.5% 2.5%';
+    positiveEntitiesContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
     positiveEntitiesContainer.style.backgroundColor = 'white';
     positiveEntitiesContainer.style.borderRadius = '5px';
     positiveEntitiesContainer.style.padding = '1%';
@@ -460,7 +459,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     // Container for negative entities
     var negativeEntitiesContainer = document.createElement('div');
     negativeEntitiesContainer.style.flexGrow = '1';
-    negativeEntitiesContainer.style.margin = '0.5% 2.5% 2.5% 0.5%';
+    negativeEntitiesContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
     negativeEntitiesContainer.style.backgroundColor = 'white';
     negativeEntitiesContainer.style.borderRadius = '5px';
     negativeEntitiesContainer.style.padding = '1%';
@@ -509,6 +508,40 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     negativeEntitiesContainer.appendChild(negativeEntitiesHeader);
     negativeEntitiesContainer.appendChild(negativeEntitiesContent);
     contentContainer.appendChild(negativeEntitiesContainer);
+
+    // Newline item
+    var newline = document.createElement('div');
+    newline.style.flexBasis = '100%';
+    newline.style.height = 0;
+    
+    contentContainer.appendChild(newline);
+
+    // Container for feedback item
+    var feedbackContainer = document.createElement('div');
+    feedbackContainer.style.flexGrow = '1';
+    feedbackContainer.style.margin = '0.5% 0.5% 2.5% 2.5%';
+    feedbackContainer.style.borderRadius = '5px';
+    feedbackContainer.style.padding = '1%';
+
+    var feedbackContent = document.createElement('span');
+    feedbackContent.innerHTML = 'Help us improve! <a href="https://form.jotformeu.com/201655282823354" target="_blank" style="color: #5555FF;">Share your feedback.</a>';
+
+    feedbackContainer.appendChild(feedbackContent);
+    contentContainer.appendChild(feedbackContainer);
+
+    // Container for logo item
+    var logoContainer = document.createElement('div');
+    logoContainer.style.flexGrow = '1';
+    logoContainer.style.margin = '0.5% 2.5% 2.5% 0.5%';
+    logoContainer.style.textAlign = 'right';
+    logoContainer.style.borderRadius = '5px';
+    logoContainer.style.padding = '1%';
+
+    var logoContent = document.createElement('span');
+    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: #5555FF;">Troogl</a>';
+
+    logoContainer.appendChild(logoContent);
+    contentContainer.appendChild(logoContainer);
 
     // Inject dashboard into page
     dashboardContainer.appendChild(contentContainer);
@@ -584,14 +617,14 @@ function populateSparkLine(sparklineValues) {
         maxSpotColor: null
     }).bind('sparklineRegionChange', function(ev) {
         // https://stackoverflow.com/questions/27046851/browser-back-button-does-not-work-for-anchor-links
-        var originalUrl = location.href;
+        // var originalUrl = location.href;
         setTimeout(function() {
             // Jump to the sentence that is being hovered over in the line graph
             var sparkline = ev.sparklines[0];
             var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
             if (sentenceIndex != null) {
                 location.hash = '#troogl-sentence-' + sentenceIndex;
-                history.replaceState(null, null, originalUrl);
+                // history.replaceState(null, null, originalUrl);
             }
         }, 150);
     });
