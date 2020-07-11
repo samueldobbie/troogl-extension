@@ -406,6 +406,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     // Container for positive entities
     var positiveEntitiesContainer = document.createElement('div');
     positiveEntitiesContainer.style.flexGrow = '1';
+    positiveEntitiesContainer.style.maxWidth = '50%';
     positiveEntitiesContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
     positiveEntitiesContainer.style.backgroundColor = 'white';
     positiveEntitiesContainer.style.borderRadius = '5px';
@@ -459,6 +460,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     // Container for negative entities
     var negativeEntitiesContainer = document.createElement('div');
     negativeEntitiesContainer.style.flexGrow = '1';
+    negativeEntitiesContainer.style.maxWidth = '50%';
     negativeEntitiesContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
     negativeEntitiesContainer.style.backgroundColor = 'white';
     negativeEntitiesContainer.style.borderRadius = '5px';
@@ -520,6 +522,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     var feedbackContainer = document.createElement('div');
     feedbackContainer.style.flexGrow = '1';
     feedbackContainer.style.margin = '0.5% 0.5% 2.5% 2.5%';
+    feedbackContainer.style.fontSize = '13px';
     feedbackContainer.style.borderRadius = '5px';
     feedbackContainer.style.padding = '1%';
 
@@ -533,12 +536,13 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     var logoContainer = document.createElement('div');
     logoContainer.style.flexGrow = '1';
     logoContainer.style.margin = '0.5% 2.5% 2.5% 0.5%';
+    logoContainer.style.fontSize = '13px';
     logoContainer.style.textAlign = 'right';
     logoContainer.style.borderRadius = '5px';
     logoContainer.style.padding = '1%';
 
     var logoContent = document.createElement('span');
-    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: #5555FF;">Troogl</a>';
+    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: #5555FF;">Troogl (beta)</a>';
 
     logoContainer.appendChild(logoContent);
     contentContainer.appendChild(logoContainer);

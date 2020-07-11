@@ -294,10 +294,12 @@ def predict_subjectivity_class(body):
     subjectivity = TextBlob(body).sentiment.subjectivity
     if subjectivity < 0.25:
         return 'Mostly objective'
-    elif subjectivity < 0.66:
-        return 'Somewhat opinionated'
+    elif subjectivity < 0.50:
+        return 'Fairly objective'
+    elif subjectivity < 0.75:
+        return 'Fairly opinionated'
     else:
-        return 'Very opinionated'
+        return 'Mostly opinionated'
 
 
 newspaper_configuration = newspaper.Config()
