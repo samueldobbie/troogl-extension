@@ -131,24 +131,26 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.display = 'flex';
     dashboardBar.style.flexWrap = 'nowrap';
     dashboardBar.style.alignItems = 'center';
-    dashboardBar.style.backgroundColor = '#5555FF';
+    // #5555FF    rgb(83, 51, 237)
+    dashboardBar.style.backgroundColor = 'rgb(83, 51, 237)';
     dashboardBar.style.boxShadow = '0 0 5px #333';
     dashboardBar.style.padding = '0 2%';
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
     var dragButtonContainer = document.createElement('span');
+    dragButtonContainer.id = 'troogl-draggable-container';
     dragButtonContainer.style.flexGrow = 0.33;
     dragButtonContainer.style.marginRight = '1%';
     dragButtonContainer.style.marginBottom = '12px';
 
     var dragButton = document.createElement('span');
-    dragButton.id = 'troogl-draggable-button';
     dragButton.innerText = '. .\n. .\n. .';
     dragButton.style.fontSize = '20px';
     dragButton.style.fontWeight = 'bold';
     dragButton.style.color = '#2a2abd';
     dragButton.style.cursor = 'grab';
     dragButton.style.lineHeight = '15px';
+    dragButton.style.fontWeight = 'bold';
 
     // Enable bar to be repositioned
     dragButton.addEventListener('mousedown', function() {
@@ -211,7 +213,18 @@ function injectPartialDashboard(sentenceClasses) {
         updateGraphs();
     });
 
+    var perspectiveTooltipContainer = document.createElement('div');
+    perspectiveTooltipContainer.classList.add('troogl-tooltip');
+    perspectiveTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var perspectiveTooltip = document.createElement('span');
+    perspectiveTooltip.classList.add('troogl-tooltip-text');
+    perspectiveTooltip.innerText = 'See the article sentiment from different perspectives';
+
+    perspectiveTooltipContainer.appendChild(perspectiveTooltip);
+
     perspectiveContainer.appendChild(perspectiveDropdown);
+    perspectiveContainer.appendChild(perspectiveTooltipContainer);
 
     // Construct graph container
     var graphContainer = document.createElement('span');
@@ -259,7 +272,7 @@ function injectPartialDashboard(sentenceClasses) {
     var expandButton = document.createElement('button');
     expandButton.id = 'troogl-expand-button';
     expandButton.innerText = 'Show Troogl Dashboard';
-    expandButton.style.backgroundColor = '#5555FF';
+    expandButton.style.backgroundColor = 'rgb(83, 51, 237)';
     expandButton.style.cursor = 'pointer';
     expandButton.style.color = 'white';
     expandButton.style.borderBottomLeftRadius = '5px';
@@ -334,7 +347,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
 
     var readTimeHeader = document.createElement('span');
     readTimeHeader.innerText = 'Read Time';
-    readTimeHeader.style.color = '#5555FF';
+    readTimeHeader.style.color = 'rgb(83, 51, 237)';
     readTimeHeader.style.fontWeight = 'bold';
     readTimeHeader.style.marginBottom = '0.5%';
     readTimeHeader.style.display = 'block';
@@ -357,7 +370,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
 
     var readibilityHeader = document.createElement('span');
     readibilityHeader.innerText = 'Readibility';
-    readibilityHeader.style.color = '#5555FF';
+    readibilityHeader.style.color = 'rgb(83, 51, 237)';
     readibilityHeader.style.fontWeight = 'bold';
     readibilityHeader.style.marginBottom = '0.5%';
     readibilityHeader.style.display = 'block';
@@ -380,7 +393,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
 
     var subjectivityHeader = document.createElement('span');
     subjectivityHeader.innerText = 'Subjectivity';
-    subjectivityHeader.style.color = '#5555FF';
+    subjectivityHeader.style.color = 'rgb(83, 51, 237)';
     subjectivityHeader.style.fontWeight = 'bold';
     subjectivityHeader.style.marginBottom = '0.5%';
     subjectivityHeader.style.display = 'block';
@@ -403,7 +416,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
 
     var summaryHeader = document.createElement('span');
     summaryHeader.innerText = 'TL;DR';
-    summaryHeader.style.color = '#5555FF';
+    summaryHeader.style.color = 'rgb(83, 51, 237)';
     summaryHeader.style.fontWeight = 'bold';
     summaryHeader.style.marginBottom = '0.5%';
     summaryHeader.style.display = 'block';
@@ -435,7 +448,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
 
     var positiveEntitiesHeader = document.createElement('span');
     positiveEntitiesHeader.innerText = 'Positive Towards';
-    positiveEntitiesHeader.style.color = '#5555FF';
+    positiveEntitiesHeader.style.color = 'rgb(83, 51, 237)';
     positiveEntitiesHeader.style.fontWeight = 'bold';
     positiveEntitiesHeader.style.marginBottom = '0.5%';
     positiveEntitiesHeader.style.display = 'block';
@@ -489,7 +502,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
 
     var negativeEntitiesHeader = document.createElement('span');
     negativeEntitiesHeader.innerText = 'Negative Towards';
-    negativeEntitiesHeader.style.color = '#5555FF';
+    negativeEntitiesHeader.style.color = 'rgb(83, 51, 237)';
     negativeEntitiesHeader.style.fontWeight = 'bold';
     negativeEntitiesHeader.style.marginBottom = '0.5%';
     negativeEntitiesHeader.style.display = 'block';
@@ -547,7 +560,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     feedbackContainer.style.padding = '1%';
 
     var feedbackContent = document.createElement('span');
-    feedbackContent.innerHTML = 'Help us improve! <a href="https://form.jotformeu.com/201655282823354" target="_blank" style="color: #5555FF;">Share your feedback.</a>';
+    feedbackContent.innerHTML = 'Help us improve! <a href="https://form.jotformeu.com/201655282823354" target="_blank" style="color: rgb(83, 51, 237);">Share your feedback.</a>';
 
     feedbackContainer.appendChild(feedbackContent);
     contentContainer.appendChild(feedbackContainer);
@@ -562,7 +575,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     logoContainer.style.padding = '1%';
 
     var logoContent = document.createElement('span');
-    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: #5555FF;">Troogl (beta)</a>';
+    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: rgb(83, 51, 237);">Troogl (beta)</a>';
 
     logoContainer.appendChild(logoContent);
     contentContainer.appendChild(logoContainer);
@@ -629,7 +642,7 @@ function populateSparkLine(sparklineValues) {
         height: '8vh',
         lineColor: '#e5e5e5',
         highlightSpotColor: '#66FF66',
-        highlightLineColor: '#5555FF',
+        highlightLineColor: 'rgb(83, 51, 237)',
         lineWidth: 4,
         spotRadius: 5,
         chartRangeMin: -1,
@@ -680,12 +693,12 @@ $(window).resize(function() {
     if (mediaQuery.matches) {
         document.getElementById('troogl-graph-container').style.display = 'none';
         document.getElementById('troogl-option-container').style.display = 'none';
-        document.getElementById('troogl-draggable-button').style.display = 'none';
+        document.getElementById('troogl-draggable-container').style.display = 'none';
     }
     else {
         document.getElementById('troogl-graph-container').style.display = '';
         document.getElementById('troogl-option-container').style.display = '';
-        document.getElementById('troogl-draggable-button').style.display = '';
+        document.getElementById('troogl-draggable-container').style.display = '';
     }
 
     // Resize graphs
