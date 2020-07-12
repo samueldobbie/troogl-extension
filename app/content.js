@@ -139,15 +139,17 @@ function injectPartialDashboard(sentenceClasses) {
     var dragBarButton = document.createElement('span');
     dragBarButton.id = 'troogl-draggable-button';
     dragBarButton.innerText = '. .\n. .\n. .';
+    dragBarButton.style.flexGrow = 0.33;
+    dragBarButton.style.marginRight = '1%';
     dragBarButton.style.fontSize = '20px';
     dragBarButton.style.fontWeight = 'bold';
     dragBarButton.style.color = '#2a2abd';
     dragBarButton.style.cursor = 'grab';
     dragBarButton.style.lineHeight = '15px';
-    dragBarButton.style.marginRight = '2.5%';
 
     // Enable bar to be repositioned
     dragBarButton.addEventListener('mousedown', function() {
+        // Change cursor to a closed hand
         dragBarButton.style.cursor = 'grabbing';
 
         // Disable selection of text while dragging
@@ -159,8 +161,8 @@ function injectPartialDashboard(sentenceClasses) {
         // Stop dragging
         document.onmouseup = finishDrag;
 
+        // Reposition bar within screen viewport
         document.onmousemove = function(e) {
-            // Move bar within screen view
             if (dashboardBar.offsetTop + e.movementY >= 0 && dashboardBar.offsetTop + e.movementY <= screen.height) {
                 dashboardBar.style.top = (dashboardBar.offsetTop + e.movementY) + 'px';
             }
@@ -169,6 +171,7 @@ function injectPartialDashboard(sentenceClasses) {
     
     
     function finishDrag() {
+        // Change cursor to an open hand
         dragBarButton.style.cursor = 'grab';
 
         // Re-enable selection of text
@@ -420,7 +423,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     // Container for positive entities
     var positiveEntitiesContainer = document.createElement('div');
     positiveEntitiesContainer.style.flexGrow = '1';
-    positiveEntitiesContainer.style.maxWidth = '50%';
+    positiveEntitiesContainer.style.maxWidth = '45%';
     positiveEntitiesContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
     positiveEntitiesContainer.style.backgroundColor = 'white';
     positiveEntitiesContainer.style.borderRadius = '5px';
@@ -474,7 +477,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     // Container for negative entities
     var negativeEntitiesContainer = document.createElement('div');
     negativeEntitiesContainer.style.flexGrow = '1';
-    negativeEntitiesContainer.style.maxWidth = '50%';
+    negativeEntitiesContainer.style.maxWidth = '45%';
     negativeEntitiesContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
     negativeEntitiesContainer.style.backgroundColor = 'white';
     negativeEntitiesContainer.style.borderRadius = '5px';
