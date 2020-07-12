@@ -145,7 +145,7 @@ function injectPartialDashboard(sentenceClasses) {
 
     var dragButton = document.createElement('span');
     dragButton.innerText = '. .\n. .\n. .';
-    dragButton.style.fontSize = '20px';
+    dragButton.style.fontSize = '25px';
     dragButton.style.fontWeight = 'bold';
     dragButton.style.color = '#2a2abd';
     dragButton.style.cursor = 'grab';
@@ -168,7 +168,7 @@ function injectPartialDashboard(sentenceClasses) {
 
         // Reposition bar within screen viewport
         document.onmousemove = function(e) {
-            if (dashboardBar.offsetTop + e.movementY >= 0 && dashboardBar.offsetTop + e.movementY <= screen.height) {
+            if (dashboardBar.offsetTop + e.movementY >= 0) {
                 dashboardBar.style.top = (dashboardBar.offsetTop + e.movementY) + 'px';
             }
         }
@@ -352,9 +352,19 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     readTimeHeader.style.marginBottom = '0.5%';
     readTimeHeader.style.display = 'block';
 
+    var readTimeTooltipContainer = document.createElement('div');
+    readTimeTooltipContainer.classList.add('troogl-tooltip');
+    readTimeTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var readTimeTooltip = document.createElement('span');
+    readTimeTooltip.classList.add('troogl-tooltip-text');
+    readTimeTooltip.innerText = 'Estimates the time required to read the article';
+
     var readTimeContent = document.createElement('span');
     readTimeContent.innerText = readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs';
 
+    readTimeTooltipContainer.appendChild(readTimeTooltip);
+    readTimeHeader.appendChild(readTimeTooltipContainer);
     readTimeContainer.appendChild(readTimeHeader);
     readTimeContainer.appendChild(readTimeContent);
     contentContainer.appendChild(readTimeContainer);
@@ -375,9 +385,19 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     readibilityHeader.style.marginBottom = '0.5%';
     readibilityHeader.style.display = 'block';
 
+    var readibilityTooltipContainer = document.createElement('div');
+    readibilityTooltipContainer.classList.add('troogl-tooltip');
+    readibilityTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var readibilityTooltip = document.createElement('span');
+    readibilityTooltip.classList.add('troogl-tooltip-text');
+    readibilityTooltip.innerText = 'Gauges the understandibility of the article using the Automated Readibility Index';
+
     var readibilityContent = document.createElement('span');
     readibilityContent.innerText = readibilityLevel;
 
+    readibilityTooltipContainer.appendChild(readibilityTooltip);
+    readibilityHeader.appendChild(readibilityTooltipContainer);
     readibilityContainer.appendChild(readibilityHeader);
     readibilityContainer.appendChild(readibilityContent);
     contentContainer.appendChild(readibilityContainer);
@@ -398,9 +418,19 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     subjectivityHeader.style.marginBottom = '0.5%';
     subjectivityHeader.style.display = 'block';
 
+    var subjectivityTooltipContainer = document.createElement('div');
+    subjectivityTooltipContainer.classList.add('troogl-tooltip');
+    subjectivityTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var subjectivityTooltip = document.createElement('span');
+    subjectivityTooltip.classList.add('troogl-tooltip-text');
+    subjectivityTooltip.innerText = 'Gauges how objective or opinionated the article is (does not correspond with factuality)';
+
     var subjectivityContent = document.createElement('span');
     subjectivityContent.innerText = subjectivity;
 
+    subjectivityTooltipContainer.appendChild(subjectivityTooltip);
+    subjectivityHeader.appendChild(subjectivityTooltipContainer);
     subjectivityContainer.appendChild(subjectivityHeader);
     subjectivityContainer.appendChild(subjectivityContent);
     contentContainer.appendChild(subjectivityContainer);
@@ -421,6 +451,14 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     summaryHeader.style.marginBottom = '0.5%';
     summaryHeader.style.display = 'block';
 
+    var summaryTooltipContainer = document.createElement('div');
+    summaryTooltipContainer.classList.add('troogl-tooltip');
+    summaryTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var summaryTooltip = document.createElement('span');
+    summaryTooltip.classList.add('troogl-tooltip-text');
+    summaryTooltip.innerText = 'Summarizes the article with the three most relevant sentences';
+
     var summaryContent = document.createElement('ul');
     summaryContent.style.listStyleType = 'disc';
     summaryContent.style.margin = '1% 5%';
@@ -432,6 +470,8 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
         }
         summaryContent.appendChild(summaryBulletPoint);
     }
+    summaryTooltipContainer.appendChild(summaryTooltip);
+    summaryHeader.appendChild(summaryTooltipContainer);
     summaryContainer.appendChild(summaryHeader);
     summaryContainer.appendChild(summaryContent);
     contentContainer.appendChild(summaryContainer);
@@ -452,6 +492,14 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     positiveEntitiesHeader.style.fontWeight = 'bold';
     positiveEntitiesHeader.style.marginBottom = '0.5%';
     positiveEntitiesHeader.style.display = 'block';
+
+    var positiveEntitiesTooltipContainer = document.createElement('div');
+    positiveEntitiesTooltipContainer.classList.add('troogl-tooltip');
+    positiveEntitiesTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var positiveEntitiesTooltip = document.createElement('span');
+    positiveEntitiesTooltip.classList.add('troogl-tooltip-text');
+    positiveEntitiesTooltip.innerText = 'Highlights people and organizations that are mentioned in a positive manner';
 
     var positiveEntitiesContent = document.createElement('span');
 
@@ -486,6 +534,8 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
         }
         positiveEntitiesContent.appendChild(positiveEntity);
     }
+    positiveEntitiesTooltipContainer.appendChild(positiveEntitiesTooltip);
+    positiveEntitiesHeader.appendChild(positiveEntitiesTooltipContainer);
     positiveEntitiesContainer.appendChild(positiveEntitiesHeader);
     positiveEntitiesContainer.appendChild(positiveEntitiesContent);
     contentContainer.appendChild(positiveEntitiesContainer);
@@ -506,6 +556,14 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     negativeEntitiesHeader.style.fontWeight = 'bold';
     negativeEntitiesHeader.style.marginBottom = '0.5%';
     negativeEntitiesHeader.style.display = 'block';
+
+    var negativeEntitiesTooltipContainer = document.createElement('div');
+    negativeEntitiesTooltipContainer.classList.add('troogl-tooltip');
+    negativeEntitiesTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var negativeEntitiesTooltip = document.createElement('span');
+    negativeEntitiesTooltip.classList.add('troogl-tooltip-text');
+    negativeEntitiesTooltip.innerText = 'Highlights people and organizations that are mentioned in a negative manner';
 
     var negativeEntitiesContent = document.createElement('span');
 
@@ -540,6 +598,8 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
         }
         negativeEntitiesContent.appendChild(negativeEntity);
     }
+    negativeEntitiesTooltipContainer.appendChild(negativeEntitiesTooltip);
+    negativeEntitiesHeader.appendChild(negativeEntitiesTooltipContainer);
     negativeEntitiesContainer.appendChild(negativeEntitiesHeader);
     negativeEntitiesContainer.appendChild(negativeEntitiesContent);
     contentContainer.appendChild(negativeEntitiesContainer);
@@ -671,7 +731,7 @@ function populateSparkLine(sparklineValues) {
 
 
 function populatePiechart(piechartValues) {
-    $("#troogl-piechart").sparkline(piechartValues, {
+    $('#troogl-piechart').sparkline(piechartValues, {
         type: 'pie',
         width: '8vh',
         height: '8vh',
