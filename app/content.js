@@ -14,7 +14,7 @@ function prepareSentences(sentences) {
 
         // Construct sentence anchor tag
         var anchorTag = document.createElement('a');
-        anchorTag.name = 'troogl-sentence-' + i;
+        anchorTag.id = 'troogl-sentence-' + i;
 
         // Add anchor tag to sentece
         sentenceContainer.appendChild(anchorTag);
@@ -136,21 +136,24 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.padding = '0 2%';
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
-    var dragBarButton = document.createElement('span');
-    dragBarButton.id = 'troogl-draggable-button';
-    dragBarButton.innerText = '. .\n. .\n. .';
-    dragBarButton.style.flexGrow = 0.33;
-    dragBarButton.style.marginRight = '1%';
-    dragBarButton.style.fontSize = '20px';
-    dragBarButton.style.fontWeight = 'bold';
-    dragBarButton.style.color = '#2a2abd';
-    dragBarButton.style.cursor = 'grab';
-    dragBarButton.style.lineHeight = '15px';
+    var dragButtonContainer = document.createElement('span');
+    dragButtonContainer.style.flexGrow = 0.33;
+    dragButtonContainer.style.marginRight = '1%';
+    dragButtonContainer.style.marginBottom = '12px';
+
+    var dragButton = document.createElement('span');
+    dragButton.id = 'troogl-draggable-button';
+    dragButton.innerText = '. .\n. .\n. .';
+    dragButton.style.fontSize = '20px';
+    dragButton.style.fontWeight = 'bold';
+    dragButton.style.color = '#2a2abd';
+    dragButton.style.cursor = 'grab';
+    dragButton.style.lineHeight = '15px';
 
     // Enable bar to be repositioned
-    dragBarButton.addEventListener('mousedown', function() {
+    dragButton.addEventListener('mousedown', function() {
         // Change cursor to a closed hand
-        dragBarButton.style.cursor = 'grabbing';
+        dragButton.style.cursor = 'grabbing';
 
         // Disable selection of text while dragging
         document.getElementsByTagName('body')[0].style.userSelect = 'none';
@@ -169,10 +172,9 @@ function injectPartialDashboard(sentenceClasses) {
         }
     }
     
-    
     function finishDrag() {
         // Change cursor to an open hand
-        dragBarButton.style.cursor = 'grab';
+        dragButton.style.cursor = 'grab';
 
         // Re-enable selection of text
         document.getElementsByTagName('body')[0].style.userSelect = '';
@@ -182,7 +184,8 @@ function injectPartialDashboard(sentenceClasses) {
         document.onmousemove = null;
     }
     
-    dashboardBar.appendChild(dragBarButton);
+    dragButtonContainer.appendChild(dragButton)
+    dashboardBar.appendChild(dragButtonContainer);
 
     // Construct dropdown for switching between perspectives
     var perspectiveContainer = document.createElement('span');
@@ -235,15 +238,15 @@ function injectPartialDashboard(sentenceClasses) {
 
     var fullDashboardbutton = document.createElement('span');
     fullDashboardbutton.id = 'troogl-full-dashboard-button';
-    fullDashboardbutton.innerText = 'View Full Dashboard';
-    fullDashboardbutton.style.backgroundColor = 'white';
-    fullDashboardbutton.style.color = '#333';
+    fullDashboardbutton.innerText = 'Full Dashboard';
+    fullDashboardbutton.style.backgroundColor = '#2a2abd';
+    fullDashboardbutton.style.color = 'white';
     fullDashboardbutton.style.padding = '5px';
     fullDashboardbutton.style.borderRadius = '5px';
 
     var hideButton = document.createElement('span');
     hideButton.id = 'troogl-collapse-button';
-    hideButton.innerText = 'Collapse';
+    hideButton.innerText = 'Hide';
     hideButton.style.color = 'white';
     hideButton.style.backgroundColor = '#2a2abd';
     hideButton.style.padding = '5px';
@@ -637,15 +640,12 @@ function populateSparkLine(sparklineValues) {
         minSpotColor: null,
         maxSpotColor: null
     }).bind('sparklineRegionChange', function(ev) {
-        // https://stackoverflow.com/questions/27046851/browser-back-button-does-not-work-for-anchor-links
-        // var originalUrl = location.href;
+        // Jump to the sentence that is being hovered over in the line graph
         setTimeout(function() {
-            // Jump to the sentence that is being hovered over in the line graph
             var sparkline = ev.sparklines[0];
             var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
             if (sentenceIndex != null) {
-                location.hash = '#troogl-sentence-' + sentenceIndex;
-                // history.replaceState(null, null, originalUrl);
+                document.getElementById('troogl-sentence-' + sentenceIndex).scrollIntoView(true);
             }
         }, 150);
     });
