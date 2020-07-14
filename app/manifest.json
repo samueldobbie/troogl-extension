@@ -21,7 +21,8 @@
             "matches": ["<all_urls>"],
             "js": [
                 "third-party/jquery-3.5.1.min.js",
-                "third-party/jquery.sparkline.js"
+                "third-party/jquery.sparkline.js",
+                "third-party/jquery-ui.min.js"
             ]
         }
     ],

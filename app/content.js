@@ -138,12 +138,12 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
     var dragButtonContainer = document.createElement('span');
-    dragButtonContainer.id = 'troogl-draggable-container';
     dragButtonContainer.style.flexGrow = 0.33;
     dragButtonContainer.style.marginRight = '1%';
     dragButtonContainer.style.marginBottom = '12px';
 
     var dragButton = document.createElement('span');
+    dragButton.id = 'troogl-draggable-button';
     dragButton.innerText = '. .\n. .\n. .';
     dragButton.style.fontSize = '25px';
     dragButton.style.fontWeight = 'bold';
@@ -152,6 +152,7 @@ function injectPartialDashboard(sentenceClasses) {
     dragButton.style.lineHeight = '15px';
     dragButton.style.fontWeight = 'bold';
 
+    /*
     // Enable bar to be repositioned
     dragButton.addEventListener('mousedown', function() {
         // Change cursor to a closed hand
@@ -185,6 +186,7 @@ function injectPartialDashboard(sentenceClasses) {
         document.onmouseup = null;
         document.onmousemove = null;
     }
+    */
     
     dragButtonContainer.appendChild(dragButton)
     dashboardBar.appendChild(dragButtonContainer);
@@ -298,6 +300,14 @@ function injectPartialDashboard(sentenceClasses) {
     // Inject dashboard into page
     document.body.prepend(expandButton);
     document.body.prepend(dashboardContainer);
+
+    $('#troogl-partial-dashboard-container').draggable({
+        handle: '#troogl-draggable-button',
+        containment: 'window',
+        cursor: 'grabbing',
+        axis: 'y',
+        scroll: false
+    });
 }
 
 

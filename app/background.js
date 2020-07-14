@@ -16,17 +16,21 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
 
             // Construct URL for API query
             var queryUrl = apiUrl + tabUrl;
-            
+
             // Send API query
             var request = new XMLHttpRequest();
             request.open('GET', queryUrl, true);
             request.send();
-            
+
             // Pass API response data to content script
             request.onload = function() {
-                chrome.tabs.executeScript(tabId, {code: 'var response = ' + JSON.stringify(request.responseText)}, function() {
-                    chrome.tabs.executeScript(tabId, {file: 'content.js'});
-                });
+                if (request.responseText != 'None') {
+                    chrome.tabs.executeScript(tabId, {code: 'var response = ' + JSON.stringify(request.responseText)}, function() {
+                        chrome.tabs.executeScript(tabId, {file: 'content.js'});
+                    });
+                } else {
+                    chrome.tabs.executeScript(tabId, {file: 'parse-failure.js'});
+                }
             }
         }
     });

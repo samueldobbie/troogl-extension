@@ -32,6 +32,10 @@ def analyse_article(request, url):
     # Extract core article data from specified url
     article_data = extract_article_data_from_url(url)
 
+    # Return empty response if article parsing was unsuccessful
+    if article_data is None:
+        return HttpResponse(None)
+
     # Define default entity name
     article_data['default_entity_name'] = 'Everyday News Reader'
 
@@ -57,9 +61,12 @@ def extract_article_data_from_url(url):
     Extact core data from specified article URL
     '''
 
-    article = newspaper.Article(url=url, config=get_newspaper_configuration())
-    article.download()
-    article.parse()
+    try:
+        article = newspaper.Article(url=url, config=get_newspaper_configuration())
+        article.download()
+        article.parse()
+    except:
+        return None
 
     sentences = get_article_sentences(article.text)
     sentences.insert(0, article.title)
