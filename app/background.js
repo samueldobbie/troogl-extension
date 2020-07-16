@@ -1,4 +1,4 @@
-var apiUrl = 'http://127.0.0.1:8000/analyse/';
+var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
 
 chrome.browserAction.onClicked.addListener(function(activeTab) {
     // Get id and url of active tab
@@ -15,12 +15,11 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
             chrome.tabs.executeScript(tabId, {file: 'loader.js'});
 
             // Construct URL for API query
-            var queryUrl = apiUrl + tabUrl;
+            var queryUrl = apiUrl + encodeURIComponent(tabUrl);
 
-            // Send API query
+            // Construct API query
             var request = new XMLHttpRequest();
             request.open('GET', queryUrl, true);
-            request.send();
 
             // Pass API response data to content script
             request.onload = function() {
@@ -32,6 +31,9 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
                     chrome.tabs.executeScript(tabId, {file: 'parse-failure.js'});
                 }
             }
+
+            // Send API query
+            request.send();
         }
     });
 });

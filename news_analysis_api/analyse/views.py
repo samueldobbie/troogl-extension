@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 
 import math
-import random
 
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
@@ -23,11 +22,13 @@ import json
 import newspaper
 import spacy
 
-def analyse_article(request, url):
+def analyse_article(request):
     '''
     Analyse specified article and return data
     to be displayed by the troogl extension
     '''
+
+    url = request.GET['url']
 
     # Extract core article data from specified url
     article_data = extract_article_data_from_url(url)
