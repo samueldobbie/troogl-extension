@@ -118,13 +118,13 @@ function insertDashboard(sentenceClasses, summarySentences, readTime, readibilit
 
 function injectPartialDashboard(sentenceClasses) {
     var dashboardContainer = document.createElement('div');
-    dashboardContainer.id = 'troogl-partial-dashboard-container';
     dashboardContainer.style.position = 'relative';
     dashboardContainer.style.width = '100%';
     dashboardContainer.style.height = '12.5vh';
     dashboardContainer.style.zIndex = 2147483646;
 
     var dashboardBar = document.createElement('div');
+    dashboardBar.id = 'troogl-partial-dashboard-container';
     dashboardBar.style.position = 'fixed';
     dashboardBar.style.width = '100%';
     dashboardBar.style.height = '12.5vh';
@@ -339,7 +339,6 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     contentContainer.style.width = '80vw';
     contentContainer.style.top = '50%';
     contentContainer.style.left = '50%';
-    contentContainer.style.overflowY = 'auto';
     contentContainer.style.transform = 'translate(-50%, -50%)';
     contentContainer.style.borderRadius = '5px';
     contentContainer.style.backgroundColor = '#f1f1f1';
