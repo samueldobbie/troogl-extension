@@ -1,4 +1,5 @@
-var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
+//var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
+var apiUrl = 'http://127.0.0.1:8000/analyse/?url=';
 
 chrome.browserAction.onClicked.addListener(function(activeTab) {
     // Get id and url of active tab
