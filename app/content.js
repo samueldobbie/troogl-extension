@@ -126,6 +126,7 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.id = 'troogl-partial-dashboard-bar';
     dashboardBar.style.position = 'fixed';
     dashboardBar.style.width = '100%';
+    //dashboardBar.style.top = '0';
     dashboardBar.style.height = '12.5vh';
     dashboardBar.style.display = 'flex';
     dashboardBar.style.flexWrap = 'nowrap';
@@ -685,6 +686,8 @@ function injectSentencePopup() {
     voteButton.style.padding = '5px';
     voteButton.style.borderRadius = '5px';
     voteButton.style.margin = '0.5%';
+    voteButton.style.border = 'none';
+    voteButton.style.outline = 'none';
 
     var shareButton = document.createElement('button');
     shareButton.innerText = 'Share (coming soon)';
@@ -693,6 +696,8 @@ function injectSentencePopup() {
     shareButton.style.padding = '5px';
     shareButton.style.borderRadius = '5px';
     shareButton.style.margin = '0.5%';
+    shareButton.style.border = 'none';
+    shareButton.style.outline = 'none';
 
     optionContainer.appendChild(voteButton);
     optionContainer.appendChild(shareButton);
