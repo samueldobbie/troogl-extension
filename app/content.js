@@ -137,6 +137,7 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
     var dragButtonContainer = document.createElement('span');
+    dragButtonContainer.id = 'troogl-draggable-container';
     dragButtonContainer.style.flexGrow = 0.33;
     dragButtonContainer.style.marginRight = '1%';
     dragButtonContainer.style.marginBottom = '12px';
@@ -643,7 +644,7 @@ function injectSentencePopup() {
     contentContainer.style.position = 'absolute';
     contentContainer.style.display = 'flex';
     contentContainer.style.flexWrap = 'wrap';
-    contentContainer.style.width = '80vw';
+    contentContainer.style.width = '60vw';
     contentContainer.style.top = '50%';
     contentContainer.style.left = '50%';
     contentContainer.style.transform = 'translate(-50%, -50%)';
@@ -651,6 +652,51 @@ function injectSentencePopup() {
     contentContainer.style.backgroundColor = '#f1f1f1';
     contentContainer.style.fontSize = '16px';
     contentContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
+
+    // Container for sentence item
+    var sentenceContainer = document.createElement('div');
+    sentenceContainer.style.flexGrow = '1';
+    sentenceContainer.style.fontSize = '18px';
+    sentenceContainer.style.borderRadius = '5px';
+    sentenceContainer.style.padding = '1%';
+
+    var sentenceContent = document.createElement('span');
+    sentenceContent.id = 'troogl-sentence-content-item';
+
+    sentenceContainer.appendChild(sentenceContent);
+    contentContainer.appendChild(sentenceContainer);
+
+    // Newline item
+    var newline = document.createElement('div');
+    newline.style.flexBasis = '100%';
+    newline.style.height = 0;
+    
+    contentContainer.appendChild(newline);
+
+    // Container for coming soon item
+    var optionContainer = document.createElement('div');
+    optionContainer.style.flexGrow = '1';
+    optionContainer.style.padding = '1%';
+
+    var voteButton = document.createElement('button');
+    voteButton.innerText = 'Vote (coming soon)';
+    voteButton.style.color = '#333';
+    voteButton.style.backgroundColor = '#ccc';
+    voteButton.style.padding = '5px';
+    voteButton.style.borderRadius = '5px';
+    voteButton.style.margin = '0.5%';
+
+    var shareButton = document.createElement('button');
+    shareButton.innerText = 'Share (coming soon)';
+    shareButton.style.color = '#333';
+    shareButton.style.backgroundColor = '#ccc';
+    shareButton.style.padding = '5px';
+    shareButton.style.borderRadius = '5px';
+    shareButton.style.margin = '0.5%';
+
+    optionContainer.appendChild(voteButton);
+    optionContainer.appendChild(shareButton);
+    contentContainer.appendChild(optionContainer);
 
     // Inject sentence container into page
     popupContainer.appendChild(contentContainer);
@@ -684,6 +730,7 @@ function bindDashboardEvents() {
 
     // Enable opening of sentence popup
     $('.troogl-sentence').click(function () {
+        $('#troogl-sentence-content-item').text(this.innerText);
         $('#troogl-sentence-popup-container').fadeIn();
     });
 
@@ -770,14 +817,20 @@ function populatePiechart(piechartValues) {
 
 
 $(window).resize(function() {
-    // Hide graph and options if screensize too small
-    var mediaQuery = window.matchMedia('(max-width: 750px)');
-    if (mediaQuery.matches) {
+    // Hide partial bar elements for certain screensizes
+    if (window.matchMedia('(max-width: 500px)').matches) {
         document.getElementById('troogl-graph-container').style.display = 'none';
         document.getElementById('troogl-option-container').style.display = 'none';
         document.getElementById('troogl-draggable-container').style.display = 'none';
-    }
-    else {
+    } else if (window.matchMedia('(max-width: 750px)').matches) {
+        document.getElementById('troogl-graph-container').style.display = '';
+        document.getElementById('troogl-option-container').style.display = 'none';
+        document.getElementById('troogl-draggable-container').style.display = 'none';
+    } else if (window.matchMedia('(max-width: 900px)').matches) {
+        document.getElementById('troogl-graph-container').style.display = '';
+        document.getElementById('troogl-option-container').style.display = '';
+        document.getElementById('troogl-draggable-container').style.display = 'none';
+    } else {
         document.getElementById('troogl-graph-container').style.display = '';
         document.getElementById('troogl-option-container').style.display = '';
         document.getElementById('troogl-draggable-container').style.display = '';
