@@ -195,14 +195,14 @@ def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_nam
     # Cluster similar entities together
     clustered_response = cluster_response_entities(response)
 
-    # Strip unwanted entities based on category type
-    clean_response = strip_response_categories(clustered_response, body)
+    # List unwanted entities based on category type
+    unwanted_entities = get_unwanted_entities(clustered_response, body)
 
     # Classify sentiment of sentences from all perspectives
-    perspective_data = get_perspective_data(clean_response, default_entity_name, sentences, sentence_offsets)
+    perspective_data = get_perspective_data(clustered_response, unwanted_entities, default_entity_name, sentences, sentence_offsets)
 
     # Classify overall sentiment towards entities
-    positive_towards, negative_towards = get_overall_perspective_data(clean_response)
+    positive_towards, negative_towards = get_overall_perspective_data(clustered_response, unwanted_entities)
     
     return perspective_data, positive_towards, negative_towards
 
@@ -217,23 +217,37 @@ def cluster_response_entities(reponse):
     return reponse
 
 
-def strip_response_categories(response, body):
+def get_unwanted_entities(response, body):
     '''
-    Strip unwanted entity categories from response
+    Get a list of all unwanted entities
+    based on target entity types
     '''
 
     # Get list of target entities
     target_entity_types = ('PERSON', 'ORGANIZATION')
     target_entities = get_entities(body, target_entity_types)
 
-    print(target_entities)
+    # Remove unwanted entities
+    unwanted_entities = set()
+    for entity in response.entities:
+        remove_entity = True
 
-    # Remove 
+        # Check whether entity name or mentions appear in target list
+        if entity.name.lower() not in target_entities:
+            for mention in entity.mentions:
+                if mention.text.content.lower() in target_entities:
+                    remove_entity = False
+                    break
+        else:
+            continue
 
-    return response
+        if remove_entity:
+            unwanted_entities.add(entity.name)
+
+    return unwanted_entities
 
 
-def get_perspective_data(response, default_entity_name, sentences, sentence_offsets):
+def get_perspective_data(response, unwanted_entities, default_entity_name, sentences, sentence_offsets):
     '''
     Classify sentiment of article sentences
     from all perspectives (default + entity)
@@ -248,7 +262,7 @@ def get_perspective_data(response, default_entity_name, sentences, sentence_offs
 
     # Classify default and entity sentiments
     default_perspective_data = classify_default_perspective(default_entity_name, sentences, sentence_attribute_options)
-    entity_perspective_data = classify_entity_perspectives(response, sentence_offsets, sentence_attribute_options)
+    entity_perspective_data = classify_entity_perspectives(response, unwanted_entities, sentence_offsets, sentence_attribute_options)
     
     # Combine default and entity perspectives
     perspective_data = default_perspective_data.copy()
@@ -284,7 +298,7 @@ def classify_default_perspective(default_entity_name, sentences, sentence_attrib
     return perspective_data
 
 
-def classify_entity_perspectives(response, sentence_offsets, sentence_attribute_options):
+def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, sentence_attribute_options):
     '''
     Classify the sentiment for the article sentences from
     the perspective of mentioned people and organizations 
@@ -293,6 +307,9 @@ def classify_entity_perspectives(response, sentence_offsets, sentence_attribute_
     perspective_data = {}
     for entity in response.entities:
         entity_name = entity.name.strip().title()
+
+        if entity_name not in unwanted_entities:
+            continue
 
         if entity_name not in perspective_data:
             perspective_data[entity_name] = []
@@ -346,11 +363,11 @@ def get_entities(body, target_entity_types):
     entities = set()
     for entity in document.ents:
         if entity.label_ in target_entity_types:
-            entities.add(str(entity).strip().title())
+            entities.add(str(entity).lower())
     return entities
 
 
-def get_overall_perspective_data(response):
+def get_overall_perspective_data(response, unwanted_entities):
     '''
     Determine which entities are mentioned
     positively or negatively overall
@@ -360,6 +377,9 @@ def get_overall_perspective_data(response):
     for entity in response.entities:
         entity_name = entity.name.strip().title()
         entity_type = enums.Entity.Type(entity.type).name
+
+        if entity_name not in unwanted_entities:
+            continue
 
         if entity.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD and entity.sentiment.magnitude > MAGNITUDE_THRESHOLD and entity.salience > SALIENCE_THRESHOLD:
             positive_towards[entity_name] = {
