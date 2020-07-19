@@ -47,9 +47,12 @@ html {
 /*** Loader / overlay ***/
 
 .troogl-loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 10000000000;
+    z-index: 2147483647;
     background-color: black;
     opacity: 0.55;
     position: fixed;

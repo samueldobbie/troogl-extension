@@ -96,12 +96,12 @@ function disablePageEditing() {
 }
 
 
-function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities) {
+function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards) {
     // Create and inject dashboard snippet bar
     injectPartialDashboard(sentenceClasses);
 
     // Create and inject full page dashboard
-    injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities);
+    injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards);
     
     // Create and inject sentence popup
     injectSentencePopup();
@@ -120,13 +120,13 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardContainer.style.position = 'relative';
     dashboardContainer.style.width = '100%';
     dashboardContainer.style.height = '12.5vh';
-    dashboardContainer.style.zIndex = 2147483646;
 
     var dashboardBar = document.createElement('div');
     dashboardBar.id = 'troogl-partial-dashboard-bar';
     dashboardBar.style.position = 'fixed';
     dashboardBar.style.width = '100%';
-    //dashboardBar.style.top = '0';
+    dashboardBar.style.top = '0';
+    dashboardBar.style.left = '0';
     dashboardBar.style.height = '12.5vh';
     dashboardBar.style.display = 'flex';
     dashboardBar.style.flexWrap = 'nowrap';
@@ -136,6 +136,7 @@ function injectPartialDashboard(sentenceClasses) {
     dashboardBar.style.boxShadow = '0 0 5px #333';
     dashboardBar.style.padding = '0 2%';
     dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
+    dashboardBar.style.zIndex = 10000;
 
     var dragButtonContainer = document.createElement('span');
     dragButtonContainer.id = 'troogl-draggable-container';
@@ -238,7 +239,7 @@ function injectPartialDashboard(sentenceClasses) {
 
     var expandButton = document.createElement('button');
     expandButton.id = 'troogl-expand-button';
-    expandButton.innerText = 'Show Troogl Dashboard';
+    expandButton.innerText = 'Show Dashboard';
     expandButton.style.backgroundColor = 'rgb(83, 51, 237)';
     expandButton.style.cursor = 'pointer';
     expandButton.style.color = 'white';
@@ -276,7 +277,7 @@ function injectPartialDashboard(sentenceClasses) {
 }
 
 
-function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities) {
+function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards) {
     // Container for all dashboard items
     var dashboardContainer = document.createElement('div');
     dashboardContainer.id = 'troogl-full-dashboard-container';
@@ -289,6 +290,9 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     // Overlay that can be clicked to exit complete dashboard
     var overlay = document.createElement('div');
     overlay.id = 'troogl-full-dashboard-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
     overlay.style.width = '100vw';
     overlay.style.height = '100vh';
     overlay.style.backgroundColor = 'black';
@@ -451,37 +455,37 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     contentContainer.appendChild(summaryContainer);
 
     // Container for positive entities
-    var positiveEntitiesContainer = document.createElement('div');
-    positiveEntitiesContainer.style.flexGrow = '1';
-    positiveEntitiesContainer.style.maxWidth = '45%';
-    positiveEntitiesContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
-    positiveEntitiesContainer.style.backgroundColor = 'white';
-    positiveEntitiesContainer.style.borderRadius = '5px';
-    positiveEntitiesContainer.style.padding = '1%';
-    positiveEntitiesContainer.style.boxShadow = '0 0 2px #333';
+    var positiveTowardsContainer = document.createElement('div');
+    positiveTowardsContainer.style.flexGrow = '1';
+    positiveTowardsContainer.style.maxWidth = '45%';
+    positiveTowardsContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
+    positiveTowardsContainer.style.backgroundColor = 'white';
+    positiveTowardsContainer.style.borderRadius = '5px';
+    positiveTowardsContainer.style.padding = '1%';
+    positiveTowardsContainer.style.boxShadow = '0 0 2px #333';
 
-    var positiveEntitiesHeader = document.createElement('span');
-    positiveEntitiesHeader.innerText = 'Positive Towards';
-    positiveEntitiesHeader.style.color = 'rgb(83, 51, 237)';
-    positiveEntitiesHeader.style.fontWeight = 'bold';
-    positiveEntitiesHeader.style.marginBottom = '0.5%';
-    positiveEntitiesHeader.style.display = 'block';
+    var positiveTowardsHeader = document.createElement('span');
+    positiveTowardsHeader.innerText = 'Positive Towards';
+    positiveTowardsHeader.style.color = 'rgb(83, 51, 237)';
+    positiveTowardsHeader.style.fontWeight = 'bold';
+    positiveTowardsHeader.style.marginBottom = '0.5%';
+    positiveTowardsHeader.style.display = 'block';
 
-    var positiveEntitiesTooltipContainer = document.createElement('div');
-    positiveEntitiesTooltipContainer.classList.add('troogl-tooltip');
-    positiveEntitiesTooltipContainer.innerHTML = '&#x1F6C8;';
+    var positiveTowardsTooltipContainer = document.createElement('div');
+    positiveTowardsTooltipContainer.classList.add('troogl-tooltip');
+    positiveTowardsTooltipContainer.innerHTML = '&#x1F6C8;';
 
-    var positiveEntitiesTooltip = document.createElement('span');
-    positiveEntitiesTooltip.classList.add('troogl-tooltip-text');
-    positiveEntitiesTooltip.innerText = 'Highlights people and organizations that are mentioned in a positive manner';
+    var positiveTowardsTooltip = document.createElement('span');
+    positiveTowardsTooltip.classList.add('troogl-tooltip-text');
+    positiveTowardsTooltip.innerText = 'Highlights people and organizations that are mentioned in a positive manner';
 
-    var positiveEntitiesContent = document.createElement('span');
+    var positiveTowardsContent = document.createElement('span');
 
-    if (Object.keys(positiveEntities).length == 0) {
-        positiveEntitiesContent.innerText = 'Not clearly positive towards any person / organization.';
+    if (Object.keys(positiveTowards).length == 0) {
+        positiveTowardsContent.innerText = 'Not clearly positive towards any person / organization.';
     }
 
-    for (var key in positiveEntities) {
+    for (var key in positiveTowards) {
         var positiveEntity = document.createElement('span');
         positiveEntity.innerText = key;
         positiveEntity.style.fontWeight = 'bold';
@@ -491,61 +495,61 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
         positiveEntity.style.margin = '3px 5px';
         positiveEntity.style.color = '#333';
 
-        if (positiveEntities[key]['type'] == 'PERSON') {
+        if (positiveTowards[key]['type'] == 'PERSON') {
             positiveEntity.style.backgroundColor = '#fffbb5';
-        } else if (positiveEntities[key]['type'] == 'ORGANIZATION') {
+        } else if (positiveTowards[key]['type'] == 'ORGANIZATION') {
             positiveEntity.style.backgroundColor = '#ceffb5';
-        } else if (positiveEntities[key]['type'] == 'OTHER') {
+        } else if (positiveTowards[key]['type'] == 'OTHER') {
             positiveEntity.style.backgroundColor = '#ffefcf';
-        } else if (positiveEntities[key]['type'] == 'EVENT') {
+        } else if (positiveTowards[key]['type'] == 'EVENT') {
             positiveEntity.style.backgroundColor = '#dab5ff';
-        } else if (positiveEntities[key]['type'] == 'LOCATION') {
+        } else if (positiveTowards[key]['type'] == 'LOCATION') {
             positiveEntity.style.backgroundColor = '#ffb5c3';
-        } else if (positiveEntities[key]['type'] == 'WORK_OF_ART') {
+        } else if (positiveTowards[key]['type'] == 'WORK_OF_ART') {
             positiveEntity.style.backgroundColor = '#fcccfb';
-        } else if (positiveEntities[key]['type'] == 'CONSUMER_GOOD') {
+        } else if (positiveTowards[key]['type'] == 'CONSUMER_GOOD') {
             positiveEntity.style.backgroundColor = '#c2d1ff';
         }
-        positiveEntitiesContent.appendChild(positiveEntity);
+        positiveTowardsContent.appendChild(positiveEntity);
     }
-    positiveEntitiesTooltipContainer.appendChild(positiveEntitiesTooltip);
-    positiveEntitiesHeader.appendChild(positiveEntitiesTooltipContainer);
-    positiveEntitiesContainer.appendChild(positiveEntitiesHeader);
-    positiveEntitiesContainer.appendChild(positiveEntitiesContent);
-    contentContainer.appendChild(positiveEntitiesContainer);
+    positiveTowardsTooltipContainer.appendChild(positiveTowardsTooltip);
+    positiveTowardsHeader.appendChild(positiveTowardsTooltipContainer);
+    positiveTowardsContainer.appendChild(positiveTowardsHeader);
+    positiveTowardsContainer.appendChild(positiveTowardsContent);
+    contentContainer.appendChild(positiveTowardsContainer);
 
     // Container for negative entities
-    var negativeEntitiesContainer = document.createElement('div');
-    negativeEntitiesContainer.style.flexGrow = '1';
-    negativeEntitiesContainer.style.maxWidth = '45%';
-    negativeEntitiesContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
-    negativeEntitiesContainer.style.backgroundColor = 'white';
-    negativeEntitiesContainer.style.borderRadius = '5px';
-    negativeEntitiesContainer.style.padding = '1%';
-    negativeEntitiesContainer.style.boxShadow = '0 0 2px #333';
+    var negativeTowardsContainer = document.createElement('div');
+    negativeTowardsContainer.style.flexGrow = '1';
+    negativeTowardsContainer.style.maxWidth = '45%';
+    negativeTowardsContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
+    negativeTowardsContainer.style.backgroundColor = 'white';
+    negativeTowardsContainer.style.borderRadius = '5px';
+    negativeTowardsContainer.style.padding = '1%';
+    negativeTowardsContainer.style.boxShadow = '0 0 2px #333';
 
-    var negativeEntitiesHeader = document.createElement('span');
-    negativeEntitiesHeader.innerText = 'Negative Towards';
-    negativeEntitiesHeader.style.color = 'rgb(83, 51, 237)';
-    negativeEntitiesHeader.style.fontWeight = 'bold';
-    negativeEntitiesHeader.style.marginBottom = '0.5%';
-    negativeEntitiesHeader.style.display = 'block';
+    var negativeTowardsHeader = document.createElement('span');
+    negativeTowardsHeader.innerText = 'Negative Towards';
+    negativeTowardsHeader.style.color = 'rgb(83, 51, 237)';
+    negativeTowardsHeader.style.fontWeight = 'bold';
+    negativeTowardsHeader.style.marginBottom = '0.5%';
+    negativeTowardsHeader.style.display = 'block';
 
-    var negativeEntitiesTooltipContainer = document.createElement('div');
-    negativeEntitiesTooltipContainer.classList.add('troogl-tooltip');
-    negativeEntitiesTooltipContainer.innerHTML = '&#x1F6C8;';
+    var negativeTowardsTooltipContainer = document.createElement('div');
+    negativeTowardsTooltipContainer.classList.add('troogl-tooltip');
+    negativeTowardsTooltipContainer.innerHTML = '&#x1F6C8;';
 
-    var negativeEntitiesTooltip = document.createElement('span');
-    negativeEntitiesTooltip.classList.add('troogl-tooltip-text');
-    negativeEntitiesTooltip.innerText = 'Highlights people and organizations that are mentioned in a negative manner';
+    var negativeTowardsTooltip = document.createElement('span');
+    negativeTowardsTooltip.classList.add('troogl-tooltip-text');
+    negativeTowardsTooltip.innerText = 'Highlights people and organizations that are mentioned in a negative manner';
 
-    var negativeEntitiesContent = document.createElement('span');
+    var negativeTowardsContent = document.createElement('span');
 
-    if (Object.keys(negativeEntities).length == 0) {
-        negativeEntitiesContent.innerText = 'Not clearly negative towards any person / organization.';
+    if (Object.keys(negativeTowards).length == 0) {
+        negativeTowardsContent.innerText = 'Not clearly negative towards any person / organization.';
     }
 
-    for (var key in negativeEntities) {
+    for (var key in negativeTowards) {
         var negativeEntity = document.createElement('span');
         negativeEntity.innerText = key;
         negativeEntity.style.fontWeight = 'bold';
@@ -555,28 +559,28 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
         negativeEntity.style.margin = '3px 5px';
         negativeEntity.style.color = '#333';
 
-        if (negativeEntities[key]['type'] == 'PERSON') {
+        if (negativeTowards[key]['type'] == 'PERSON') {
             negativeEntity.style.backgroundColor = '#fffbb5';
-        } else if (negativeEntities[key]['type'] == 'ORGANIZATION') {
+        } else if (negativeTowards[key]['type'] == 'ORGANIZATION') {
             negativeEntity.style.backgroundColor = '#ceffb5';
-        } else if (negativeEntities[key]['type'] == 'OTHER') {
+        } else if (negativeTowards[key]['type'] == 'OTHER') {
             negativeEntity.style.backgroundColor = '#ffefcf';
-        } else if (negativeEntities[key]['type'] == 'EVENT') {
+        } else if (negativeTowards[key]['type'] == 'EVENT') {
             negativeEntity.style.backgroundColor = '#dab5ff';
-        } else if (negativeEntities[key]['type'] == 'LOCATION') {
+        } else if (negativeTowards[key]['type'] == 'LOCATION') {
             negativeEntity.style.backgroundColor = '#ffb5c3';
-        } else if (negativeEntities[key]['type'] == 'WORK_OF_ART') {
+        } else if (negativeTowards[key]['type'] == 'WORK_OF_ART') {
             negativeEntity.style.backgroundColor = '#fcccfb';
-        } else if (negativeEntities[key]['type'] == 'CONSUMER_GOOD') {
+        } else if (negativeTowards[key]['type'] == 'CONSUMER_GOOD') {
             negativeEntity.style.backgroundColor = '#c2d1ff';
         }
-        negativeEntitiesContent.appendChild(negativeEntity);
+        negativeTowardsContent.appendChild(negativeEntity);
     }
-    negativeEntitiesTooltipContainer.appendChild(negativeEntitiesTooltip);
-    negativeEntitiesHeader.appendChild(negativeEntitiesTooltipContainer);
-    negativeEntitiesContainer.appendChild(negativeEntitiesHeader);
-    negativeEntitiesContainer.appendChild(negativeEntitiesContent);
-    contentContainer.appendChild(negativeEntitiesContainer);
+    negativeTowardsTooltipContainer.appendChild(negativeTowardsTooltip);
+    negativeTowardsHeader.appendChild(negativeTowardsTooltipContainer);
+    negativeTowardsContainer.appendChild(negativeTowardsHeader);
+    negativeTowardsContainer.appendChild(negativeTowardsContent);
+    contentContainer.appendChild(negativeTowardsContainer);
 
     // Newline item
     var newline = document.createElement('div');
@@ -609,7 +613,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     logoContainer.style.padding = '1%';
 
     var logoContent = document.createElement('span');
-    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: rgb(83, 51, 237);">Troogl (beta)</a>';
+    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: rgb(83, 51, 237);">Troogl (alpha)</a> - Version 0.0.1';
 
     logoContainer.appendChild(logoContent);
     contentContainer.appendChild(logoContainer);
@@ -633,6 +637,9 @@ function injectSentencePopup() {
     // Overlay that can be clicked to exit sentence popup
     var overlay = document.createElement('div');
     overlay.id = 'troogl-sentence-popup-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
     overlay.style.width = '100vw';
     overlay.style.height = '100vh';
     overlay.style.backgroundColor = 'black';
@@ -810,8 +817,7 @@ function populatePiechart(piechartValues) {
         width: '8vh',
         height: '8vh',
         sliceColors: ['#FF4444','#999999', '#66FF66'],
-        disableTooltips: true,
-        disableHighlight: true
+        tooltipFormat: '<span style="z-index: 2147483647;">{{value}} sentences</span>'
     });
 
     var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
@@ -849,8 +855,8 @@ $(window).resize(function() {
 var response = JSON.parse(response);
 var sentences = response['sentences'];
 var sentenceClasses = response['sentence_sentiment_classes'];
-var positiveEntities = response['positive_entities'];
-var negativeEntities = response['negative_entities'];
+var positiveTowards = response['positive_towards'];
+var negativeTowards = response['negative_towards'];
 var summarySentences = response['summary_sentences'];
 var readTime = response['read_time'];
 var readibilityLevel = response['readability_level'];
@@ -859,7 +865,7 @@ var subjectivity = response['subjectivity'];
 // Display data within article
 prepareSentences(sentences);
 updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
-insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveEntities, negativeEntities);
+insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards);
 
 // Remove overlay and loader
 document.body.removeChild(document.getElementById('troogl-loader'));

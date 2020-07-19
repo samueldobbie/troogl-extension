@@ -1,10 +1,9 @@
 // Display user guide upon installation of plugin
-if (!window.localStorage.getItem('hasSeenIntroduction')) {
-    window.localStorage.setItem('hasSeenIntroduction', true);
+chrome.runtime.onInstalled.addListener(function () {
     chrome.tabs.create({
         url: 'https://www.troogl.com/browser-extension/how-it-works/'
     });
-}
+});
 
 //var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
 var apiUrl = 'http://127.0.0.1:8000/analyse/?url=';
