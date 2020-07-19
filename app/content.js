@@ -2,6 +2,9 @@ function prepareSentences(sentences) {
 
     enablePageEditing();
 
+    // Return selection cursor to beginning of document
+    window.getSelection().collapse(document.body, 0);
+
     for (var i = 0; i < sentences.length; i++) {
         // Find sentence within page
         window.find(sentences[i]);
@@ -25,9 +28,6 @@ function prepareSentences(sentences) {
 
         // Insert constructed sentence into article
         range.insertNode(sentenceContainer);
-
-        // Return selection cursor to beginning of document
-        // window.getSelection().collapse(document.body, 0);
     }
 
     disablePageEditing();
@@ -255,6 +255,7 @@ function injectPartialDashboard(sentenceClasses) {
     expandButton.style.position = 'fixed';
     expandButton.style.border = 'none';
     expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
+    expandButton.style.boxShadow = '0 0 2px #333';
     expandButton.style.zIndex = 2147483647;
 
     // Populate dashboard bar

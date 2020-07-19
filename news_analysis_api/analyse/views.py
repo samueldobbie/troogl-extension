@@ -18,6 +18,7 @@ from textblob import TextBlob
 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+import requests
 import json
 import newspaper
 import spacy
@@ -29,10 +30,12 @@ def analyse_article(request):
     to be displayed by the troogl extension
     '''
 
-    html = json.loads(request.body)['html']
+    request_body = json.loads(request.body)
+    url = request_body['url']
+    html = request_body['html']
 
-    # Extract core article data from page html
-    article_data = extract_article_data_from_html(html)
+    # Extract core article data from article html or url
+    article_data = extract_article_data(url=url)
 
     # Return empty response if article parsing was unsuccessful
     if article_data is None:
@@ -59,20 +62,33 @@ def analyse_article(request):
     return HttpResponse(json.dumps(article_data))
 
 
-def extract_article_data_from_html(html):
+def extract_article_data(url=None, html=None):
     '''
-    Extact core data from specified page html
+    Extact core data from specified article page
+    html or url
     '''
 
-    try:
+    if url is None:
         article = newspaper.Article(url='')
         article.set_html(html)
         article.parse()
-    except:
-        return None
 
-    sentences = get_article_sentences(article.text)
-    sentences.insert(0, article.title)
+        sentences = get_article_sentences(article.text)
+        sentences.insert(0, article.title)
+    elif html is None:
+        api_url = 'https://api.diffbot.com/v3/article'
+        params = {
+            'token': DIFFBOT_TOKEN,
+            'maxTags': 0,
+            'paging': False,
+            'discussion': False,
+            'url': url
+        }
+        response = requests.get(url=api_url, params=params)
+        response_text = json.loads(response.text)
+
+        sentences = get_article_sentences(response_text['objects'][0]['text'])
+        sentences.insert(0, response_text['objects'][0]['title'])
 
     body = ' '.join(sentences)
 
@@ -115,7 +131,7 @@ def get_article_sentences(text):
     for paragraph in text.split('\n'):
         valid_paragraph = True
         for stopword in stopwords:
-            if stopword.lower() in paragraph.lower():
+            if stopword.lower() in paragraph.lower() or paragraph.lower().strip() in ('ad', 'advertisment'):
                 valid_paragraph = False
                 break
         if valid_paragraph:
@@ -402,6 +418,8 @@ client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\
 stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))
 nlp = spacy.load('en_core_web_md')
 sentiment_analyzer = SentimentIntensityAnalyzer()
+
+DIFFBOT_TOKEN = open('diffbot-token.txt', encoding='utf-8').read().strip()
 
 POSITIVE_SENTIMENT_THRESHOLD = 0.15
 NEGATIVE_SENTIMENT_THRESHOLD = -0.15

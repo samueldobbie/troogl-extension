@@ -9,6 +9,7 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.browserAction.onClicked.addListener(function(activeTab) {
     // Get id of active tab
     var tabId = activeTab.id;
+    var tabUrl = activeTab.url;
 
     // Ensure that url is a news article that hasn't already been analysed
     chrome.tabs.executeScript(tabId, {file: 'validate-url.js'}, function (result) {
@@ -21,14 +22,17 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
 
             // Extract HTML from article
             chrome.tabs.executeScript(tabId, {file: 'extract-html.js'}, function (result) {
-                var html = result[0];
+                var tabHtml = result[0];
 
                 // var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
 
                 // Construct API query
                 var request = new XMLHttpRequest();
                 var apiUrl = 'http://127.0.0.1:8000/analyse/';
-                var params = {'html': html};
+                var params = {
+                    'url': tabUrl,
+                    'html': tabHtml
+                };
                 request.open('POST', apiUrl, true);
 
                 // Pass API response data to content script
