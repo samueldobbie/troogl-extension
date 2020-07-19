@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 import math
 
@@ -22,16 +23,19 @@ import json
 import newspaper
 import spacy
 
+@csrf_exempt
 def analyse_article(request):
     '''
     Analyse specified article and return data
     to be displayed by the troogl extension
     '''
 
-    url = request.GET['url']
+    html = json.loads(request.body)['html']
 
-    # Extract core article data from specified url
-    article_data = extract_article_data_from_url(url)
+    print(html)
+
+    # Extract core article data from page html
+    article_data = extract_article_data_from_html(html)
 
     # Return empty response if article parsing was unsuccessful
     if article_data is None:
@@ -58,14 +62,16 @@ def analyse_article(request):
     return HttpResponse(json.dumps(article_data))
 
 
-def extract_article_data_from_url(url):
+def extract_article_data_from_html(html):
     '''
-    Extact core data from specified article URL
+    Extact core data from specified page html
     '''
 
     try:
-        article = newspaper.Article(url=url, config=get_newspaper_configuration())
-        article.download()
+        # config=get_newspaper_configuration()
+        article = newspaper.Article(url='')
+        article.set_article_html(html)
+        # article.download()
         article.parse()
     except:
         return None
@@ -140,7 +146,7 @@ def get_article_sentences(text):
 
 def get_article_summary(text, LANGUAGE, MAX_SUMMARY_SENTENCE_COUNT):
     '''
-    Get summary of article and neutralize the biased terms (to-do)
+    Get summary of article and neutralize the biased terms=
     '''
 
     # Get most relevant sentences to describe article
@@ -150,7 +156,7 @@ def get_article_summary(text, LANGUAGE, MAX_SUMMARY_SENTENCE_COUNT):
     summarizer.stop_words = get_stop_words(LANGUAGE)
     summary_sentences = [str(sentence) for sentence in summarizer(parser.document, MAX_SUMMARY_SENTENCE_COUNT)]
 
-    # Neutralize bias within summary sentences
+    # Neutralize bias within summary sentences (to-do)
 
     return summary_sentences
 
@@ -213,6 +219,8 @@ def cluster_response_entities(reponse):
     often list two entities seperately even though they
     typically refer to the same entity
     '''
+
+    # to do
 
     return reponse
 

@@ -5,8 +5,6 @@ chrome.runtime.onInstalled.addListener(function () {
     });
 });
 
-//var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
-var apiUrl = 'http://127.0.0.1:8000/analyse/?url=';
 
 chrome.browserAction.onClicked.addListener(function(activeTab) {
     // Get id and url of active tab
@@ -22,26 +20,32 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
             // Inject overlay and loader
             chrome.tabs.executeScript(tabId, {file: 'loader.js'});
 
-            // Construct URL for API query
-            var queryUrl = apiUrl + encodeURIComponent(tabUrl);
+            // Extract HTML from article
+            chrome.tabs.executeScript(tabId, {file: 'extract-html.js'}, function (result) {
+                var html = result[0];
 
-            // Construct API query
-            var request = new XMLHttpRequest();
-            request.open('GET', queryUrl, true);
+                // var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
 
-            // Pass API response data to content script
-            request.onload = function() {
-                if (request.responseText != 'None') {
-                    chrome.tabs.executeScript(tabId, {code: 'var response = ' + JSON.stringify(request.responseText)}, function() {
-                        chrome.tabs.executeScript(tabId, {file: 'content.js'});
-                    });
-                } else {
-                    chrome.tabs.executeScript(tabId, {file: 'parse-failure.js'});
+                // Construct API query
+                var request = new XMLHttpRequest();
+                var apiUrl = 'http://127.0.0.1:8000/analyse/';
+                var params = {'html': html};
+                request.open('POST', apiUrl, true);
+
+                // Pass API response data to content script
+                request.onload = function() {
+                    if (request.responseText != 'None') {
+                        chrome.tabs.executeScript(tabId, {code: 'var response = ' + JSON.stringify(request.responseText)}, function() {
+                            chrome.tabs.executeScript(tabId, {file: 'content.js'});
+                        });
+                    } else {
+                        chrome.tabs.executeScript(tabId, {file: 'parse-failure.js'});
+                    }
                 }
-            }
 
-            // Send API query
-            request.send();
+                // Send API query
+                request.send(JSON.stringify(params));
+            });
         }
     });
 });
