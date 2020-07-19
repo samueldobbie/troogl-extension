@@ -18,7 +18,6 @@ from textblob import TextBlob
 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-import fake_useragent
 import json
 import newspaper
 import spacy
@@ -31,8 +30,6 @@ def analyse_article(request):
     '''
 
     html = json.loads(request.body)['html']
-
-    print(html)
 
     # Extract core article data from page html
     article_data = extract_article_data_from_html(html)
@@ -68,10 +65,8 @@ def extract_article_data_from_html(html):
     '''
 
     try:
-        # config=get_newspaper_configuration()
         article = newspaper.Article(url='')
-        article.set_article_html(html)
-        # article.download()
+        article.set_html(html)
         article.parse()
     except:
         return None
@@ -112,15 +107,6 @@ def extract_article_data_from_html(html):
     article_data['readability_level'] = readability_level
 
     return article_data
-
-
-def get_newspaper_configuration():
-    '''
-    Specify newspaper configuration settings
-    '''
-
-    newspaper_configuration.browser_user_agent = user_agent_generator.random
-    return newspaper_configuration
 
 
 def get_article_sentences(text):
@@ -412,8 +398,6 @@ def get_subjectivity_class(body):
         return 'Mostly opinionated'
 
 
-newspaper_configuration = newspaper.Config()
-user_agent_generator = fake_useragent.UserAgent()
 client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\Samuel\Desktop\Troogl Browser Extension\troogl_extension_env\Troogl Browser Extension\news_analysis_api\ce-v1-f594c3be6fc9.json')
 stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))
 nlp = spacy.load('en_core_web_md')

@@ -7,9 +7,8 @@ chrome.runtime.onInstalled.addListener(function () {
 
 
 chrome.browserAction.onClicked.addListener(function(activeTab) {
-    // Get id and url of active tab
+    // Get id of active tab
     var tabId = activeTab.id;
-    var tabUrl = activeTab.url;
 
     // Ensure that url is a news article that hasn't already been analysed
     chrome.tabs.executeScript(tabId, {file: 'validate-url.js'}, function (result) {
