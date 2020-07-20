@@ -5,29 +5,49 @@ function prepareSentences(sentences) {
     // Return selection cursor to beginning of document
     window.getSelection().collapse(document.body, 0);
 
+    var invalidIndicies = [];
     for (var i = 0; i < sentences.length; i++) {
         // Find sentence within page
-        window.find(sentences[i]);
+        if (window.find(sentences[i])) {
+            // Get selected sentence range
+            var range = window.getSelection().getRangeAt(0);
 
-        // Get selected sentence range
-        var range = window.getSelection().getRangeAt(0);
+            // Construct sentence container
+            var sentenceContainer = document.createElement('span');
 
-        // Construct sentence container
-        var sentenceContainer = document.createElement('span');
+            // Construct sentence anchor tag
+            var anchorTag = document.createElement('a');
+            anchorTag.id = 'troogl-sentence-' + i;
 
-        // Construct sentence anchor tag
-        var anchorTag = document.createElement('a');
-        anchorTag.id = 'troogl-sentence-' + i;
+            // Add anchor tag to sentece
+            sentenceContainer.appendChild(anchorTag);
 
-        // Add anchor tag to sentece
-        sentenceContainer.appendChild(anchorTag);
+            // Add sentiment classes to container
+            sentenceContainer.classList.add('troogl-sentence');
+            sentenceContainer.appendChild(range.extractContents());
 
-        // Add sentiment classes to container
-        sentenceContainer.classList.add('troogl-sentence');
-        sentenceContainer.appendChild(range.extractContents());
+            // Insert constructed sentence into article
+            range.insertNode(sentenceContainer);
+        } else {
+            invalidIndicies.push(i);
+        }
+    }
 
-        // Insert constructed sentence into article
-        range.insertNode(sentenceContainer);
+    for (var i = 0; i < invalidIndicies.length; i++) {
+        // Remove sentences that couldn't be matched
+        sentences.splice(invalidIndicies[i], 1);
+
+        // Remove sentence classes that couldn't be matched
+        var invalidKeys = [];
+        for (var j = 0; j < sentenceClasses.length; j++) {
+            if (sentenceClasses[j]['sentence_index'] == invalidIndicies[i]) {
+                invalidKeys.push(j);
+            }
+        }
+
+        for (var k = 0; k < invalidKeys.length; k++) {
+            delete sentenceClasses[invalidKeys[k]];
+        }
     }
 
     disablePageEditing();
@@ -57,17 +77,19 @@ function updateSentenceClasses(sentenceClasses) {
     // Update sentences based on entity sentiments
     for (var i = 0; i < sentenceClasses.length; i++) {
         var sentenceIndex = sentenceClasses[i]['sentence_index'];
+        var sentence = document.getElementById('troogl-sentence-' + sentenceIndex).parentElement;
+
         var sentenceClassString = sentenceClasses[i]['sentence_class_string'];
         var sentenceClassValue = sentenceClasses[i]['sentence_class_value'];
         var sentenceClassTitle = sentenceClasses[i]['sentence_class_title'];
 
         // Remove existing sentiment class
-        stripSentence(sentences[sentenceIndex]);
+        stripSentence(sentence);
 
         // Update sentence values
-        sentences[sentenceIndex].classList.add(sentenceClassString);
-        sentences[sentenceIndex].setAttribute('troogl-class-value', sentenceClassValue);
-        sentences[sentenceIndex].setAttribute('title', sentenceClassTitle);
+        sentence.classList.add(sentenceClassString);
+        sentence.setAttribute('troogl-class-value', sentenceClassValue);
+        sentence.setAttribute('title', sentenceClassTitle);
     }
 
     disablePageEditing();
@@ -153,6 +175,7 @@ function injectPartialDashboard(sentenceClasses) {
     dragButton.style.cursor = 'grab';
     dragButton.style.lineHeight = '15px';
     dragButton.style.fontWeight = 'bold';
+    dragButton.style.userSelect = 'none';
 
     dragButtonContainer.appendChild(dragButton)
     dashboardBar.appendChild(dragButtonContainer);
@@ -799,7 +822,10 @@ function populateSparkLine(sparklineValues) {
         setTimeout(function() {
             var sparkline = ev.sparklines[0];
             var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
-            if (sentenceIndex != null) {
+            if (sentenceIndex == 0) {
+                window.scrollTo(0, 0);
+            } else if (sentenceIndex != null) {
+                alert(sentenceIndex);
                 document.getElementById('troogl-sentence-' + sentenceIndex).scrollIntoView(true);
             }
         }, 150);

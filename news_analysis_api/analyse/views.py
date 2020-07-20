@@ -90,6 +90,9 @@ def extract_article_data(url=None, html=None):
         sentences = get_article_sentences(response_text['objects'][0]['text'])
         sentences.insert(0, response_text['objects'][0]['title'])
 
+        with open('abcde.txt', 'w') as f:
+            f.write(response_text['objects'][0]['text'])
+
     body = ' '.join(sentences)
 
     # Get neutralized summary of article
