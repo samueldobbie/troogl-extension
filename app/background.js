@@ -24,7 +24,9 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
             var request = new XMLHttpRequest();
             // var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/?url=';
             var apiUrl = 'http://127.0.0.1:8000/analyse/';
-            var params = {'url': tabUrl};
+            var params = {
+                'url': tabUrl
+            };
             request.open('POST', apiUrl, true);
 
             // Pass API response data to content script

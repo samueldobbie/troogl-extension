@@ -2,4 +2,4 @@
 document.body.removeChild(document.getElementById('troogl-loader'));
 
 // Output error message
-alert('Troogl was unable to analyse this article. We will work to fix this ASAP.');
+alert('Troogl was unable to analyse this article, sorry! We are working hard to get the plugin working on all news sites.');

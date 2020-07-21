@@ -36,27 +36,29 @@ def analyse_article(request):
     # Extract core article data from article html or url
     article_data = extract_article_data(url=url)
 
-    # Return empty response if article parsing was unsuccessful
-    if article_data is None:
-        return HttpResponse(None)
-
     # Define default entity name
     article_data['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
-    sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
-        article_data['body'],
-        article_data['sentences'],
-        article_data['sentence_offsets'],
-        article_data['default_entity_name']
-    )
+    try:
+        sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
+            article_data['body'],
+            article_data['sentences'],
+            article_data['sentence_offsets'],
+            article_data['default_entity_name']
+        )
+    except:
+        return HttpResponse(None)
 
     article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
     article_data['positive_towards'] = positive_towards
     article_data['negative_towards'] = negative_towards
 
     # Get subjectivity for overall article
-    article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
+    try:
+        article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
+    except:
+        return HttpResponse(None)
 
     return HttpResponse(json.dumps(article_data))
 
@@ -77,6 +79,7 @@ def extract_article_data(url=None, html=None):
     elif html is None:
         api_url = 'https://api.diffbot.com/v3/article'
         params = {
+            'timeout': 90000,
             'token': DIFFBOT_TOKEN,
             'maxTags': 0,
             'paging': False,
@@ -87,7 +90,8 @@ def extract_article_data(url=None, html=None):
         response_text = json.loads(response.text)
 
         sentences = get_article_sentences(response_text['objects'][0]['text'])
-        sentences.insert(0, response_text['objects'][0]['title'])
+        if response_text['objects'][0]['title'].strip() != '':
+            sentences.insert(0, response_text['objects'][0]['title'])
 
     body = ' '.join(sentences)
 
