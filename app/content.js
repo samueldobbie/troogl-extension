@@ -5,7 +5,6 @@ function prepareSentences(sentences) {
     // Return selection cursor to beginning of document
     window.getSelection().collapse(document.body, 0);
 
-    var invalidIndicies = [];
     for (var i = 0; i < sentences.length; i++) {
         // Find sentence within page
         if (window.find(sentences[i])) {
@@ -22,16 +21,22 @@ function prepareSentences(sentences) {
             // Add anchor tag to sentece
             sentenceContainer.appendChild(anchorTag);
 
+            // Set index of sentence container
+            sentenceContainer.setAttribute('troogl-sentence-index', i);
+
             // Add sentiment classes to container
             sentenceContainer.classList.add('troogl-sentence');
             sentenceContainer.appendChild(range.extractContents());
 
             // Insert constructed sentence into article
             range.insertNode(sentenceContainer);
-        } else {
-            invalidIndicies.push(i);
         }
     }
+
+    /*
+    var invalidIndicies = [];
+
+    invalidIndicies.push(i);
 
     for (var i = 0; i < invalidIndicies.length; i++) {
         // Remove sentences that couldn't be matched
@@ -49,6 +54,8 @@ function prepareSentences(sentences) {
             delete sentenceClasses[invalidKeys[k]];
         }
     }
+
+    */
 
     disablePageEditing();
 
@@ -776,7 +783,7 @@ function bindDashboardEvents() {
     });
 }
 
-
+var sparklineIndexMappings = {};
 function updateGraphs() {
     var sentences = document.getElementsByClassName('troogl-sentence');
 
@@ -785,6 +792,9 @@ function updateGraphs() {
     for (var i = 0; i < sentences.length; i++) {
         var sentenceValue = sentences[i].getAttribute('troogl-class-value');
         sparklineValues.push(sentenceValue);
+
+        // Define mappings from original to actual sentence index (for missed sentences)
+        sparklineIndexMappings[i] = sentences[i].getAttribute('troogl-sentence-index');
 
         if (sentenceValue == -1) {
             piechartValues[0]++;
@@ -821,11 +831,10 @@ function populateSparkLine(sparklineValues) {
         // Jump to the sentence that is being hovered over in the line graph
         setTimeout(function() {
             var sparkline = ev.sparklines[0];
-            var sentenceIndex = sparkline.getCurrentRegionFields()['offset'];
+            var sentenceIndex = sparklineIndexMappings[sparkline.getCurrentRegionFields()['offset']];
             if (sentenceIndex == 0) {
                 window.scrollTo(0, 0);
             } else if (sentenceIndex != null) {
-                alert(sentenceIndex);
                 document.getElementById('troogl-sentence-' + sentenceIndex).scrollIntoView(true);
             }
         }, 150);
