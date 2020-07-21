@@ -259,7 +259,7 @@ def get_unwanted_entities(response, body):
             continue
 
         if remove_entity:
-            unwanted_entities.add(entity.name)
+            unwanted_entities.add(entity.name.lower())
 
     return unwanted_entities
 
@@ -325,13 +325,14 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
     for entity in response.entities:
         entity_name = entity.name.strip().title()
 
-        if entity_name not in unwanted_entities:
+        if entity_name.lower() in unwanted_entities:
             continue
 
         if entity_name not in perspective_data:
             perspective_data[entity_name] = []
 
         for mention in entity.mentions:
+            # Get the attributes for the sentence that mentions the entity
             sentence_class = ''
             sentence_title = ''
             sentence_value = ''
@@ -344,14 +345,10 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
                 sentence_title = sentence_attribute_options['titles'][1]
                 sentence_value = sentence_attribute_options['values'][1]
 
-            if sentence_class != '':
-                # Get the index of the sentence that the entity was mentioned within
-                sentence_index = 0
-                for offset_index in range(len(sentence_offsets)):
-                    if mention.text.begin_offset >= sentence_offsets[offset_index][0] and mention.text.begin_offset <= sentence_offsets[offset_index][1]:
-                        sentence_index = offset_index
-                        break
+            # Get the index of the sentence that the entity was mentioned within
+            sentence_index = get_mention_sentence_index(mention, sentence_offsets)
 
+            if sentence_class != '' and sentence_index != -1:
                 perspective_data[entity_name].append({
                     'sentence_index': sentence_index,
                     'sentence_class_string': sentence_class,
@@ -371,6 +368,18 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
     return updated_perspective_data
 
 
+def get_mention_sentence_index(mention, sentence_offsets):
+    '''
+    Get the index of the sentence that the entity
+    was mentioned within
+    '''
+    for offset_index in range(len(sentence_offsets)):
+        if mention.text.begin_offset >= sentence_offsets[offset_index][0] and
+           mention.text.begin_offset <= sentence_offsets[offset_index][1]:
+            return offset_index
+    return -1
+
+
 def get_entities(body, target_entity_types):
     '''
     Get list of people and organizations mentioned
@@ -380,7 +389,7 @@ def get_entities(body, target_entity_types):
     entities = set()
     for entity in document.ents:
         if entity.label_ in target_entity_types:
-            entities.add(str(entity).lower())
+            entities.add(str(entity.text).lower())
     return entities
 
 
@@ -389,13 +398,13 @@ def get_overall_perspective_data(response, unwanted_entities):
     Determine which entities are mentioned
     positively or negatively overall
     '''
-    positive_towards = {}
     negative_towards = {}
+    positive_towards = {}
     for entity in response.entities:
         entity_name = entity.name.strip().title()
         entity_type = enums.Entity.Type(entity.type).name
 
-        if entity_name not in unwanted_entities:
+        if entity_name.lower() in unwanted_entities:
             continue
 
         if entity.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD and entity.sentiment.magnitude > MAGNITUDE_THRESHOLD and entity.salience > SALIENCE_THRESHOLD:
@@ -406,6 +415,7 @@ def get_overall_perspective_data(response, unwanted_entities):
             negative_towards[entity_name] = {
                 'type': entity_type
             }
+
     return positive_towards, negative_towards
 
 
@@ -429,7 +439,7 @@ sentiment_analyzer = SentimentIntensityAnalyzer()
 
 DIFFBOT_TOKEN = open('diffbot-token.txt', encoding='utf-8').read().strip()
 
-POSITIVE_SENTIMENT_THRESHOLD = 0.15
-NEGATIVE_SENTIMENT_THRESHOLD = -0.15
-MAGNITUDE_THRESHOLD = 0.2
+POSITIVE_SENTIMENT_THRESHOLD = 0.05
+NEGATIVE_SENTIMENT_THRESHOLD = -0.05
+MAGNITUDE_THRESHOLD = 0
 SALIENCE_THRESHOLD = 0
