@@ -32,7 +32,6 @@ def analyse_article(request):
 
     request_body = json.loads(request.body)
     url = request_body['url']
-    html = request_body['html']
 
     # Extract core article data from article html or url
     article_data = extract_article_data(url=url)
@@ -89,9 +88,6 @@ def extract_article_data(url=None, html=None):
 
         sentences = get_article_sentences(response_text['objects'][0]['text'])
         sentences.insert(0, response_text['objects'][0]['title'])
-
-        with open('abcde.txt', 'w') as f:
-            f.write(response_text['objects'][0]['text'])
 
     body = ' '.join(sentences)
 
