@@ -60,19 +60,21 @@ function updateSentenceClasses(sentenceClasses) {
     // Update sentences based on entity sentiments
     for (var i = 0; i < sentenceClasses.length; i++) {
         var sentenceIndex = sentenceClasses[i]['sentence_index'];
-        var sentence = document.getElementById('troogl-sentence-' + sentenceIndex).parentElement;
-
-        var sentenceClassString = sentenceClasses[i]['sentence_class_string'];
-        var sentenceClassValue = sentenceClasses[i]['sentence_class_value'];
-        var sentenceClassTitle = sentenceClasses[i]['sentence_class_title'];
-
-        // Remove existing sentiment class
-        stripSentence(sentence);
-
-        // Update sentence values
-        sentence.classList.add(sentenceClassString);
-        sentence.setAttribute('troogl-class-value', sentenceClassValue);
-        sentence.setAttribute('title', sentenceClassTitle);
+        var sentenceAnchor = document.getElementById('troogl-sentence-' + sentenceIndex);
+        if (sentenceAnchor) {
+            var sentence = sentenceAnchor.parentElement;
+            var sentenceClassString = sentenceClasses[i]['sentence_class_string'];
+            var sentenceClassValue = sentenceClasses[i]['sentence_class_value'];
+            var sentenceClassTitle = sentenceClasses[i]['sentence_class_title'];
+    
+            // Remove existing sentiment class
+            stripSentence(sentence);
+    
+            // Update sentence values
+            sentence.classList.add(sentenceClassString);
+            sentence.setAttribute('troogl-class-value', sentenceClassValue);
+            sentence.setAttribute('title', sentenceClassTitle);
+        }
     }
 
     disablePageEditing();
@@ -694,7 +696,7 @@ function injectSentencePopup() {
     optionContainer.style.padding = '1%';
 
     var voteButton = document.createElement('button');
-    voteButton.innerText = 'Vote - Coming Soon';
+    voteButton.innerHTML = 'Vote<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
     voteButton.style.color = 'white';
     voteButton.style.backgroundColor = 'rgb(83, 51, 237)';
     voteButton.style.padding = '5px';
@@ -705,7 +707,7 @@ function injectSentencePopup() {
     voteButton.style.boxShadow = '0 0 2px #333';
 
     var shareButton = document.createElement('button');
-    shareButton.innerText = 'Share - Coming Soon';
+    shareButton.innerHTML = 'Share<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
     // #333 #ccc
     shareButton.style.color = 'white';
     shareButton.style.backgroundColor = 'rgb(83, 51, 237)';
