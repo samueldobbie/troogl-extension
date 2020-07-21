@@ -18,6 +18,7 @@ from textblob import TextBlob
 
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+import fake_useragent
 import requests
 import json
 import newspaper
@@ -84,8 +85,11 @@ def extract_article_data(url=None, html=None):
             'maxTags': 0,
             'paging': False,
             'discussion': False,
+            'X-Forward-User-Agent': user_agent_generator.random,
+            'X-Forward-Referer': 'google.com',
             'url': url
         }
+
         response = requests.get(url=api_url, params=params)
         response_text = json.loads(response.text)
 
@@ -417,6 +421,7 @@ def get_subjectivity_class(body):
         return 'Mostly opinionated'
 
 
+user_agent_generator = fake_useragent.UserAgent()
 client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\Samuel\Desktop\Troogl Browser Extension\troogl_extension_env\Troogl Browser Extension\news_analysis_api\ce-v1-f594c3be6fc9.json')
 stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))
 nlp = spacy.load('en_core_web_md')

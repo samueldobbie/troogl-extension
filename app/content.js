@@ -33,30 +33,6 @@ function prepareSentences(sentences) {
         }
     }
 
-    /*
-    var invalidIndicies = [];
-
-    invalidIndicies.push(i);
-
-    for (var i = 0; i < invalidIndicies.length; i++) {
-        // Remove sentences that couldn't be matched
-        sentences.splice(invalidIndicies[i], 1);
-
-        // Remove sentence classes that couldn't be matched
-        var invalidKeys = [];
-        for (var j = 0; j < sentenceClasses.length; j++) {
-            if (sentenceClasses[j]['sentence_index'] == invalidIndicies[i]) {
-                invalidKeys.push(j);
-            }
-        }
-
-        for (var k = 0; k < invalidKeys.length; k++) {
-            delete sentenceClasses[invalidKeys[k]];
-        }
-    }
-
-    */
-
     disablePageEditing();
 
     // Move to top of article
@@ -718,24 +694,27 @@ function injectSentencePopup() {
     optionContainer.style.padding = '1%';
 
     var voteButton = document.createElement('button');
-    voteButton.innerText = 'Vote (coming soon)';
-    voteButton.style.color = '#333';
-    voteButton.style.backgroundColor = '#ccc';
+    voteButton.innerText = 'Vote - Coming Soon';
+    voteButton.style.color = 'white';
+    voteButton.style.backgroundColor = 'rgb(83, 51, 237)';
     voteButton.style.padding = '5px';
     voteButton.style.borderRadius = '5px';
     voteButton.style.margin = '0.5%';
     voteButton.style.border = 'none';
     voteButton.style.outline = 'none';
+    voteButton.style.boxShadow = '0 0 2px #333';
 
     var shareButton = document.createElement('button');
-    shareButton.innerText = 'Share (coming soon)';
-    shareButton.style.color = '#333';
-    shareButton.style.backgroundColor = '#ccc';
+    shareButton.innerText = 'Share - Coming Soon';
+    // #333 #ccc
+    shareButton.style.color = 'white';
+    shareButton.style.backgroundColor = 'rgb(83, 51, 237)';
     shareButton.style.padding = '5px';
     shareButton.style.borderRadius = '5px';
     shareButton.style.margin = '0.5%';
     shareButton.style.border = 'none';
     shareButton.style.outline = 'none';
+    shareButton.style.boxShadow = '0 0 2px #333';
 
     optionContainer.appendChild(voteButton);
     optionContainer.appendChild(shareButton);
