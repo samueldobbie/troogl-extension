@@ -836,7 +836,16 @@ function populatePiechart(piechartValues) {
         width: '8vh',
         height: '8vh',
         sliceColors: ['#FF4444','#999999', '#66FF66'],
-        tooltipFormat: '<span style="padding: 10px; border-radius: 5px; z-index: 2147483647;">{{value}} sentences</span>'
+        tooltipFormatter: function (sparkline, options, fields) {
+            var openTag = '<span style="font-size: 18px; padding: 10px; border-radius: 5px; z-index: 2147483647;">';
+            if (fields['color'] == '#FF4444') {
+                return openTag + fields['value'] + ' negative sentences</span>';
+            } else if (fields['color'] == '#999999') {
+                return openTag + fields['value'] + ' neutral sentences</span>';
+            } else if (fields['color'] == '#66FF66') {
+                return openTag + fields['value'] + ' positive sentences</span>';
+            }
+        }
     });
 
     var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
