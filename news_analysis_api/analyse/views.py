@@ -97,12 +97,22 @@ def extract_article_data(url=None, html=None):
         response = requests.get(url=api_url, params=params)
     
     response_text = json.loads(response.text)
-    title = response_text['objects'][0]['title'].strip()
-    text = response_text['objects'][0]['text'].strip()
-    author = response_text['objects'][0]['author'].strip()
+    response_data = response_text['objects'][0]
+
+    title = ''
+    if 'title' in response_data:
+        title = response_data['title'].strip()
+
+    text = ''
+    if 'text' in response_data:
+        text = response_data['text'].strip()
+
+    author = ''
+    if 'author' in response_data:
+        author = response_data['author'].strip()
 
     # Parse response data into sentences
-    if text != '' and title != '':
+    if text != '':
         sentences = get_article_sentences(text, author)
         sentences.insert(0, title)
     else:
@@ -232,6 +242,9 @@ def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_nam
     # List unwanted entities based on category type
     unwanted_entities = get_unwanted_entities(clustered_response, body)
 
+    with open('abc.txt', 'w', encoding='utf-8') as f:
+        f.write(str(clustered_response))
+
     # Classify sentiment of sentences from all perspectives
     perspective_data = get_perspective_data(clustered_response, unwanted_entities, default_entity_name, sentences, sentence_offsets)
 
@@ -299,7 +312,7 @@ def get_perspective_data(response, unwanted_entities, default_entity_name, sente
     # Classify default and entity sentiments
     default_perspective_data = classify_default_perspective(default_entity_name, sentences, sentence_attribute_options)
     entity_perspective_data = classify_entity_perspectives(response, unwanted_entities, sentence_offsets, sentence_attribute_options)
-    
+
     # Combine default and entity perspectives
     perspective_data = default_perspective_data.copy()
     perspective_data.update(entity_perspective_data)
@@ -340,31 +353,24 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
     the perspective of mentioned people and organizations 
     '''
 
+    print(unwanted_entities)
+
     perspective_data = {}
     for entity in response.entities:
         entity_name = entity.name.strip().title()
 
         if entity_name.lower() in unwanted_entities:
+            print('\nSKIPPED:', entity_name, '\n')
             continue
 
         if entity_name not in perspective_data:
             perspective_data[entity_name] = []
 
         for mention in entity.mentions:
-            # Get the attributes for the sentence that mentions the entity
-            sentence_class = ''
-            sentence_title = ''
-            sentence_value = ''
-            if mention.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD and mention.sentiment.magnitude > MAGNITUDE_THRESHOLD:
-                sentence_class = sentence_attribute_options['classes'][0]
-                sentence_title = sentence_attribute_options['titles'][0]
-                sentence_value = sentence_attribute_options['values'][0]
-            elif mention.sentiment.score > POSITIVE_SENTIMENT_THRESHOLD and mention.sentiment.magnitude > MAGNITUDE_THRESHOLD:
-                sentence_class = sentence_attribute_options['classes'][1]
-                sentence_title = sentence_attribute_options['titles'][1]
-                sentence_value = sentence_attribute_options['values'][1]
+            # Select attributes for the sentence that mentions the entity
+            sentence_class, sentence_title, sentence_value = get_sentence_attributes(mention, sentence_attribute_options)
 
-            # Get the index of the sentence that the entity was mentioned within
+            # Get the index of the sentence where the entity was mentioned
             sentence_index = get_mention_sentence_index(mention, sentence_offsets)
 
             if sentence_class != '' and sentence_index != -1:
@@ -387,10 +393,23 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
     return updated_perspective_data
 
 
+def get_sentence_attributes(mention, options):
+    '''
+    Select the attributes for the sentence that
+    mentions the entity based on the sentiment
+    '''
+    if mention.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD and mention.sentiment.magnitude > MAGNITUDE_THRESHOLD:
+        return options['classes'][0], options['titles'][0], options['values'][0]
+    elif mention.sentiment.score > POSITIVE_SENTIMENT_THRESHOLD and mention.sentiment.magnitude > MAGNITUDE_THRESHOLD:
+        return options['classes'][1], options['titles'][1], options['values'][1]
+    else:
+        return '', '', ''
+
+
 def get_mention_sentence_index(mention, sentence_offsets):
     '''
-    Get the index of the sentence that the entity
-    was mentioned within
+    Get the index of the sentence
+    where the entity was mentioned
     '''
     for i in range(len(sentence_offsets)):
         if mention.text.begin_offset >= sentence_offsets[i][0] and mention.text.begin_offset <= sentence_offsets[i][1]:
