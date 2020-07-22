@@ -6,6 +6,8 @@ function prepareSentences(sentences) {
     window.getSelection().collapse(document.body, 0);
 
     for (var i = 0; i < sentences.length; i++) {
+        console.log(i, sentences[i]);
+
         // Find sentence within page
         if (window.find(sentences[i])) {
             // Get selected sentence range
@@ -462,76 +464,12 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     summaryContainer.appendChild(summaryHeader);
     summaryContainer.appendChild(summaryContent);
     contentContainer.appendChild(summaryContainer);
-
-    // Container for positive entities
-    var positiveTowardsContainer = document.createElement('div');
-    positiveTowardsContainer.style.flexGrow = '1';
-    positiveTowardsContainer.style.maxWidth = '45%';
-    positiveTowardsContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
-    positiveTowardsContainer.style.backgroundColor = 'white';
-    positiveTowardsContainer.style.borderRadius = '5px';
-    positiveTowardsContainer.style.padding = '1%';
-    positiveTowardsContainer.style.boxShadow = '0 0 2px #333';
-
-    var positiveTowardsHeader = document.createElement('span');
-    positiveTowardsHeader.innerText = 'Positive Towards';
-    positiveTowardsHeader.style.color = 'rgb(83, 51, 237)';
-    positiveTowardsHeader.style.fontWeight = 'bold';
-    positiveTowardsHeader.style.marginBottom = '0.5%';
-    positiveTowardsHeader.style.display = 'block';
-
-    var positiveTowardsTooltipContainer = document.createElement('div');
-    positiveTowardsTooltipContainer.classList.add('troogl-tooltip');
-    positiveTowardsTooltipContainer.innerHTML = '&#x1F6C8;';
-
-    var positiveTowardsTooltip = document.createElement('span');
-    positiveTowardsTooltip.classList.add('troogl-tooltip-text');
-    positiveTowardsTooltip.innerText = 'Highlights people and organizations that are mentioned in a positive manner';
-
-    var positiveTowardsContent = document.createElement('span');
-
-    if (Object.keys(positiveTowards).length == 0) {
-        positiveTowardsContent.innerText = 'Not clearly positive towards any person / organization.';
-    }
-
-    for (var key in positiveTowards) {
-        var positiveEntity = document.createElement('span');
-        positiveEntity.innerText = key;
-        positiveEntity.style.fontWeight = 'bold';
-        positiveEntity.style.padding = '5px';
-        positiveEntity.style.borderRadius = '5px';
-        positiveEntity.style.display = 'inline-block';
-        positiveEntity.style.margin = '3px 5px';
-        positiveEntity.style.color = '#333';
-
-        if (positiveTowards[key]['type'] == 'PERSON') {
-            positiveEntity.style.backgroundColor = '#fffbb5';
-        } else if (positiveTowards[key]['type'] == 'ORGANIZATION') {
-            positiveEntity.style.backgroundColor = '#ceffb5';
-        } else if (positiveTowards[key]['type'] == 'OTHER') {
-            positiveEntity.style.backgroundColor = '#ffefcf';
-        } else if (positiveTowards[key]['type'] == 'EVENT') {
-            positiveEntity.style.backgroundColor = '#dab5ff';
-        } else if (positiveTowards[key]['type'] == 'LOCATION') {
-            positiveEntity.style.backgroundColor = '#ffb5c3';
-        } else if (positiveTowards[key]['type'] == 'WORK_OF_ART') {
-            positiveEntity.style.backgroundColor = '#fcccfb';
-        } else if (positiveTowards[key]['type'] == 'CONSUMER_GOOD') {
-            positiveEntity.style.backgroundColor = '#c2d1ff';
-        }
-        positiveTowardsContent.appendChild(positiveEntity);
-    }
-    positiveTowardsTooltipContainer.appendChild(positiveTowardsTooltip);
-    positiveTowardsHeader.appendChild(positiveTowardsTooltipContainer);
-    positiveTowardsContainer.appendChild(positiveTowardsHeader);
-    positiveTowardsContainer.appendChild(positiveTowardsContent);
-    contentContainer.appendChild(positiveTowardsContainer);
-
+    
     // Container for negative entities
     var negativeTowardsContainer = document.createElement('div');
     negativeTowardsContainer.style.flexGrow = '1';
     negativeTowardsContainer.style.maxWidth = '45%';
-    negativeTowardsContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
+    negativeTowardsContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
     negativeTowardsContainer.style.backgroundColor = 'white';
     negativeTowardsContainer.style.borderRadius = '5px';
     negativeTowardsContainer.style.padding = '1%';
@@ -590,6 +528,70 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     negativeTowardsContainer.appendChild(negativeTowardsHeader);
     negativeTowardsContainer.appendChild(negativeTowardsContent);
     contentContainer.appendChild(negativeTowardsContainer);
+
+    // Container for positive entities
+    var positiveTowardsContainer = document.createElement('div');
+    positiveTowardsContainer.style.flexGrow = '1';
+    positiveTowardsContainer.style.maxWidth = '45%';
+    positiveTowardsContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
+    positiveTowardsContainer.style.backgroundColor = 'white';
+    positiveTowardsContainer.style.borderRadius = '5px';
+    positiveTowardsContainer.style.padding = '1%';
+    positiveTowardsContainer.style.boxShadow = '0 0 2px #333';
+
+    var positiveTowardsHeader = document.createElement('span');
+    positiveTowardsHeader.innerText = 'Positive Towards';
+    positiveTowardsHeader.style.color = 'rgb(83, 51, 237)';
+    positiveTowardsHeader.style.fontWeight = 'bold';
+    positiveTowardsHeader.style.marginBottom = '0.5%';
+    positiveTowardsHeader.style.display = 'block';
+
+    var positiveTowardsTooltipContainer = document.createElement('div');
+    positiveTowardsTooltipContainer.classList.add('troogl-tooltip');
+    positiveTowardsTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var positiveTowardsTooltip = document.createElement('span');
+    positiveTowardsTooltip.classList.add('troogl-tooltip-text');
+    positiveTowardsTooltip.innerText = 'Highlights people and organizations that are mentioned in a positive manner';
+
+    var positiveTowardsContent = document.createElement('span');
+
+    if (Object.keys(positiveTowards).length == 0) {
+        positiveTowardsContent.innerText = 'Not clearly positive towards any person / organization.';
+    }
+
+    for (var key in positiveTowards) {
+        var positiveEntity = document.createElement('span');
+        positiveEntity.innerText = key;
+        positiveEntity.style.fontWeight = 'bold';
+        positiveEntity.style.padding = '5px';
+        positiveEntity.style.borderRadius = '5px';
+        positiveEntity.style.display = 'inline-block';
+        positiveEntity.style.margin = '3px 5px';
+        positiveEntity.style.color = '#333';
+
+        if (positiveTowards[key]['type'] == 'PERSON') {
+            positiveEntity.style.backgroundColor = '#fffbb5';
+        } else if (positiveTowards[key]['type'] == 'ORGANIZATION') {
+            positiveEntity.style.backgroundColor = '#ceffb5';
+        } else if (positiveTowards[key]['type'] == 'OTHER') {
+            positiveEntity.style.backgroundColor = '#ffefcf';
+        } else if (positiveTowards[key]['type'] == 'EVENT') {
+            positiveEntity.style.backgroundColor = '#dab5ff';
+        } else if (positiveTowards[key]['type'] == 'LOCATION') {
+            positiveEntity.style.backgroundColor = '#ffb5c3';
+        } else if (positiveTowards[key]['type'] == 'WORK_OF_ART') {
+            positiveEntity.style.backgroundColor = '#fcccfb';
+        } else if (positiveTowards[key]['type'] == 'CONSUMER_GOOD') {
+            positiveEntity.style.backgroundColor = '#c2d1ff';
+        }
+        positiveTowardsContent.appendChild(positiveEntity);
+    }
+    positiveTowardsTooltipContainer.appendChild(positiveTowardsTooltip);
+    positiveTowardsHeader.appendChild(positiveTowardsTooltipContainer);
+    positiveTowardsContainer.appendChild(positiveTowardsHeader);
+    positiveTowardsContainer.appendChild(positiveTowardsContent);
+    contentContainer.appendChild(positiveTowardsContainer);
 
     // Newline item
     var newline = document.createElement('div');
@@ -834,7 +836,7 @@ function populatePiechart(piechartValues) {
         width: '8vh',
         height: '8vh',
         sliceColors: ['#FF4444','#999999', '#66FF66'],
-        tooltipFormat: '<span style="z-index: 2147483647;">{{value}} sentences</span>'
+        tooltipFormat: '<span style="padding: 10px; border-radius: 5px; z-index: 2147483647;">{{value}} sentences</span>'
     });
 
     var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
