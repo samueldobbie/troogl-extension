@@ -438,14 +438,15 @@ def get_overall_perspective_data(response, unwanted_entities):
         if entity_name.lower() in unwanted_entities:
             continue
 
-        if entity.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD and entity.sentiment.magnitude > MAGNITUDE_THRESHOLD and entity.salience > SALIENCE_THRESHOLD:
-            positive_towards[entity_name] = {
-                'type': entity_type
-            }
-        elif entity.sentiment.score > POSITIVE_SENTIMENT_THRESHOLD and entity.sentiment.magnitude > MAGNITUDE_THRESHOLD and entity.salience > SALIENCE_THRESHOLD:
-            negative_towards[entity_name] = {
-                'type': entity_type
-            }
+        if entity.sentiment.magnitude > MAGNITUDE_THRESHOLD and entity.salience > SALIENCE_THRESHOLD:
+            if entity.sentiment.score < NEGATIVE_SENTIMENT_THRESHOLD:
+                negative_towards[entity_name] = {
+                    'type': entity_type
+                }
+            elif entity.sentiment.score > POSITIVE_SENTIMENT_THRESHOLD:
+                positive_towards[entity_name] = {
+                    'type': entity_type
+                }
 
     return positive_towards, negative_towards
 
