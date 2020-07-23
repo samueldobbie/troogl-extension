@@ -139,3 +139,23 @@ html {
 .troogl-tooltip:hover .troogl-tooltip-text {
     visibility: visible;
 }
+
+/* Close button */
+.troogl-exit-button {
+    position: absolute;
+    cursor: pointer;
+    background-color: white;
+    color: #333;
+    border-radius: 50%;
+    font-size: 31px;
+    line-height: 12px;
+    height: 12px;
+    padding: 14px;
+    top: 30px;
+    left: 30px;
+}
+
+.troogl-exit-button:before {
+    content: '×';
+}
+    

@@ -6,8 +6,6 @@ function prepareSentences(sentences) {
     window.getSelection().collapse(document.body, 0);
 
     for (var i = 0; i < sentences.length; i++) {
-        console.log(i, sentences[i]);
-
         // Find sentence within page
         if (window.find(sentences[i])) {
             // Get selected sentence range
@@ -177,6 +175,7 @@ function injectPartialDashboard(sentenceClasses) {
     perspectiveDropdown.style.fontSize = '16px';
     perspectiveDropdown.style.outline = 'none';
     perspectiveDropdown.style.cursor = 'pointer';
+    perspectiveDropdown.style.display = 'inline-block';
 
     // Populate perspective dropdown
     for (var key in sentenceClasses) {
@@ -310,6 +309,12 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     overlay.style.opacity = 0.55;
 
     dashboardContainer.appendChild(overlay);
+    
+    // Close button
+    var closeButton = document.createElement('a');
+    closeButton.classList.add('troogl-exit-button');
+
+    dashboardContainer.appendChild(closeButton);
 
     // Container for content-related dashboard items
     var contentContainer = document.createElement('div');
@@ -749,8 +754,13 @@ function bindDashboardEvents() {
         $('#troogl-full-dashboard-container').fadeIn();
     });
 
-    // Enable exiting from full dashboard
+    // Enable exiting from full dashboard via overlay
     $('#troogl-full-dashboard-overlay').click(function () {
+        $('#troogl-full-dashboard-container').fadeOut();
+    });
+
+    // Enable exiting from full dashboard via exit button
+    $('.troogl-exit-button').click(function () {
         $('#troogl-full-dashboard-container').fadeOut();
     });
 

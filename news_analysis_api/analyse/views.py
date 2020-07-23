@@ -353,14 +353,11 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
     the perspective of mentioned people and organizations 
     '''
 
-    print(unwanted_entities)
-
     perspective_data = {}
     for entity in response.entities:
         entity_name = entity.name.strip().title()
 
         if entity_name.lower() in unwanted_entities:
-            print('\nSKIPPED:', entity_name, '\n')
             continue
 
         if entity_name not in perspective_data:
