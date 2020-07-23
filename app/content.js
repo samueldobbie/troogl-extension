@@ -306,11 +306,11 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     overlay.style.width = '100vw';
     overlay.style.height = '100vh';
     overlay.style.backgroundColor = 'black';
-    overlay.style.opacity = 0.55;
+    overlay.style.opacity = 0.7;
 
     dashboardContainer.appendChild(overlay);
     
-    // Close button
+    // Button to exit dashboard
     var closeButton = document.createElement('a');
     closeButton.classList.add('troogl-exit-button');
 
@@ -659,9 +659,15 @@ function injectSentencePopup() {
     overlay.style.width = '100vw';
     overlay.style.height = '100vh';
     overlay.style.backgroundColor = 'black';
-    overlay.style.opacity = 0.55;
+    overlay.style.opacity = 0.7;
 
     popupContainer.appendChild(overlay);
+
+    // Button to exit sentence popup
+    var closeButton = document.createElement('a');
+    closeButton.classList.add('troogl-exit-button');
+
+    popupContainer.appendChild(closeButton);
 
     // Container for sentence popup-related items
     var contentContainer = document.createElement('div');
@@ -684,46 +690,52 @@ function injectSentencePopup() {
     sentenceContainer.style.borderRadius = '5px';
     sentenceContainer.style.padding = '1%';
 
+    // Container that will be populated upon sentence selection
     var sentenceContent = document.createElement('span');
     sentenceContent.id = 'troogl-sentence-content-item';
+    sentenceContent.style.padding = '5px';
 
     sentenceContainer.appendChild(sentenceContent);
     contentContainer.appendChild(sentenceContainer);
 
-    // Newline item
     var newline = document.createElement('div');
     newline.style.flexBasis = '100%';
     newline.style.height = 0;
     
     contentContainer.appendChild(newline);
 
-    // Container for coming soon item
+    // Container for coming soon options
     var optionContainer = document.createElement('div');
     optionContainer.style.flexGrow = '1';
     optionContainer.style.padding = '1%';
 
     var voteButton = document.createElement('button');
+    voteButton.id = 'troogl-vote-button';
     voteButton.innerHTML = 'Vote<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
     voteButton.style.color = 'white';
-    voteButton.style.backgroundColor = 'rgb(83, 51, 237)';
+    voteButton.style.backgroundColor = '#dedede';
     voteButton.style.padding = '5px';
     voteButton.style.borderRadius = '5px';
     voteButton.style.margin = '0.5%';
     voteButton.style.border = 'none';
+    voteButton.style.color = '#333';
     voteButton.style.outline = 'none';
-    voteButton.style.boxShadow = '0 0 2px #333';
+    voteButton.style.boxShadow = '0 0 1px #3E3E3E';
+    voteButton.style.cursor = 'pointer';
 
     var shareButton = document.createElement('button');
+    shareButton.id = 'troogl-share-button';
     shareButton.innerHTML = 'Share<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
-    // #333 #ccc
     shareButton.style.color = 'white';
-    shareButton.style.backgroundColor = 'rgb(83, 51, 237)';
+    shareButton.style.backgroundColor = '#dedede';
     shareButton.style.padding = '5px';
     shareButton.style.borderRadius = '5px';
     shareButton.style.margin = '0.5%';
     shareButton.style.border = 'none';
+    shareButton.style.color = '#333';
     shareButton.style.outline = 'none';
-    shareButton.style.boxShadow = '0 0 2px #333';
+    shareButton.style.boxShadow = '0 0 1px #3E3E3E';
+    shareButton.style.cursor = 'pointer';
 
     optionContainer.appendChild(voteButton);
     optionContainer.appendChild(shareButton);
@@ -762,6 +774,7 @@ function bindDashboardEvents() {
     // Enable exiting from full dashboard via exit button
     $('.troogl-exit-button').click(function () {
         $('#troogl-full-dashboard-container').fadeOut();
+        $('#troogl-sentence-popup-container').fadeOut();
     });
 
     // Enable opening of sentence popup
@@ -774,7 +787,18 @@ function bindDashboardEvents() {
     $('#troogl-sentence-popup-overlay').click(function () {
         $('#troogl-sentence-popup-container').fadeOut();
     });
+
+    // Display coming soon message for voting
+    $('#troogl-vote-button').click(function () {
+        alert('The ability to provide your own perspective on all metrics, to help improve the results, will be added soon!');
+    });
+
+    // Display coming soon message for sharing
+    $('#troogl-share-button').click(function () {
+        alert('The ability to share metrics and trends will be added soon!');
+    });
 }
+
 
 var sparklineIndexMappings = {};
 function updateGraphs() {
