@@ -242,9 +242,6 @@ def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_nam
     # List unwanted entities based on category type
     unwanted_entities = get_unwanted_entities(clustered_response, body)
 
-    with open('abc.txt', 'w', encoding='utf-8') as f:
-        f.write(str(clustered_response))
-
     # Classify sentiment of sentences from all perspectives
     perspective_data = get_perspective_data(clustered_response, unwanted_entities, default_entity_name, sentences, sentence_offsets)
 
@@ -380,7 +377,7 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
 
     # Ignore perspectives that don't include at least one non-neutral sentence
     updated_perspective_data = {}
-    for key, value in updated_perspective_data.items():
+    for key, value in perspective_data.items():
         if len(value) > 0:
             updated_perspective_data[key] = value
 
