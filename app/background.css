@@ -173,4 +173,13 @@ html {
 .troogl-exit-button:hover {
     background-color: #f1f1f1;
 }
-    
+
+/* Troogl options */
+
+#troogl-vote-button:hover {
+    filter: brightness(90%);
+}
+
+#troogl-share-button:hover {
+    filter: brightness(90%);
+}
