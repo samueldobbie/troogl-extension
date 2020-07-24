@@ -258,10 +258,6 @@ def cluster_response_entities(response):
     typically refer to the same entity
     '''
 
-    with open('abc.txt', 'w', encoding='utf-8') as f:
-        for entity in response.entities:
-            f.write(str(entity) + '\n\n')
-
     return response
 
 

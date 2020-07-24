@@ -4,5 +4,6 @@
 *.pyc
 *.json
 
-testing-output.txt
+
 diffbot-token.txt
+secret-key.txt
