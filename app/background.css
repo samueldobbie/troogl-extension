@@ -143,19 +143,34 @@ html {
 /* Close button */
 .troogl-exit-button {
     position: absolute;
-    cursor: pointer;
     background-color: white;
-    color: #333;
     border-radius: 50%;
-    font-size: 31px;
-    line-height: 12px;
-    height: 12px;
-    padding: 14px;
     top: 30px;
     left: 30px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.troogl-exit-button:before, .troogl-exit-button:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 20px;
+    top: 6.5px;
+    width: 2px;
+    background-color: #333;
 }
 
 .troogl-exit-button:before {
-    content: '×';
+    transform: rotate(45deg);
+}
+
+.troogl-exit-button:after {
+    transform: rotate(-45deg);
+}
+
+.troogl-exit-button:hover {
+    background-color: #f1f1f1;
 }
     
