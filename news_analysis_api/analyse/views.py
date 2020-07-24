@@ -258,7 +258,7 @@ def cluster_response_entities(reponse):
     typically refer to the same entity
     '''
 
-    # to do
+    
 
     return reponse
 

@@ -322,6 +322,8 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     contentContainer.style.display = 'flex';
     contentContainer.style.flexWrap = 'wrap';
     contentContainer.style.width = '80vw';
+    contentContainer.style.maxHeight = '95vh';
+    contentContainer.style.overflowY = 'auto';
     contentContainer.style.top = '50%';
     contentContainer.style.left = '50%';
     contentContainer.style.transform = 'translate(-50%, -50%)';
@@ -675,6 +677,8 @@ function injectSentencePopup() {
     contentContainer.style.display = 'flex';
     contentContainer.style.flexWrap = 'wrap';
     contentContainer.style.width = '60vw';
+    contentContainer.style.height = 'auto';
+    contentContainer.style.maxHeight = '95vh';
     contentContainer.style.top = '50%';
     contentContainer.style.left = '50%';
     contentContainer.style.transform = 'translate(-50%, -50%)';
@@ -683,62 +687,108 @@ function injectSentencePopup() {
     contentContainer.style.fontSize = '16px';
     contentContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
 
-    // Container for sentence item
     var sentenceContainer = document.createElement('div');
-    sentenceContainer.style.flexGrow = '1';
+    sentenceContainer.style.flexGrow = '2';
+    sentenceContainer.style.margin = '2.5% 2.5% 0.5% 2.5%';
     sentenceContainer.style.fontSize = '18px';
     sentenceContainer.style.borderRadius = '5px';
     sentenceContainer.style.padding = '1%';
+    sentenceContainer.style.backgroundColor = 'white';
+    sentenceContainer.style.boxShadow = '0 0 2px #333';
 
-    // Container that will be populated upon sentence selection
-    var sentenceContent = document.createElement('span');
+    var sentenceHeader = document.createElement('span');
+    sentenceHeader.innerText = 'Sentence';
+    sentenceHeader.style.color = 'rgb(83, 51, 237)';
+    sentenceHeader.style.fontWeight = 'bold';
+    sentenceHeader.style.marginBottom = '0.5%';
+    sentenceHeader.style.display = 'block';
+
+    var sentenceTooltipContainer = document.createElement('div');
+    sentenceTooltipContainer.classList.add('troogl-tooltip');
+    sentenceTooltipContainer.innerHTML = '&#x1F6C8;';
+
+    var sentenceTooltip = document.createElement('span');
+    sentenceTooltip.classList.add('troogl-tooltip-text');
+    sentenceTooltip.innerText = 'The selected sentence within the article with its sentiment class';
+
+    sentenceTooltipContainer.appendChild(sentenceTooltip);
+    sentenceHeader.appendChild(sentenceTooltipContainer);
+
+    // Container that gets populated upon sentence selection
+    var sentenceContent = document.createElement('p');
     sentenceContent.id = 'troogl-sentence-content-item';
     sentenceContent.style.padding = '5px';
 
+    sentenceContainer.appendChild(sentenceHeader);
     sentenceContainer.appendChild(sentenceContent);
     contentContainer.appendChild(sentenceContainer);
 
+    // Break line
     var newline = document.createElement('div');
     newline.style.flexBasis = '100%';
     newline.style.height = 0;
     
     contentContainer.appendChild(newline);
 
-    // Container for coming soon options
+    // Container for sentence options
     var optionContainer = document.createElement('div');
     optionContainer.style.flexGrow = '1';
+    optionContainer.style.margin = '0.5% 2.5% 2.5% 2.5%';
+    optionContainer.style.fontSize = '18px';
+    optionContainer.style.borderRadius = '5px';
     optionContainer.style.padding = '1%';
+    optionContainer.style.backgroundColor = 'white';
+    optionContainer.style.boxShadow = '0 0 2px #333';
 
-    var voteButton = document.createElement('button');
-    voteButton.id = 'troogl-vote-button';
-    voteButton.innerHTML = 'Vote<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
-    voteButton.style.color = 'white';
-    voteButton.style.backgroundColor = '#dedede';
-    voteButton.style.padding = '5px';
-    voteButton.style.borderRadius = '5px';
-    voteButton.style.margin = '0.5%';
-    voteButton.style.border = 'none';
-    voteButton.style.color = '#333';
-    voteButton.style.outline = 'none';
-    voteButton.style.boxShadow = '0 0 1px #3E3E3E';
-    voteButton.style.cursor = 'pointer';
+    var optionHeader = document.createElement('span');
+    optionHeader.innerText = 'Options';
+    optionHeader.style.color = 'rgb(83, 51, 237)';
+    optionHeader.style.fontWeight = 'bold';
+    optionHeader.style.marginBottom = '0.5%';
+    optionHeader.style.display = 'block';
 
-    var shareButton = document.createElement('button');
-    shareButton.id = 'troogl-share-button';
-    shareButton.innerHTML = 'Share<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
-    shareButton.style.color = 'white';
-    shareButton.style.backgroundColor = '#dedede';
-    shareButton.style.padding = '5px';
-    shareButton.style.borderRadius = '5px';
-    shareButton.style.margin = '0.5%';
-    shareButton.style.border = 'none';
-    shareButton.style.color = '#333';
-    shareButton.style.outline = 'none';
-    shareButton.style.boxShadow = '0 0 1px #3E3E3E';
-    shareButton.style.cursor = 'pointer';
+    var optionTooltipContainer = document.createElement('div');
+    optionTooltipContainer.classList.add('troogl-tooltip');
+    optionTooltipContainer.innerHTML = '&#x1F6C8;';
 
-    optionContainer.appendChild(voteButton);
-    optionContainer.appendChild(shareButton);
+    var optionTooltip = document.createElement('span');
+    optionTooltip.classList.add('troogl-tooltip-text');
+    optionTooltip.innerText = 'Provide your input or share with friends!';
+
+    optionTooltipContainer.appendChild(optionTooltip);
+    optionHeader.appendChild(optionTooltipContainer);
+
+    var voteOption = document.createElement('button');
+    voteOption.id = 'troogl-vote-button';
+    voteOption.innerHTML = 'Vote<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
+    voteOption.style.color = 'white';
+    voteOption.style.backgroundColor = '#dedede';
+    voteOption.style.padding = '5px';
+    voteOption.style.borderRadius = '5px';
+    voteOption.style.margin = '0.5%';
+    voteOption.style.border = 'none';
+    voteOption.style.color = '#333';
+    voteOption.style.outline = 'none';
+    voteOption.style.boxShadow = '0 0 1px #3E3E3E';
+    voteOption.style.cursor = 'pointer';
+
+    var shareOption = document.createElement('button');
+    shareOption.id = 'troogl-share-button';
+    shareOption.innerHTML = 'Share<span style="margin-left: 8px; font-size:9px;">Coming Soon</span>';
+    shareOption.style.color = 'white';
+    shareOption.style.backgroundColor = '#dedede';
+    shareOption.style.padding = '5px';
+    shareOption.style.borderRadius = '5px';
+    shareOption.style.margin = '0.5%';
+    shareOption.style.border = 'none';
+    shareOption.style.color = '#333';
+    shareOption.style.outline = 'none';
+    shareOption.style.boxShadow = '0 0 1px #3E3E3E';
+    shareOption.style.cursor = 'pointer';
+
+    optionContainer.appendChild(optionHeader)
+    optionContainer.appendChild(voteOption);
+    optionContainer.appendChild(shareOption);
     contentContainer.appendChild(optionContainer);
 
     // Inject sentence container into page
@@ -780,6 +830,8 @@ function bindDashboardEvents() {
     // Enable opening of sentence popup
     $('.troogl-sentence').click(function () {
         $('#troogl-sentence-content-item').text(this.innerText);
+        $('#troogl-sentence-content-item').removeClass();
+        $('#troogl-sentence-content-item').addClass(this.classList[1]);
         $('#troogl-sentence-popup-container').fadeIn();
     });
 
