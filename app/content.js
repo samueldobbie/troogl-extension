@@ -917,11 +917,15 @@ function populateSparkLine(sparklineValues) {
 
 
 function populatePiechart(piechartValues) {
+    var negativeColor = '#FF4444';
+    var neutralColor = '#999999';
+    var positiveColor = '#66FF66';
+
     $('#troogl-piechart').sparkline(piechartValues, {
         type: 'pie',
         width: '8vh',
         height: '8vh',
-        sliceColors: ['#FF4444','#999999', '#66FF66'],
+        sliceColors: [negativeColor, neutralColor, positiveColor],
         tooltipFormatter: function (sparkline, options, fields) {
             var openTag = '<span style="font-size: 18px; padding: 10px; border-radius: 5px; z-index: 2147483647;">';
             if (fields['color'] == '#FF4444') {
@@ -932,6 +936,18 @@ function populatePiechart(piechartValues) {
                 return openTag + fields['value'] + ' positive sentences</span>';
             }
         }
+    }).bind('sparklineClick', function(ev) {
+        alert('The ability to view all sentences within each sentiment class will be added soon!');
+        /*
+        var selectedSliceColor = ev.sparklines[0].getCurrentRegionFields()['color'];
+        if (selectedSliceColor == negativeColor) {
+            alert('Ability to view all negative sentences');
+        } else if (selectedSliceColor == neutralColor) {
+            alert('neutral');
+        } else if (selectedSliceColor == positiveColor) {
+            alert('positive');
+        }
+        */
     });
 
     var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
