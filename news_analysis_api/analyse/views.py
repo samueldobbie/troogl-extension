@@ -251,16 +251,18 @@ def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_nam
     return perspective_data, positive_towards, negative_towards
 
 
-def cluster_response_entities(reponse):
+def cluster_response_entities(response):
     '''
     Merge similar entities together, as Google NLP will
     often list two entities seperately even though they
     typically refer to the same entity
     '''
 
-    
+    with open('abc.txt', 'w', encoding='utf-8') as f:
+        for entity in response.entities:
+            f.write(str(entity) + '\n\n')
 
-    return reponse
+    return response
 
 
 def get_unwanted_entities(response, body):
@@ -471,8 +473,7 @@ nlp = spacy.load('en_core_web_md')
 sentiment_analyzer = SentimentIntensityAnalyzer()
 
 DIFFBOT_TOKEN = open('diffbot-token.txt', encoding='utf-8').read().strip()
-
-POSITIVE_SENTIMENT_THRESHOLD = 0.05
-NEGATIVE_SENTIMENT_THRESHOLD = -0.05
-MAGNITUDE_THRESHOLD = 0
+POSITIVE_SENTIMENT_THRESHOLD = 0.15
+NEGATIVE_SENTIMENT_THRESHOLD = -0.15
+MAGNITUDE_THRESHOLD = 0.2
 SALIENCE_THRESHOLD = 0

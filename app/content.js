@@ -874,23 +874,34 @@ function updateGraphs() {
         }
     }
 
-    populateSparkLine(sparklineValues);
-    populatePiechart(piechartValues);
+    var colors = {
+        'negative': '#FF4444',
+        'neutral': '#999999',
+        'positive': '#66FF66'
+    };
+
+    populateSparkLine(sparklineValues, colors);
+    populatePiechart(piechartValues, colors);
 }
 
 
-function populateSparkLine(sparklineValues) {
+function populateSparkLine(sparklineValues, colors) {
     $('#troogl-sparkline').sparkline(sparklineValues, {
         type: 'line',
-        width: '30vw',
+        width: '35vw',
         height: '8vh',
-        lineColor: '#e5e5e5',
-        highlightSpotColor: '#66FF66',
-        highlightLineColor: 'rgb(83, 51, 237)',
+        lineColor: '#f1f1f1',
+        highlightSpotColor: '#333',
+        highlightLineColor: '#333',
         lineWidth: 4,
-        spotRadius: 5,
+        spotRadius: 4,
         chartRangeMin: -1,
         chartRangeMax: 1,
+        valueSpots: {
+            '-1': colors['negative'],
+            '0': colors['neutral'],
+            '1': colors['positive']
+        },
         disableTooltips: true,
         fillColor: null,
         spotColor: null,
@@ -916,16 +927,12 @@ function populateSparkLine(sparklineValues) {
 }
 
 
-function populatePiechart(piechartValues) {
-    var negativeColor = '#FF4444';
-    var neutralColor = '#999999';
-    var positiveColor = '#66FF66';
-
+function populatePiechart(piechartValues, colors) {
     $('#troogl-piechart').sparkline(piechartValues, {
         type: 'pie',
         width: '8vh',
         height: '8vh',
-        sliceColors: [negativeColor, neutralColor, positiveColor],
+        sliceColors: [colors['negative'], colors['neutral'], colors['positive']],
         tooltipFormatter: function (sparkline, options, fields) {
             var openTag = '<span style="font-size: 18px; padding: 10px; border-radius: 5px; z-index: 2147483647;">';
             if (fields['color'] == '#FF4444') {
@@ -937,15 +944,14 @@ function populatePiechart(piechartValues) {
             }
         }
     }).bind('sparklineClick', function(ev) {
-        alert('The ability to view all sentences within each sentiment class will be added soon!');
         /*
         var selectedSliceColor = ev.sparklines[0].getCurrentRegionFields()['color'];
-        if (selectedSliceColor == negativeColor) {
-            alert('Ability to view all negative sentences');
-        } else if (selectedSliceColor == neutralColor) {
-            alert('neutral');
-        } else if (selectedSliceColor == positiveColor) {
-            alert('positive');
+        if (selectedSliceColor == colors['negative']) {
+            alert('Negative');
+        } else if (selectedSliceColor == colors['neutral']) {
+            alert('Neutral');
+        } else if (selectedSliceColor == colors['positive']) {
+            alert('Positive');
         }
         */
     });
