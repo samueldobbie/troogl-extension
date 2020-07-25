@@ -631,7 +631,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
     logoContainer.style.padding = '1%';
 
     var logoContent = document.createElement('span');
-    logoContent.innerHTML = 'Powered by <a href="https://www.troogl.com" target="_blank" style="color: rgb(83, 51, 237);">Troogl (alpha)</a> - Version 0.0.1';
+    logoContent.innerHTML = 'Powered by <a href="https://samueldobbie.github.io/troogl/" target="_blank" style="color: rgb(83, 51, 237);">Troogl (alpha)</a> - Version 0.0.1';
 
     logoContainer.appendChild(logoContent);
     contentContainer.appendChild(logoContainer);
