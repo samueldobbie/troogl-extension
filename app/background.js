@@ -1,7 +1,7 @@
 // Display user guide upon installation of plugin
 chrome.runtime.onInstalled.addListener(function () {
     chrome.tabs.create({
-        url: 'https://www.troogl.com/browser-extension/how-it-works/'
+        url: 'tutorial.html'
     });
 });
 
