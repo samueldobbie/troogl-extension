@@ -943,8 +943,10 @@ function populatePiechart(piechartValues, colors) {
                 return openTag + fields['value'] + ' positive sentences</span>';
             }
         }
-    }).bind('sparklineClick', function(ev) {
-        /*
+    });
+    
+    /*
+    .bind('sparklineClick', function(ev) {
         var selectedSliceColor = ev.sparklines[0].getCurrentRegionFields()['color'];
         if (selectedSliceColor == colors['negative']) {
             alert('Negative');
@@ -953,8 +955,7 @@ function populatePiechart(piechartValues, colors) {
         } else if (selectedSliceColor == colors['positive']) {
             alert('Positive');
         }
-        */
-    });
+    });*/
 
     var piechartCanvas = document.getElementById('troogl-piechart').childNodes[0];
     piechartCanvas.style.backgroundColor = '#2a2abd';

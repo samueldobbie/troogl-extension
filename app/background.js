@@ -6,6 +6,7 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 
+// Analyse article upon plugin icon click
 chrome.browserAction.onClicked.addListener(function(activeTab) {
     // Get id and url of active tab
     var tabId = activeTab.id;
