@@ -1,6 +1,6 @@
 # troogl - a new way to read the news
 
-![](demo.gif)
+![](app/images/plugin-demo.gif)
 
 ### Features
 
