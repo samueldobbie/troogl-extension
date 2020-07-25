@@ -35,37 +35,37 @@ def analyse_article(request):
     url = request_body['url']
 
     # Extract core article data from article html or url
-    #try:
-    article_data = extract_article_data(url=url)
-    #except:
-    #    return HttpResponse(None)
+    try:
+        article_data = extract_article_data(url=url)
+    except:
+        return HttpResponse(None)
 
-    #if article_data is None:
-    #    return HttpResponse(None)
+    if article_data is None:
+        return HttpResponse(None)
 
     # Define default entity name
     article_data['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
-    #try:
-    sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
-        article_data['body'],
-        article_data['sentences'],
-        article_data['sentence_offsets'],
-        article_data['default_entity_name']
-    )
-    #except:
-    #    return HttpResponse(None)
+    try:
+        sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
+            article_data['body'],
+            article_data['sentences'],
+            article_data['sentence_offsets'],
+            article_data['default_entity_name']
+        )
+    except:
+        return HttpResponse(None)
 
     article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
     article_data['positive_towards'] = positive_towards
     article_data['negative_towards'] = negative_towards
 
     # Get subjectivity for overall article
-    #try:
-    article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
-    #except:
-    #    return HttpResponse(None)
+    try:
+        article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
+    except:
+        return HttpResponse(None)
 
     return HttpResponse(json.dumps(article_data))
 
