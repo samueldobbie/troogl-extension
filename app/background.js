@@ -1,7 +1,7 @@
 // Display user guide upon installation of plugin
 chrome.runtime.onInstalled.addListener(function () {
     chrome.tabs.create({
-        url: 'tutorial.html'
+        url: 'index.html'
     });
 });
 

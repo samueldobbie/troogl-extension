@@ -1,0 +1,39 @@
+body {
+	background-color: #f1f1f1;
+	font-family: 'Roboto', sans-serif;
+	font-size:17px;
+	color: #333; 
+}
+
+li {
+	padding: 5px;
+}
+
+.outer-content-container {
+	background-color: white;
+	max-width: 75vw;
+	margin: auto;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgb(214, 214, 214);
+}
+
+.inner-content-container {
+	padding: 4% 0;
+	margin: 3% 12.5% 3% 12.5%;"
+}
+
+.header {
+	color: rgb(83, 51, 237);
+}
+
+.demo-gif {
+	width: 90%;
+	margin: 1.5%;
+	box-shadow: 0 0 5px #333;
+	border-radius: 5px;
+}
+
+.link {
+	color: rgb(83, 51, 237);
+	font-weight: bold;
+}
