@@ -75,7 +75,6 @@ def extract_article_data(url=None, html=None):
     Extact core data from specified article
     page html or url
     '''
-
     # Construct api query
     api_url = 'https://api.diffbot.com/v3/article'
     params = {
@@ -84,11 +83,12 @@ def extract_article_data(url=None, html=None):
         'maxTags': 0,
         'paging': False,
         'discussion': False,
+        'norender':
         'X-Forward-User-Agent': user_agent_generator.random,
         'X-Forward-Referer': 'google.com',
         'url': url
     }
-    
+
     # Send query using article url or html
     if url is None:
         headers = {'Content-Type': 'text/html'}
