@@ -5,23 +5,20 @@ import math
 
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
-
 from nltk.tokenize import sent_tokenize
-
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
-
 from textblob import TextBlob
-
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 import fake_useragent
 import requests
 import json
 import spacy
+import newspaper
 
 @csrf_exempt
 def analyse_article(request):
@@ -29,42 +26,29 @@ def analyse_article(request):
     Analyse specified article and return data
     to be displayed by the troogl extension
     '''
-
     request_body = json.loads(request.body)
-    url = request_body['url']
+    article_url = request_body['url']
+    article_html = request_body['html']
 
-    # Extract core article data from article html or url
-    try:
-        article_data = extract_article_data(url=url)
-    except:
-        return HttpResponse(None)
-
-    if article_data is None:
-        return HttpResponse(None)
+    # Extract core article data from page html
+    article_data = extract_article_data(html=article_html)
 
     # Define default entity name
     article_data['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
-    try:
-        sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
-            article_data['body'],
-            article_data['sentences'],
-            article_data['sentence_offsets'],
-            article_data['default_entity_name']
-        )
-    except:
-        return HttpResponse(None)
-
+    sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
+        article_data['body'],
+        article_data['sentences'],
+        article_data['sentence_offsets'],
+        article_data['default_entity_name']
+    )
     article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
     article_data['positive_towards'] = positive_towards
     article_data['negative_towards'] = negative_towards
 
     # Get subjectivity for overall article
-    try:
-        article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
-    except:
-        return HttpResponse(None)
+    article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
 
     return HttpResponse(json.dumps(article_data))
 
@@ -73,6 +57,7 @@ def extract_article_data(url=None, html=None):
     '''
     Extact core data from specified article
     page html or url
+    '''
     '''
     # Construct api query
     api_url = 'https://api.diffbot.com/v3/article'
@@ -116,6 +101,14 @@ def extract_article_data(url=None, html=None):
         sentences.insert(0, title)
     else:
         return None
+    '''
+
+    article = newspaper.Article('')
+    article.set_html(html)
+    article.parse()
+
+    sentences = get_article_sentences(article.text)
+    sentences.insert(0, article.title)
 
     # Calculate start and end indicies of each sentence within body
     sentence_offsets = get_sentence_offsets(sentences)
@@ -148,7 +141,10 @@ def extract_article_data(url=None, html=None):
     return article_data
 
 
-def get_article_sentences(text, author):
+def get_article_sentences(text, author=''):
+    '''
+    Tokenise article body into desired sentences
+    '''
     # Strip out paragraphs that partially or exactly match defined stopwords
     paragraphs = []
     for paragraph in text.split('\n'):
@@ -175,6 +171,10 @@ def get_article_sentences(text, author):
 
 
 def get_sentence_offsets(sentences):
+    '''
+    Get the start and end indicies of
+    each sentence within the article
+    '''
     offsets = []
     offset = 0
     for sentence in sentences:
@@ -200,6 +200,10 @@ def get_article_summary(text, LANGUAGE, MAX_SUMMARY_SENTENCE_COUNT):
 
 
 def get_read_time(word_count):
+    '''
+    Calculate read time of entire
+    article in minutes and seconds
+    '''
     minutes = int(word_count / 250)
     seconds = int(((word_count / 250) % 1) * 60)
     return {'minutes': minutes, 'seconds': seconds}
@@ -207,8 +211,8 @@ def get_read_time(word_count):
 
 def get_readability_level(sent_count, word_count, character_count):
     '''
-    Calculate readibility rating of article using
-    Automated Readibility Index (ARI) score
+    Calculate readibility rating of article
+    using the automated readibility index
     '''
     # Calculate ARI score
     ari_score = math.ceil((4.71 * (character_count / word_count)) +
@@ -252,10 +256,11 @@ def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_nam
 
 def cluster_response_entities(response):
     '''
-    Merge similar entities together, as Google NLP will
-    often list k entities seperately even if they all
-    refer to the same entity
+    Merge similar entities together, as Google NLP often
+    lists entities seperately when they refer to the same
+    entity (e.g. Jane and Jane Doe)
     '''
+
     '''
     entity_names = [ent.name.lower() for ent in response.entities]
 
@@ -266,27 +271,27 @@ def cluster_response_entities(response):
                 cluster_mappings[entity_two] = entity_one
 
     print(cluster_mappings)
-    '''
 
     return response
+    '''
+    pass
 
 
 def get_unwanted_entities(response, body):
     '''
     Get a list of all unwanted entities
-    based on target entity types
+    based on desired entity types
     '''
-
     # Get list of target entities
     target_entity_types = ('PERSON', 'ORGANIZATION')
     target_entities = get_entities(body, target_entity_types)
 
-    # Remove unwanted entities
+    # Get list of entities to ignore
     unwanted_entities = set()
     for entity in response.entities:
         remove_entity = True
 
-        # Check whether entity name or mentions appear in target list
+        # Check whether entity or mention names appear in target list
         if entity.name.lower() not in target_entities:
             for mention in entity.mentions:
                 if mention.text.content.lower() in target_entities:
@@ -306,7 +311,6 @@ def get_perspective_data(response, unwanted_entities, default_entity_name, sente
     Classify sentiment of article sentences
     from all perspectives (default + entity)
     '''
-    
     # Define attributes used for adjusting display of sentence within article
     sentence_attribute_options = {
         'classes': ['troogl-negative', 'troogl-positive'],
@@ -334,14 +338,14 @@ def classify_default_perspective(default_entity_name, sentences, sentence_attrib
     for sentence_index in range(len(sentences)):
         sentence_sentiment = sentiment_analyzer.polarity_scores(sentences[sentence_index])
 
-        if -sentence_sentiment['neg'] < NEGATIVE_SENTIMENT_THRESHOLD:
+        if sentence_sentiment['compound'] < -0.4:
             perspective_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': sentence_attribute_options['classes'][0],
                 'sentence_class_title': sentence_attribute_options['titles'][0],
                 'sentence_class_value': sentence_attribute_options['values'][0]
             })
-        elif sentence_sentiment['pos'] > POSITIVE_SENTIMENT_THRESHOLD:
+        elif sentence_sentiment['compound'] > 0.4:
             perspective_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': sentence_attribute_options['classes'][1],
@@ -357,7 +361,6 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
     Classify the sentiment for the article sentences from
     the perspective of mentioned people and organizations 
     '''
-
     perspective_data = {}
     for entity in response.entities:
         entity_name = entity.name.strip().title()
