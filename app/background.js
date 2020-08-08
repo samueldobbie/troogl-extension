@@ -33,7 +33,6 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
                             var request = new XMLHttpRequest();
                             //var apiUrl = 'https://32pjz6f6ca.execute-api.eu-west-2.amazonaws.com/troogl';
                             var apiUrl = 'http://127.0.0.1:8000/analyse/';
-                            //var apiUrl = 'http://samueldobbie.pythonanywhere.com/analyse/';
                             var params = {
                                 'url': tabUrl,
                                 'html': tabHtml

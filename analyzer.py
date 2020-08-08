@@ -1,32 +1,35 @@
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
+from nltk.tokenize import sent_tokenize
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
-from nltk.tokenize import sent_tokenize
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 import math
 import fake_useragent
 import requests
-import spacy
 import json
+import spacy
+import newspaper
 
-def analyze_article(event, context):
+def analyse_article(event, context):
     '''
-    Analyze specified article and return data
+    Analyse specified article and return data
     to be displayed by the troogl extension
     '''
-    article_url = json.loads(event['body'])['url']
-    article_html = json.loads(event['body'])['html']
+
+    event_body = json.loads(event['body'])
+    article_url = event_body['url']
+    article_html = event_body['html']
 
     # Extract core article data from page html
-    article_data = extract_article_data(url=article_url, html=article_html)
+    article_data = extract_article_data(extractor='newspaper', html=article_html)
 
-    # Define default entity name
+    # Define default entity perspective name
     article_data['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
@@ -36,7 +39,6 @@ def analyze_article(event, context):
         article_data['sentence_offsets'],
         article_data['default_entity_name']
     )
-
     article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
     article_data['positive_towards'] = positive_towards
     article_data['negative_towards'] = negative_towards
@@ -44,61 +46,21 @@ def analyze_article(event, context):
     # Get subjectivity for overall article
     article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
 
-    return json.dumps(article_data)
+    return HttpResponse(json.dumps(article_data))
 
 
-def extract_article_data(url=None, html=None):
+def extract_article_data(extractor, url=None, html=None):
     '''
-    Extact core data from specified article
-    page html or url
+    Extact data from specified
+    article page via html or url
     '''
-    # Construct api query
-    api_url = 'https://api.diffbot.com/v3/article'
-    params = {
-        'timeout': 30000,
-        'token': diffbot_token,
-        'maxTags': 0,
-        'paging': False,
-        'discussion': False,
-        'norender': True,
-        'X-Forward-User-Agent': user_agent_generator.random,
-        'X-Forward-Referer': 'google.com',
-        'url': url
-    }
+    # Extract article content and split into sentences
+    sentences = extract_article_sentences(extractor, url, html)
 
-    # Send query using article url or html
-    if html is not None:
-        headers = {'Content-Type': 'text/html'}
-        response = requests.post(url=api_url, params=params, headers=headers, data=html.encode('utf-8'))
-    else:
-        response = requests.get(url=api_url, params=params)
-    
-    response_text = json.loads(response.text)
-    
-    response_data = ''
-    if 'objects' in response_text:
-        response_data = response_text['objects'][0]
-
-    title = ''
-    if 'title' in response_data:
-        title = response_data['title'].strip()
-
-    text = ''
-    if 'text' in response_data:
-        text = response_data['text'].strip()
-
-    author = ''
-    if 'author' in response_data:
-        author = response_data['author'].strip()
-
-    # Parse response data into sentences
-    if text != '':
-        sentences = get_article_sentences(text, author)
-        sentences.insert(0, title)
-    else:
+    if sentences == []:
         return None
 
-    # Calculate start and end indicies of each sentence within body
+    # Calculate start and end indicies of each sentence
     sentence_offsets = get_sentence_offsets(sentences)
 
     body = ' '.join(sentences)
@@ -129,8 +91,17 @@ def extract_article_data(url=None, html=None):
     return article_data
 
 
-def get_article_sentences(text, author):
-    # Strip out paragraphs that partially or exactly match defined stopwords
+def extract_article_sentences(extractor, url, html):
+    '''
+    Extract and tokenise article content into sentences
+    '''
+    # Extract article content
+    if extractor == 'diffbot':
+        title, text = extract_via_diffbot(url, html)
+    elif extractor == 'newspaper':
+        title, text = extract_via_newspaper(html)
+
+    # Strip out paragraphs that match defined stopwords
     paragraphs = []
     for paragraph in text.split('\n'):
         valid_paragraph = True
@@ -138,10 +109,6 @@ def get_article_sentences(text, author):
             if partial_stopword.lower() in paragraph.lower() or paragraph.lower().strip() in exact_stopwords:
                 valid_paragraph = False
                 break
-        
-        # Ignore sentences that include the authors name
-        if author != '' and author.lower() in paragraph.lower():
-            valid_paragraph = False 
 
         if valid_paragraph:
             paragraphs.append(paragraph)
@@ -152,10 +119,58 @@ def get_article_sentences(text, author):
         for sentence in sent_tokenize(paragraph):
             sentences.append(sentence.strip())
 
+    # Include headline in sentences
+    sentences.insert(0, title)
+
     return sentences
 
 
+def extract_via_diffbot(url, html=None):
+    # Define query parameters
+    params = {
+        'timeout': 30000,
+        'token': DIFFBOT_TOKEN,
+        'maxTags': 0,
+        'paging': False,
+        'discussion': False,
+        'norender': True,
+        'X-Forward-User-Agent': user_agent_generator.random,
+        'X-Forward-Referer': 'google.com',
+        'url': url
+    }
+
+    # Send query using article url or html
+    if html is None:
+        response = requests.get(
+            url=DIFFBOT_URL,
+            params=params
+        )
+    else:
+        headers = {'Content-Type': 'text/html'}
+        response = requests.post(
+            url=DIFFBOT_URL,
+            params=params,
+            headers=headers,
+            data=html.encode('utf-8')
+        )
+    response_data = json.loads(response.text)['objects'][0]
+
+    return response_data['title'], response_data['text']
+
+
+def extract_via_newspaper(html):
+    article = newspaper.Article('')
+    article.set_html(html)
+    article.parse()
+
+    return article.title, article.text
+
+
 def get_sentence_offsets(sentences):
+    '''
+    Get the start and end indicies of
+    each sentence within the article
+    '''
     offsets = []
     offset = 0
     for sentence in sentences:
@@ -181,6 +196,10 @@ def get_article_summary(text, LANGUAGE, MAX_SUMMARY_SENTENCE_COUNT):
 
 
 def get_read_time(word_count):
+    '''
+    Calculate read time of entire
+    article in minutes and seconds
+    '''
     minutes = int(word_count / 250)
     seconds = int(((word_count / 250) % 1) * 60)
     return {'minutes': minutes, 'seconds': seconds}
@@ -188,8 +207,8 @@ def get_read_time(word_count):
 
 def get_readability_level(sent_count, word_count, character_count):
     '''
-    Calculate readibility rating of article using
-    Automated Readibility Index (ARI) score
+    Calculate readibility rating of article
+    using the automated readibility index
     '''
     # Calculate ARI score
     ari_score = math.ceil((4.71 * (character_count / word_count)) +
@@ -233,9 +252,23 @@ def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_nam
 
 def cluster_response_entities(response):
     '''
-    Merge similar entities together, as Google NLP will
-    often list k entities seperately even if they all
-    refer to the same entity
+    Merge similar entities together, as Google NLP often
+    lists entities seperately when they refer to the same
+    entity (e.g. Jane and Jane Doe)
+    '''
+
+    '''
+    entity_names = [ent.name.lower() for ent in response.entities]
+
+    cluster_mappings = {}
+    for entity_one in entity_names:
+        for entity_two in entity_names:
+            if entity_two in entity_one and entity_two != entity_one:
+                cluster_mappings[entity_two] = entity_one
+
+    print(cluster_mappings)
+
+    return response
     '''
     pass
 
@@ -243,19 +276,18 @@ def cluster_response_entities(response):
 def get_unwanted_entities(response, body):
     '''
     Get a list of all unwanted entities
-    based on target entity types
+    based on desired entity types
     '''
-
     # Get list of target entities
     target_entity_types = ('PERSON', 'ORGANIZATION')
     target_entities = get_entities(body, target_entity_types)
 
-    # Remove unwanted entities
+    # Get list of entities to ignore
     unwanted_entities = set()
     for entity in response.entities:
         remove_entity = True
 
-        # Check whether entity name or mentions appear in target list
+        # Check whether entity or mention names appear in target list
         if entity.name.lower() not in target_entities:
             for mention in entity.mentions:
                 if mention.text.content.lower() in target_entities:
@@ -275,7 +307,6 @@ def get_perspective_data(response, unwanted_entities, default_entity_name, sente
     Classify sentiment of article sentences
     from all perspectives (default + entity)
     '''
-    
     # Define attributes used for adjusting display of sentence within article
     sentence_attribute_options = {
         'classes': ['troogl-negative', 'troogl-positive'],
@@ -303,14 +334,14 @@ def classify_default_perspective(default_entity_name, sentences, sentence_attrib
     for sentence_index in range(len(sentences)):
         sentence_sentiment = sentiment_analyzer.polarity_scores(sentences[sentence_index])
 
-        if -sentence_sentiment['neg'] < -0.4:
+        if sentence_sentiment['compound'] < -0.4:
             perspective_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': sentence_attribute_options['classes'][0],
                 'sentence_class_title': sentence_attribute_options['titles'][0],
                 'sentence_class_value': sentence_attribute_options['values'][0]
             })
-        elif sentence_sentiment['pos'] > 0.4:
+        elif sentence_sentiment['compound'] > 0.4:
             perspective_data[default_entity_name].append({
                 'sentence_index': sentence_index,
                 'sentence_class_string': sentence_attribute_options['classes'][1],
@@ -326,7 +357,6 @@ def classify_entity_perspectives(response, unwanted_entities, sentence_offsets, 
     Classify the sentiment for the article sentences from
     the perspective of mentioned people and organizations 
     '''
-
     perspective_data = {}
     for entity in response.entities:
         entity_name = entity.name.strip().title()
@@ -440,15 +470,15 @@ def get_subjectivity_class(body):
         return 'Mostly opinionated'
 
 
-diffbot_token = open('diffbot-token.txt', encoding='utf-8').read().strip()
-client = language_v1.LanguageServiceClient.from_service_account_json('ce-v1-f594c3be6fc9.json')
-exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))
-partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
-
-nlp = spacy.load('en_core_web_sm')
 user_agent_generator = fake_useragent.UserAgent()
+client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\Samuel\Desktop\Troogl Browser Extension\troogl_extension_env\Troogl Browser Extension\news_analysis_api\ce-v1-f594c3be6fc9.json')
+partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
+exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))
+nlp = spacy.load('en_core_web_sm')
 sentiment_analyzer = SentimentIntensityAnalyzer()
 
+DIFFBOT_TOKEN = open('diffbot-token.txt', encoding='utf-8').read().strip()
+DIFFBOT_URL = 'https://api.diffbot.com/v3/article'
 POSITIVE_SENTIMENT_THRESHOLD = 0.15
 NEGATIVE_SENTIMENT_THRESHOLD = -0.15
-MAGNITUDE_THRESHOLD = 0.2
+MAGNITUDE_THRESHOLD = 0.4

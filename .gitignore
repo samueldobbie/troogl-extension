@@ -3,7 +3,5 @@
 *.ipynb_checkpoints
 *.pyc
 *.json
-
-
 diffbot-token.txt
 secret-key.txt
