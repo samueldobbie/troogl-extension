@@ -2,7 +2,7 @@
 
 ![](app/images/plugin-demo.gif)
 
-Troogl is a browser extension that aims to improve the experience of reading news articles by providing (hopefully useful and interesting) insights into news articles as you read them. Troogl will be added to the Chrome Web Store soon!
+Troogl is a browser extension that aims to improve the experience of reading news articles by providing useful and interesting insights into each article you read. Coming soon to Chrome and Firefox!
 
 ### Features
 
