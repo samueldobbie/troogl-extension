@@ -1,5 +1,5 @@
-from google.cloud import language_v1
-from google.cloud.language_v1 import enums
+from google.cloud import language
+from google.cloud.language import enums
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer as Summarizer
@@ -10,7 +10,6 @@ from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from flask import Flask
 
-import fake_useragent
 import json
 import math
 import newspaper
@@ -19,7 +18,7 @@ import spacy
 
 app = Flask(__name__)
 
-@app.route('v1/api/analyse', methods=['GET'])
+@app.route('/v1/api/analyse', methods=['POST'])
 def analyse_article(event, context):
     '''
     Analyse article and return JSON response
@@ -422,14 +421,14 @@ def get_subjectivity_class(body):
         return 'Mostly opinionated'
 
 
-GOOGLE_API_KEY = ADD_KEY_HERE
+GOOGLE_API_KEY = r'C:\Users\Samuel\Desktop\Troogl\Extension\api\google-key.json'
 POSITIVE_SENTIMENT_THRESHOLD = 0.15
 NEGATIVE_SENTIMENT_THRESHOLD = -0.15
 MAGNITUDE_THRESHOLD = 0.4
 
-user_agents = fake_useragent.UserAgent()
-client = language_v1.LanguageServiceClient.from_service_account_json(GOOGLE_API_KEY)
-# partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
-# exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))
+client = language.LanguageServiceClient.from_service_account_json(GOOGLE_API_KEY)
 nlp = spacy.load('en_core_web_sm')
 sentiment_analyzer = SentimentIntensityAnalyzer()
+
+# partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
+# exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))

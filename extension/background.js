@@ -35,10 +35,10 @@ function analyseArticle(tabId) {
     chrome.tabs.executeScript(tabId, {file: 'extract-html.js'}, function (result) {
         // Construct API query
         var request = new XMLHttpRequest();
-        var apiUrl = 'http://127.0.0.1:5000/';
+        var apiUrl = 'http://127.0.0.1:5000/v1/api/analyse';
         var params = JSON.stringify({'html': result[0]});
 
-        request.open('GET', apiUrl, true);
+        request.open('POST', apiUrl, true);
 
         // Pass response data to content script
         request.onload = function() {
