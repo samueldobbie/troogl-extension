@@ -19,12 +19,12 @@ import spacy
 app = Flask(__name__)
 
 @app.route('/v1/api/analyse', methods=['POST'])
-def analyse_article(event, context):
+def analyse_article():
     '''
     Analyse article and return JSON response
     '''
     # Extract core article data
-    article = get_article_data(json.loads(event['body'])['html'])
+    article = get_article_data(request.form['html'])
 
     # Define default entity perspective name
     article['default_entity_name'] = 'Everyday News Reader'
