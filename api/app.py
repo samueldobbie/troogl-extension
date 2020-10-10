@@ -8,7 +8,8 @@ from sumy.utils import get_stop_words
 from nltk.tokenize import sent_tokenize
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from flask import Flask
+from flask import Flask, Response, request
+from flask_cors import CORS
 
 import json
 import math
@@ -17,6 +18,7 @@ import requests
 import spacy
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/v1/api/analyse', methods=['POST'])
 def analyse_article():
@@ -24,7 +26,10 @@ def analyse_article():
     Analyse article and return JSON response
     '''
     # Extract core article data
-    article = get_article_data(request.form['html'])
+    article = get_article_data(json.loads(request.data)['html'])
+
+    if not article:
+        return Response(json.dumps(None))
 
     # Define default entity perspective name
     article['default_entity_name'] = 'Everyday News Reader'
@@ -43,7 +48,7 @@ def analyse_article():
     # Get subjectivity for overall article
     article['subjectivity'] = get_subjectivity_class(article['body'])
 
-    return HttpResponse(json.dumps(article))
+    return Response(json.dumps(article))
 
 
 def get_article_data(html):
@@ -216,8 +221,6 @@ def cluster_response_entities(response):
         for entity_two in entity_names:
             if entity_two in entity_one and entity_two != entity_one:
                 cluster_mappings[entity_two] = entity_one
-
-    print(cluster_mappings)
 
     return response
     '''

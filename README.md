@@ -2,7 +2,15 @@
 
 ![](extension/images/plugin-demo.gif)
 
-Troogl is a browser extension that aims to improve the experience of reading news articles by providing useful and interesting insights into each article you read. Coming soon to Chrome and Firefox!
+Troogl is a browser extension that aims to improve the experience of reading news articles by providing you with interesting, real-time insights into articles as you read them. Coming soon to Chrome and Firefox!
+
+### How do I use it?
+
+1. Add the extension to your browser.
+2. Visit any news article.
+3. Click the Troogl plugin icon in the top right corner of your browser.
+
+Troogl will analyse the article and display the results directly within the article, as shown in the GIF above.
 
 ### Features
 
