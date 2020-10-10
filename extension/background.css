@@ -1,6 +1,6 @@
 /*
     All class names prefixed with 'troogl' to
-    avoid conflicts with target website CSS
+    prevent conflicts with target website
 */
 
 /* General styling */
@@ -44,7 +44,7 @@ html {
     background-color: rgb(182, 255, 200);
 }
 
-/*** Loader / overlay ***/
+/* Loader / overlay */
 
 .troogl-loader-container {
     position: fixed;
@@ -141,6 +141,7 @@ html {
 }
 
 /* Close button */
+
 .troogl-exit-button {
     position: absolute;
     background-color: white;
@@ -174,7 +175,8 @@ html {
     background-color: #f1f1f1;
 }
 
-/* Troogl options */
+/* Sentence button options */
+
 #troogl-vote-button:hover {
     filter: brightness(90%);
 }

@@ -1,119 +1,112 @@
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
-from nltk.tokenize import sent_tokenize
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
+from nltk.tokenize import sent_tokenize
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from flask import Flask
 
-import math
 import fake_useragent
-import requests
 import json
-import spacy
+import math
 import newspaper
+import requests
+import spacy
 
+app = Flask(__name__)
+
+@app.route('v1/api/analyse', methods=['GET'])
 def analyse_article(event, context):
     '''
-    Analyse specified article and return data
-    to be displayed by the troogl extension
+    Analyse article and return JSON response
     '''
-
-    event_body = json.loads(event['body'])
-    article_url = event_body['url']
-    article_html = event_body['html']
-
-    # Extract core article data from page html
-    article_data = extract_article_data(extractor='newspaper', html=article_html)
+    # Extract core article data
+    article = get_article_data(json.loads(event['body'])['html'])
 
     # Define default entity perspective name
-    article_data['default_entity_name'] = 'Everyday News Reader'
+    article['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
     sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
-        article_data['body'],
-        article_data['sentences'],
-        article_data['sentence_offsets'],
-        article_data['default_entity_name']
+        article['body'],
+        article['sentences'],
+        article['sentence_offsets'],
+        article['default_entity_name']
     )
-    article_data['sentence_sentiment_classes'] = sentence_sentiment_classes
-    article_data['positive_towards'] = positive_towards
-    article_data['negative_towards'] = negative_towards
+    article['sentence_sentiment_classes'] = sentence_sentiment_classes
+    article['positive_towards'] = positive_towards
+    article['negative_towards'] = negative_towards
 
     # Get subjectivity for overall article
-    article_data['subjectivity'] = get_subjectivity_class(article_data['body'])
+    article['subjectivity'] = get_subjectivity_class(article['body'])
 
-    return HttpResponse(json.dumps(article_data))
+    return HttpResponse(json.dumps(article))
 
 
-def extract_article_data(extractor, url=None, html=None):
+def get_article_data(html):
     '''
-    Extact data from specified
-    article page via html or url
+    Extact data from article html
     '''
     # Extract article content and split into sentences
-    sentences = extract_article_sentences(extractor, url, html)
+    sentences = get_article_sentences(html)
 
-    if sentences == []:
+    if not sentences:
         return None
 
     # Calculate start and end indicies of each sentence
     sentence_offsets = get_sentence_offsets(sentences)
 
+    # Get body and summary of article
     body = ' '.join(sentences)
-
-    # Get neutralized summary of article
-    summary_sentences = get_article_summary(body, 'english', 3)
+    summary_sentences = get_article_summary(body, 3)
 
     # Get sentence, word and character counts
-    sentence_count = len(sentences)
+    sent_count = len(sentences)
     word_count = len(body.split(' '))
-    character_count = len(body)
+    char_count = len(body)
 
     # Get read time of article in minutes and seconds
     read_time = get_read_time(word_count)
 
     # Get readability level of article
-    readability_level = get_readability_level(sentence_count, word_count, character_count)
+    readability_level = get_readability_level(sent_count, word_count, char_count)
 
     # Construct response data
-    article_data = {}
-    article_data['body'] = body
-    article_data['sentences'] = sentences
-    article_data['sentence_offsets'] = sentence_offsets
-    article_data['summary_sentences'] = summary_sentences
-    article_data['read_time'] = read_time
-    article_data['readability_level'] = readability_level
+    article = {}
+    article['body'] = body
+    article['sentences'] = sentences
+    article['sentence_offsets'] = sentence_offsets
+    article['summary_sentences'] = summary_sentences
+    article['read_time'] = read_time
+    article['readability_level'] = readability_level
 
-    return article_data
+    return article
 
 
-def extract_article_sentences(extractor, url, html):
+def get_article_sentences(html):
     '''
-    Extract and tokenise article content into sentences
+    Extract and tokenise article into sentences
     '''
     # Extract article content
-    if extractor == 'diffbot':
-        title, text = extract_via_diffbot(url, html)
-    elif extractor == 'newspaper':
-        title, text = extract_via_newspaper(html)
+    title, text = get_article_content(html)
 
-    # Strip out paragraphs that match defined stopwords
-    paragraphs = []
-    for paragraph in text.split('\n'):
-        valid_paragraph = True
-        for partial_stopword in partial_stopwords:
-            if partial_stopword.lower() in paragraph.lower() or paragraph.lower().strip() in exact_stopwords:
-                valid_paragraph = False
-                break
+    # Get valid paragraphs
+    paragraphs = [p for p in text.split('\n')]
+    # for paragraph in text.split('\n'):
+    #     valid_paragraph = True
+    #     for partial_stopword in partial_stopwords:
+    #         if partial_stopword.lower() in paragraph.lower() or paragraph.lower().strip() in exact_stopwords:
+    #             valid_paragraph = False
+    #             break
 
-        if valid_paragraph:
-            paragraphs.append(paragraph)
+    #     if valid_paragraph:
+    #         paragraphs.append(paragraph)
 
-    # Tokenize remaining paragraphs into sentences
+    # Break paragraphs into sentences
     sentences = []
     for paragraph in paragraphs:
         for sentence in sent_tokenize(paragraph):
@@ -125,40 +118,7 @@ def extract_article_sentences(extractor, url, html):
     return sentences
 
 
-def extract_via_diffbot(url, html=None):
-    # Define query parameters
-    params = {
-        'timeout': 30000,
-        'token': DIFFBOT_TOKEN,
-        'maxTags': 0,
-        'paging': False,
-        'discussion': False,
-        'norender': True,
-        'X-Forward-User-Agent': user_agent_generator.random,
-        'X-Forward-Referer': 'google.com',
-        'url': url
-    }
-
-    # Send query using article url or html
-    if html is None:
-        response = requests.get(
-            url=DIFFBOT_URL,
-            params=params
-        )
-    else:
-        headers = {'Content-Type': 'text/html'}
-        response = requests.post(
-            url=DIFFBOT_URL,
-            params=params,
-            headers=headers,
-            data=html.encode('utf-8')
-        )
-    response_data = json.loads(response.text)['objects'][0]
-
-    return response_data['title'], response_data['text']
-
-
-def extract_via_newspaper(html):
+def get_article_content(html):
     article = newspaper.Article('')
     article.set_html(html)
     article.parse()
@@ -179,20 +139,15 @@ def get_sentence_offsets(sentences):
     return offsets
 
 
-def get_article_summary(text, LANGUAGE, MAX_SUMMARY_SENTENCE_COUNT):
+def get_article_summary(text, n):
     '''
-    Get summary of article and neutralize the biased terms
+    Get n-sentences that best summarise the article
+    and neutralize biased terms within the summary (to-do)
     '''
-    # Get most relevant sentences to describe article
-    parser = PlaintextParser.from_string(text, Tokenizer(LANGUAGE))
-    stemmer = Stemmer(LANGUAGE)
-    summarizer = Summarizer(stemmer)
-    summarizer.stop_words = get_stop_words(LANGUAGE)
-    summary_sentences = [str(sentence) for sentence in summarizer(parser.document, MAX_SUMMARY_SENTENCE_COUNT)]
-
-    # Neutralize bias within summary sentences (to-do)
-
-    return summary_sentences
+    parser = PlaintextParser.from_string(text, Tokenizer('english'))
+    summarizer = Summarizer(Stemmer('english'))
+    summarizer.stop_words = get_stop_words('english')
+    return [str(s) for s in summarizer(parser.document, n)]
 
 
 def get_read_time(word_count):
@@ -205,29 +160,26 @@ def get_read_time(word_count):
     return {'minutes': minutes, 'seconds': seconds}
 
 
-def get_readability_level(sent_count, word_count, character_count):
+def get_readability_level(sent_count, word_count, char_count):
     '''
     Calculate readibility rating of article
     using the automated readibility index
     '''
     # Calculate ARI score
-    ari_score = math.ceil((4.71 * (character_count / word_count)) +
+    ari_score = math.ceil((4.71 * (char_count / word_count)) +
                           (0.5 * (word_count / sent_count)) - 21.43)
 
-    # Map ARI score to readibility rating
-    readability_level = ''
+    # Map ARI score to readibility category
     if ari_score <= 5:
-        readability_level = 'Elementary Level'
+        return 'Elementary Level'
     elif ari_score <= 8:
-        readability_level = 'Middle School Level'
+        return 'Middle School Level'
     elif ari_score <= 12:
-        readability_level = 'High School Level'
+        return 'High School Level'
     elif ari_score <= 13:
-        readability_level = 'College Level'
+        return 'College Level'
     else:
-        readability_level = 'Professor Level'
-
-    return readability_level
+        return 'Professor Level'
 
 
 def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_name):
@@ -470,15 +422,14 @@ def get_subjectivity_class(body):
         return 'Mostly opinionated'
 
 
-user_agent_generator = fake_useragent.UserAgent()
-client = language_v1.LanguageServiceClient.from_service_account_json(r'C:\Users\Samuel\Desktop\Troogl Browser Extension\troogl_extension_env\Troogl Browser Extension\news_analysis_api\ce-v1-f594c3be6fc9.json')
-partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
-exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))
-nlp = spacy.load('en_core_web_sm')
-sentiment_analyzer = SentimentIntensityAnalyzer()
-
-DIFFBOT_TOKEN = open('diffbot-token.txt', encoding='utf-8').read().strip()
-DIFFBOT_URL = 'https://api.diffbot.com/v3/article'
+GOOGLE_API_KEY = ADD_KEY_HERE
 POSITIVE_SENTIMENT_THRESHOLD = 0.15
 NEGATIVE_SENTIMENT_THRESHOLD = -0.15
 MAGNITUDE_THRESHOLD = 0.4
+
+user_agents = fake_useragent.UserAgent()
+client = language_v1.LanguageServiceClient.from_service_account_json(GOOGLE_API_KEY)
+# partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
+# exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))
+nlp = spacy.load('en_core_web_sm')
+sentiment_analyzer = SentimentIntensityAnalyzer()

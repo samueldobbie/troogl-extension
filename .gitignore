@@ -1,7 +1,10 @@
-.vscode/
+.venv
+.vscode
+
 *.ipynb
 *.ipynb_checkpoints
-*.pyc
 *.json
+*.pyc
+
 diffbot-token.txt
 secret-key.txt
