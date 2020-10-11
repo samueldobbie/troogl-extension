@@ -9,6 +9,21 @@ li {
 	padding: 5px;
 }
 
+.pos {
+	color: green;
+	background-color: rgb(189, 255, 189);
+}
+
+.neu {
+	color: gray;
+	background-color: rgb(221, 221, 221);
+}
+
+.neg {
+	color: red;
+	background-color: rgb(255, 196, 196);
+}
+
 .outer-content-container {
 	background-color: white;
 	max-width: 75vw;

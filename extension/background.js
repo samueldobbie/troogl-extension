@@ -21,6 +21,8 @@ chrome.browserAction.onClicked.addListener(function(activeTab) {
                     });
                 });
             });
+        } else {
+            alert('The article is invalid or has already been analysed.');
         }
     });
 });

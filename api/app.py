@@ -35,7 +35,7 @@ def analyse_article():
     article['default_entity_name'] = 'Everyday News Reader'
 
     # Get sentence sentiments for all entity perspectives
-    sentence_sentiment_classes, positive_towards, negative_towards = extract_sentiment_data(
+    sentence_sentiment_classes, positive_towards, negative_towards = get_sentiment_data(
         article['body'],
         article['sentences'],
         article['sentence_offsets'],
@@ -100,15 +100,17 @@ def get_article_sentences(html):
 
     # Get valid paragraphs
     paragraphs = [p for p in text.split('\n')]
+
     # for paragraph in text.split('\n'):
     #     valid_paragraph = True
     #     for partial_stopword in partial_stopwords:
     #         if partial_stopword.lower() in paragraph.lower() or paragraph.lower().strip() in exact_stopwords:
     #             valid_paragraph = False
     #             break
-
     #     if valid_paragraph:
     #         paragraphs.append(paragraph)
+    # partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
+    # exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))
 
     # Break paragraphs into sentences
     sentences = []
@@ -186,7 +188,7 @@ def get_readability_level(sent_count, word_count, char_count):
         return 'Professor Level'
 
 
-def extract_sentiment_data(body, sentences, sentence_offsets, default_entity_name):
+def get_sentiment_data(body, sentences, sentence_offsets, default_entity_name):
     # Query Google NLP
     document = {'content': body, 'type': enums.Document.Type.PLAIN_TEXT, 'language': 'en'}
     response = client.analyze_entity_sentiment(document, encoding_type=enums.EncodingType.UTF32)
@@ -432,6 +434,3 @@ MAGNITUDE_THRESHOLD = 0.4
 client = language.LanguageServiceClient.from_service_account_json(GOOGLE_API_KEY)
 nlp = spacy.load('en_core_web_sm')
 sentiment_analyzer = SentimentIntensityAnalyzer()
-
-# partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
-# exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))

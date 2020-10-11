@@ -14,10 +14,11 @@ Troogl will analyse the article and display the results directly within the arti
 
 ### Features
 
-- Color-coded sentences based on the sentiment (green = positive, grey = neutral, red = negative).
-- A line graph that highlights the changing sentence sentiments over the course of the article.
-- Easy navigation of sentences by hovering over different points within the line graph.
-- A dropdown to switch between perspectives, enabling you to view the sentiment of sentences from the perspective of people and organizations mentioned in the article.
-- A piechart breakdown of sentence sentiments based on the counts of each sentiment type.
-- A more extensive dashboard that provides a summary of the article, the read time, the readability, the objectivity, and an overview of the people and organizations that are mentioned positively and negatively.
-- ...and many other features in the works!
+- Colour-coded sentences based on the sentiment (```diff + positive```, ```diff # neutral```, ```diff - negative```).
+- A graph demonstrating the changing sentence sentiments over the course of the article.
+- Easy article navigation by hovering over different points within the graph.
+- Ability to view sentence sentiments from the perspective of those mentioned in the article.
+- Neutral summary of the article.
+- A dashboard providing metrics such as the read time, readability level, objectivity.
+- Overview of the people and orgs who are mentioned positively or negatively.
+- ...many other features in the works!
