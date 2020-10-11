@@ -99,27 +99,13 @@ def get_article_sentences(html):
     title, text = get_article_content(html)
 
     # Get valid paragraphs
-    paragraphs = [p for p in text.split('\n')]
-
-    # for paragraph in text.split('\n'):
-    #     valid_paragraph = True
-    #     for partial_stopword in partial_stopwords:
-    #         if partial_stopword.lower() in paragraph.lower() or paragraph.lower().strip() in exact_stopwords:
-    #             valid_paragraph = False
-    #             break
-    #     if valid_paragraph:
-    #         paragraphs.append(paragraph)
-    # partial_stopwords = set(open('partial_stopwords.txt', encoding='utf-8').read().split('\n'))
-    # exact_stopwords = set(open('exact_stopwords.txt', encoding='utf-8').read().split('\n'))
+    paragraphs = filter(is_valid_paragraph, text.split('\n'))
 
     # Break paragraphs into sentences
-    sentences = []
+    sentences = [title]
     for paragraph in paragraphs:
         for sentence in sent_tokenize(paragraph):
             sentences.append(sentence.strip())
-
-    # Include headline in sentences
-    sentences.insert(0, title)
 
     return sentences
 
@@ -130,6 +116,13 @@ def get_article_content(html):
     article.parse()
 
     return article.title, article.text
+
+
+def is_valid_paragraph(paragraph):
+    for stopword in stopwords:
+        if stopword.lower() in paragraph.lower():
+            return False
+    return True
 
 
 def get_sentence_offsets(sentences):
@@ -434,3 +427,4 @@ MAGNITUDE_THRESHOLD = 0.4
 client = language.LanguageServiceClient.from_service_account_json(GOOGLE_API_KEY)
 nlp = spacy.load('en_core_web_sm')
 sentiment_analyzer = SentimentIntensityAnalyzer()
+stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))

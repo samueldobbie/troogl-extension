@@ -9,17 +9,22 @@ li {
 	padding: 5px;
 }
 
-.pos {
+.sentiment-tag {
+	padding: 1px 4px;
+	border-radius: 5px;
+}
+
+.positive {
 	color: green;
 	background-color: rgb(189, 255, 189);
 }
 
-.neu {
+.neutral {
 	color: gray;
 	background-color: rgb(221, 221, 221);
 }
 
-.neg {
+.negative {
 	color: red;
 	background-color: rgb(255, 196, 196);
 }
@@ -34,7 +39,7 @@ li {
 
 .inner-content-container {
 	padding: 4% 0;
-	margin: 3% 12.5% 3% 12.5%;"
+	margin: 3% 12.5% 3% 12.5%;
 }
 
 .header {
