@@ -1,30 +1,20 @@
 function prepareSentences(sentences) {
-
     enablePageEditing();
-
-    // Return selection cursor to beginning of document
     window.getSelection().collapse(document.body, 0);
 
-    for (var i = 0; i < sentences.length; i++) {
-        // Find sentence within page
+    for (let i = 0; i < sentences.length; i++) {
         if (window.find(sentences[i])) {
-            // Get selected sentence range
-            var range = window.getSelection().getRangeAt(0);
+            // Get sentence range
+            let range = window.getSelection().getRangeAt(0);
 
-            // Construct sentence container
-            var sentenceContainer = document.createElement('span');
-
-            // Construct sentence anchor tag
-            var anchorTag = document.createElement('a');
+            // Construct anchor tag
+            let anchorTag = document.createElement('a');
             anchorTag.id = 'troogl-sentence-' + i;
 
-            // Add anchor tag to sentece
+            // Construct sentence container
+            let sentenceContainer = document.createElement('span');
             sentenceContainer.appendChild(anchorTag);
-
-            // Set index of sentence container
             sentenceContainer.setAttribute('troogl-sentence-index', i);
-
-            // Add sentiment classes to container
             sentenceContainer.classList.add('troogl-sentence');
             sentenceContainer.appendChild(range.extractContents());
 
@@ -32,251 +22,270 @@ function prepareSentences(sentences) {
             range.insertNode(sentenceContainer);
         }
     }
-
     disablePageEditing();
-
-    // Move to top of article
     window.scrollTo(0, 0);
 }
 
-
-function updateSentenceClasses(sentenceClasses) {
-
+function updateSentenceClasses(updatedClasses) {
     enablePageEditing();
 
-    var sentences = document.getElementsByClassName('troogl-sentence');
-
-    // Return sentences to default state
-    for (var i = 0; i < sentences.length; i++) {
-        // Remove existing sentiment class
-        stripSentence(sentences[i]);
-
-        // Set default sentence values
-        sentences[i].classList.add('troogl-neutral');
-        sentences[i].setAttribute('troogl-class-value', 0);
-        sentences[i].setAttribute('title', 'Neutral');
+    // Revert sentences to default state (neutral class)
+    let sentences = document.getElementsByClassName('troogl-sentence');
+    for (let i = 0; i < sentences.length; i++) {
+        removeExistingClass(sentences[i]);
+        setDefaultClass(sentences[i]);
     }
 
-    // Update sentences based on entity sentiments
-    for (var i = 0; i < sentenceClasses.length; i++) {
-        var sentenceIndex = sentenceClasses[i]['sentence_index'];
-        var sentenceAnchor = document.getElementById('troogl-sentence-' + sentenceIndex);
-        if (sentenceAnchor) {
-            var sentence = sentenceAnchor.parentElement;
-            var sentenceClassString = sentenceClasses[i]['sentence_class_string'];
-            var sentenceClassValue = sentenceClasses[i]['sentence_class_value'];
-            var sentenceClassTitle = sentenceClasses[i]['sentence_class_title'];
-    
-            // Remove existing sentiment class
-            stripSentence(sentence);
-    
-            // Update sentence values
-            sentence.classList.add(sentenceClassString);
-            sentence.setAttribute('troogl-class-value', sentenceClassValue);
-            sentence.setAttribute('title', sentenceClassTitle);
+    // Update sentence classes based on entity sentiments
+    for (let i = 0; i < updatedClasses.length; i++) {
+        let index = updatedClasses[i]['sentence_index'];
+        let anchor = document.getElementById('troogl-sentence-' + index);
+
+        // Update sentence class
+        if (anchor) {
+            let sentence = anchor.parentElement;
+            removeExistingClass(sentence);
+            sentence.classList.add(updatedClasses[i]['sentence_class_string']);
+            sentence.setAttribute('troogl-class-value', updatedClasses[i]['sentence_class_value']);
+            sentence.setAttribute('title', updatedClasses[i]['sentence_class_title']);
         }
     }
-
     disablePageEditing();
 }
 
 
-function stripSentence(sentence) {
+function removeExistingClass(sentence) {
     sentence.classList.remove('troogl-negative');
     sentence.classList.remove('troogl-neutral');
     sentence.classList.remove('troogl-positive');
 }
 
 
+function setDefaultClass(sentence) {
+    sentence.classList.add('troogl-neutral');
+    sentence.setAttribute('troogl-class-value', 0);
+    sentence.setAttribute('title', 'Neutral');
+}
+
+
 function enablePageEditing() {
-    // Enable editing of article
     document.designMode = 'on';
 }
 
 
 function disablePageEditing() {
-    // Disable editing of article
     document.designMode = 'off';
-
-    // Remove final sentence selection
     window.getSelection().collapse(document.body, 0);
 }
 
 
-function insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards) {
-    // Create and inject dashboard snippet bar
-    injectPartialDashboard(sentenceClasses);
-
-    // Create and inject full page dashboard
-    injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards);
-    
-    // Create and inject sentence popup
-    injectSentencePopup();
-
-    // Populate sparkline and piechart with article sentiments
-    updateGraphs();
-
-    // Add clickable events to both dashboards
+function insertDashboard(article) {
+    // Inject visual elements and bind events
+    addPartialDashboard(article['sentence_sentiment_classes']);
+    addCompleteDashboard(article);
+    addSentencePopup();
     bindDashboardEvents();
+
+    // Populate graphs
+    updateGraphs();
 }
 
 
-function injectPartialDashboard(sentenceClasses) {
-    var dashboardContainer = document.createElement('div');
-    dashboardContainer.id = 'troogl-partial-dashboard-container';
-    dashboardContainer.style.position = 'relative';
-    dashboardContainer.style.width = '100%';
-    dashboardContainer.style.height = '12.5vh';
+function addPartialDashboard(sentenceClasses) {
+    let container = $('<div/>', {
+        'id': 'troogl-partial-dashboard-container',
+        'css': {
+            'position': 'relative',
+            'width': '100%',
+            'height': '12.5vh'
+        }
+    });
 
-    var dashboardBar = document.createElement('div');
-    dashboardBar.id = 'troogl-partial-dashboard-bar';
-    dashboardBar.style.position = 'fixed';
-    dashboardBar.style.width = '100%';
-    dashboardBar.style.top = '0';
-    dashboardBar.style.left = '0';
-    dashboardBar.style.height = '12.5vh';
-    dashboardBar.style.display = 'flex';
-    dashboardBar.style.flexWrap = 'nowrap';
-    dashboardBar.style.alignItems = 'center';
-    // #5555FF    rgb(83, 51, 237)
-    dashboardBar.style.backgroundColor = 'rgb(83, 51, 237)';
-    dashboardBar.style.boxShadow = '0 0 5px #333';
-    dashboardBar.style.padding = '0 2%';
-    dashboardBar.style.fontFamily = 'Tahoma, Geneva, sans-serif';
-    dashboardBar.style.zIndex = 10000;
+    let dashboard = $('<div/>', {
+        'id': 'troogl-partial-dashboard-bar',
+        'css': {
+            'position': 'fixed',
+            'width': '100%',
+            'top': '0',
+            'left': '0',
+            'height': '12.5vh',
+            'display': 'flex',
+            'flex-wrap': 'nowrap',
+            'align-items': 'center',
+            'background-color': 'rgb(83, 51, 237)',
+            'box-shadow': '0 0 5px #333',
+            'padding': '0 2%',
+            'font-family': 'Tahoma, Geneva, sans-serif',
+            'z-index': 10000
+        }
+    });
 
-    var dragButtonContainer = document.createElement('span');
-    dragButtonContainer.id = 'troogl-draggable-container';
-    dragButtonContainer.style.flexGrow = 0.33;
-    dragButtonContainer.style.marginRight = '1%';
-    dragButtonContainer.style.marginBottom = '12px';
+    let dragContainer = $('<span/>', {
+        'id': 'troogl-draggable-container',
+        'css': {
+            'flex-grow': 0.33,
+            'margin-right': '1%',
+            'margin-bottom': '12px'
+        }
+    });
 
-    var dragButton = document.createElement('span');
-    dragButton.id = 'troogl-draggable-button';
-    dragButton.innerText = '. .\n. .\n. .';
-    dragButton.style.fontSize = '25px';
-    dragButton.style.fontWeight = 'bold';
-    dragButton.style.color = '#2a2abd';
-    dragButton.style.cursor = 'grab';
-    dragButton.style.lineHeight = '15px';
-    dragButton.style.fontWeight = 'bold';
-    dragButton.style.userSelect = 'none';
+    let dragButton = $('<span/>', {
+        'id': 'troogl-draggable-button',
+        'html': '. .<br>. .<br>. .',
+        'css': {
+            'font-size': '25px',
+            'font-weight': 'bold',
+            'color': '#2a2abd',
+            'cursor': 'grab',
+            'line-height': '15px',
+            'font-weight': 'bold',
+            'user-select': 'none'
+        }
+    });
 
-    dragButtonContainer.appendChild(dragButton)
-    dashboardBar.appendChild(dragButtonContainer);
+    dragContainer.append(dragButton);
 
     // Construct dropdown for switching between perspectives
-    var perspectiveContainer = document.createElement('span');
-    perspectiveContainer.style.flexGrow = 1;
+    let perspectiveContainer = $('<span/>', {
+        'css': {
+            'flex-grow': 1
+        }
+    });
 
-    var perspectiveDropdown = document.createElement('select');
-    perspectiveDropdown.style.padding = '5px';
-    perspectiveDropdown.style.borderRadius = '7.5px';
-    perspectiveDropdown.style.fontSize = '16px';
-    perspectiveDropdown.style.outline = 'none';
-    perspectiveDropdown.style.cursor = 'pointer';
-    perspectiveDropdown.style.display = 'inline-block';
+    let perspectiveDropdown = $('<select/>', {
+        'css': {
+            'padding': '5px',
+            'border-radius': '7.5px',
+            'font-size': '16px',
+            'outline': 'none',
+            'cursor': 'pointer',
+            'display': 'inline-block'
+        }
+    });
 
     // Populate perspective dropdown
-    for (var key in sentenceClasses) {
-        perspectiveOption = document.createElement('option');
-        perspectiveOption.innerText = key;
-        perspectiveDropdown.appendChild(perspectiveOption);
+    for (const key in sentenceClasses) {
+        let perspectiveOption = $('<option/>', {
+            'text': key
+        });
+        perspectiveDropdown.append(perspectiveOption);
     }
 
     // Update sentence classes upon changing perspective
-    perspectiveDropdown.addEventListener('change', function () {
+    perspectiveDropdown.on('change', function () {
         updateSentenceClasses(sentenceClasses[perspectiveDropdown.value]);
         updateGraphs();
     });
 
-    var perspectiveTooltipContainer = document.createElement('div');
-    perspectiveTooltipContainer.classList.add('troogl-tooltip');
-    perspectiveTooltipContainer.innerHTML = '&#x1F6C8;';
+    let perspectiveTooltipContainer = $('<div/>', {
+        'class': 'troogl-tooltip',
+        'html': '&#x1F6C8;'
+    });
 
-    var perspectiveTooltip = document.createElement('span');
-    perspectiveTooltip.classList.add('troogl-tooltip-text');
-    perspectiveTooltip.innerText = 'See the article sentiment from different perspectives';
+    let perspectiveTooltip = $('<span/>', {
+        'class': 'troogl-tooltip-text',
+        'text': 'See the article sentiment from different perspectives'
+    });
 
-    perspectiveTooltipContainer.appendChild(perspectiveTooltip);
-
-    perspectiveContainer.appendChild(perspectiveDropdown);
-    perspectiveContainer.appendChild(perspectiveTooltipContainer);
+    perspectiveTooltipContainer.append(perspectiveTooltip);
+    perspectiveContainer.append(perspectiveDropdown);
+    perspectiveContainer.append(perspectiveTooltipContainer);
 
     // Construct graph container
-    var graphContainer = document.createElement('span');
-    graphContainer.id = 'troogl-graph-container';
-    graphContainer.style.flexGrow = 2;
+    let graphContainer = $('<span/>', {
+        'id': 'troogl-graph-container',
+        'css': {
+            'flex-grow': 2
+        }
+    });
 
     // Create sparkline container
-    var sparklineChart = document.createElement('span');
-    sparklineChart.id = 'troogl-sparkline';
+    let sparklineChart = $('<span/>', {
+        'id': 'troogl-sparkline',
+    });
 
     // Create piechart container
-    var piechartChart = document.createElement('span');
-    piechartChart.id = 'troogl-piechart';
-    piechartChart.style.marginLeft = '0.5%';
+    let piechartChart = $('<span/>', {
+        'id': 'troogl-piechart',
+        'css': {
+            'margin-left': '0.5%'
+        }
+    });
 
-    graphContainer.appendChild(sparklineChart);
-    graphContainer.appendChild(piechartChart);
+    graphContainer.append(sparklineChart);
+    graphContainer.append(piechartChart);
 
-    var optionContainer = document.createElement('span');
-    optionContainer.id = 'troogl-option-container';
-    optionContainer.style.cursor = 'pointer';
-    optionContainer.style.fontSize = '16px';
-    optionContainer.style.flexGrow = 1;
+    let optionContainer = $('<span/>', {
+        'id': 'troogl-option-container',
+        'css': {
+            'cursor': 'pointer',
+            'font-size': '16px',
+            'flex-grow': 1
+        }
+    });
 
-    var fullDashboardbutton = document.createElement('span');
-    fullDashboardbutton.id = 'troogl-full-dashboard-button';
-    fullDashboardbutton.innerText = 'Full Dashboard';
-    fullDashboardbutton.style.backgroundColor = '#2a2abd';
-    fullDashboardbutton.style.color = 'white';
-    fullDashboardbutton.style.padding = '5px';
-    fullDashboardbutton.style.borderRadius = '5px';
+    let fullDashboardbutton = $('<span/>', {
+        'id': 'troogl-full-dashboard-button',
+        'text': 'Full Dashboard',
+        'css': {
+            'background-color': '#2a2abd',
+            'color': 'white',
+            'padding': '5px',
+            'border-radius': '5px'
+        }
+    });
 
-    var hideButton = document.createElement('span');
-    hideButton.id = 'troogl-collapse-button';
-    hideButton.innerText = 'Hide';
-    hideButton.style.color = 'white';
-    hideButton.style.backgroundColor = '#2a2abd';
-    hideButton.style.padding = '5px';
-    hideButton.style.borderRadius = '5px';
-    hideButton.style.marginLeft = '1%';
+    let hideButton = $('<span/>', {
+        'id': 'troogl-collapse-button',
+        'text': 'Hide',
+        'css': {
+            'background-color': '#2a2abd',
+            'color': 'white',
+            'padding': '5px',
+            'border-radius': '5px',
+            'margin-left': '1%'
+        }
+    });
 
-    optionContainer.appendChild(fullDashboardbutton);
-    optionContainer.appendChild(hideButton);
+    optionContainer.append(fullDashboardbutton);
+    optionContainer.append(hideButton);
 
-    var expandButton = document.createElement('button');
-    expandButton.id = 'troogl-expand-button';
-    expandButton.innerText = 'Show Dashboard';
-    expandButton.style.backgroundColor = 'rgb(83, 51, 237)';
-    expandButton.style.cursor = 'pointer';
-    expandButton.style.color = 'white';
-    expandButton.style.borderBottomLeftRadius = '5px';
-    expandButton.style.borderBottomRightRadius = '5px';
-    expandButton.style.top = 0;
-    expandButton.style.right = 0;
-    expandButton.style.padding = '5px';
-    expandButton.style.marginRight = '5%';
-    expandButton.style.outline = 'none';
-    expandButton.style.display = 'none';
-    expandButton.style.fontSize = '16px';
-    expandButton.style.position = 'fixed';
-    expandButton.style.border = 'none';
-    expandButton.style.fontFamily = 'Tahoma, Geneva, sans-serif';
-    expandButton.style.boxShadow = '0 0 2px #333';
-    expandButton.style.zIndex = 2147483647;
+    let expandButton = $('<button/>', {
+        'id': 'troogl-expand-button',
+        'text': 'Show Dashboard',
+        'css': {
+            'background-color': 'rgb(83, 51, 237)',
+            'cursor': 'pointer',
+            'color': 'white',
+            'border-bottom-left-radius': '5px',
+            'border-bottom-right-radius': '5px',
+            'top': 0,
+            'right': 0,
+            'padding': '5px',
+            'margin-right': '5%',
+            'outline': 'none',
+            'display': 'none',
+            'font-size': '16px',
+            'position': 'fixed',
+            'border': 'none',
+            'font-family': 'Tahoma, Geneva, sans-serif',
+            'box-shadow': '0 0 2px #333',
+            'z-index': 2147483647,
+        }
+    });
 
-    // Populate dashboard bar
-    dashboardBar.appendChild(perspectiveContainer);
-    dashboardBar.appendChild(graphContainer);
-    dashboardBar.appendChild(optionContainer);
-    dashboardContainer.appendChild(dashboardBar);
+    // Populate dashboard
+    dashboard.append(dragContainer);
+    dashboard.append(perspectiveContainer);
+    dashboard.append(graphContainer);
+    dashboard.append(optionContainer);
+    container.append(dashboard);
 
     // Inject dashboard into page
-    document.body.prepend(expandButton);
-    document.body.prepend(dashboardContainer);
+    $('body').append(expandButton);
+    $('body').append(container);
 
+    // Enable dragging of dashboard
     $('#troogl-partial-dashboard-bar').draggable({
         handle: '#troogl-draggable-button',
         containment: 'window',
@@ -287,7 +296,14 @@ function injectPartialDashboard(sentenceClasses) {
 }
 
 
-function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards) {
+function addCompleteDashboard(article) {
+    const summarySentences = article['summary_sentences'];
+    const readTime = article['read_time'];
+    const readibilityLevel = article['readability_level'];
+    const subjectivity = article['subjectivity'];
+    const positiveTowards = article['positive_towards'];
+    const negativeTowards = article['negative_towards'];
+    
     // Container for all dashboard items
     var dashboardContainer = document.createElement('div');
     dashboardContainer.id = 'troogl-full-dashboard-container';
@@ -642,7 +658,7 @@ function injectCompleteDashboard(summarySentences, readTime, readibilityLevel, s
 }
 
 
-function injectSentencePopup() {
+function addSentencePopup() {
     // Container for all popup items
     var popupContainer = document.createElement('div');
     popupContainer.id = 'troogl-sentence-popup-container';
@@ -989,20 +1005,13 @@ $(window).resize(function() {
 });
 
 // Parse response data
-var response = JSON.parse(response);
-var sentences = response['sentences'];
-var sentenceClasses = response['sentence_sentiment_classes'];
-var positiveTowards = response['positive_towards'];
-var negativeTowards = response['negative_towards'];
-var summarySentences = response['summary_sentences'];
-var readTime = response['read_time'];
-var readibilityLevel = response['readability_level'];
-var subjectivity = response['subjectivity'];
+const article = JSON.parse(response);
+const defaultEntity = article['default_entity_name'];
 
 // Display data within article
-prepareSentences(sentences);
-updateSentenceClasses(sentenceClasses[response['default_entity_name']]);
-insertDashboard(sentenceClasses, summarySentences, readTime, readibilityLevel, subjectivity, positiveTowards, negativeTowards);
+prepareSentences(article['sentences']);
+updateSentenceClasses(article['sentence_sentiment_classes'][defaultEntity]);
+insertDashboard(article);
 
-// Remove overlay and loader
+// Remove loader overlay
 document.body.removeChild(document.getElementById('troogl-loader'));

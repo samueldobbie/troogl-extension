@@ -93,19 +93,16 @@ def get_article_data(html):
 
 def get_article_sentences(html):
     '''
-    Extract and tokenise article into sentences
+    Extract article and break into sentences
     '''
     # Extract article content
     title, text = get_article_content(html)
 
     # Get valid paragraphs
-    paragraphs = filter(is_valid_paragraph, text.split('\n'))
+    paragraphs = filter(is_valid_paragraph, text.lower().split('\n'))
 
     # Break paragraphs into sentences
-    sentences = [title]
-    for paragraph in paragraphs:
-        for sentence in sent_tokenize(paragraph):
-            sentences.append(sentence.strip())
+    sentences = [title] + paragraphs_to_sentences(paragraphs)
 
     return sentences
 
@@ -120,9 +117,18 @@ def get_article_content(html):
 
 def is_valid_paragraph(paragraph):
     for stopword in stopwords:
-        if stopword.lower() in paragraph.lower():
+        if stopword in paragraph:
             return False
     return True
+
+
+def paragraphs_to_sentences(paragraphs):
+    sentences = []
+    for paragraph in paragraphs:
+        for sentence in sent_tokenize(paragraph):
+            if sentence.strip():
+                sentences.append(sentence.strip())
+    return sentences
 
 
 def get_sentence_offsets(sentences):
@@ -186,9 +192,6 @@ def get_sentiment_data(body, sentences, sentence_offsets, default_entity_name):
     document = {'content': body, 'type': enums.Document.Type.PLAIN_TEXT, 'language': 'en'}
     response = client.analyze_entity_sentiment(document, encoding_type=enums.EncodingType.UTF32)
 
-    # Cluster similar entities together
-    # clustered_response = cluster_response_entities(response)
-
     # List unwanted entities based on category type
     unwanted_entities = get_unwanted_entities(response, body)
 
@@ -199,27 +202,6 @@ def get_sentiment_data(body, sentences, sentence_offsets, default_entity_name):
     positive_towards, negative_towards = get_overall_perspective_data(response, unwanted_entities)
     
     return perspective_data, positive_towards, negative_towards
-
-
-def cluster_response_entities(response):
-    '''
-    Merge similar entities together, as Google NLP often
-    lists entities seperately when they refer to the same
-    entity (e.g. Jane and Jane Doe)
-    '''
-
-    '''
-    entity_names = [ent.name.lower() for ent in response.entities]
-
-    cluster_mappings = {}
-    for entity_one in entity_names:
-        for entity_two in entity_names:
-            if entity_two in entity_one and entity_two != entity_one:
-                cluster_mappings[entity_two] = entity_one
-
-    return response
-    '''
-    pass
 
 
 def get_unwanted_entities(response, body):
@@ -427,4 +409,4 @@ MAGNITUDE_THRESHOLD = 0.4
 client = language.LanguageServiceClient.from_service_account_json(GOOGLE_API_KEY)
 nlp = spacy.load('en_core_web_sm')
 sentiment_analyzer = SentimentIntensityAnalyzer()
-stopwords = set(open('stopwords.txt', encoding='utf-8').read().split('\n'))
+stopwords = set(open('stopwords.txt', encoding='utf-8').read().lower().split('\n'))
