@@ -92,7 +92,50 @@ function insertDashboard(article) {
 
 
 function addPartialDashboard(sentenceClasses) {
-    let dashboardContainer = $('<div/>', {
+    $('body').append([
+        getExpandButton(),
+        getPartialDashboard(sentenceClasses)
+    ]);
+
+    // Enable dragging of dashboard
+    $('#troogl-partial-dashboard-bar').draggable({
+        handle: '#troogl-draggable-button',
+        containment: 'window',
+        cursor: 'grabbing',
+        axis: 'y',
+        scroll: false
+    });
+}
+
+
+function getExpandButton() {
+    return $('<button/>', {
+        'id': 'troogl-expand-button',
+        'text': 'Show Dashboard',
+        'css': {
+            'background-color': 'rgb(83, 51, 237)',
+            'cursor': 'pointer',
+            'color': 'white',
+            'border-radius': '0px 0px 5px 5px',
+            'top': '0',
+            'right': '0',
+            'padding': '5px',
+            'margin-right': '5%',
+            'outline': 'none',
+            'display': 'none',
+            'font-size': '16px',
+            'position': 'fixed',
+            'border': 'none',
+            'font-family': 'Tahoma, Geneva, sans-serif',
+            'box-shadow': '0 0 2px #333',
+            'z-index': 2147483647,
+        }
+    });
+}
+
+
+function getPartialDashboard(sentenceClasses) {
+    let container = $('<div/>', {
         'id': 'troogl-partial-dashboard-container',
         'css': {
             'position': 'relative',
@@ -120,7 +163,22 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    let dragContainer = $('<span/>', {
+    // Populate dashboard
+    dashboard.append([
+        getDragContainer(),
+        getPerspectiveContainer(sentenceClasses),
+        getGraphContainer(),
+        getOptionContainer()
+    ]);
+
+    container.append(dashboard);
+
+    return container;
+}
+
+
+function getDragContainer() {
+    let container = $('<span/>', {
         'id': 'troogl-draggable-container',
         'css': {
             'flex-grow': 0.33,
@@ -129,7 +187,7 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    let dragButton = $('<span/>', {
+    let button = $('<span/>', {
         'id': 'troogl-draggable-button',
         'html': '. .<br>. .<br>. .',
         'css': {
@@ -143,16 +201,18 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    dragContainer.append(dragButton);
+    container.append(button);
 
-    // Construct dropdown for switching between perspectives
-    let perspectiveContainer = $('<span/>', {
-        'css': {
-            'flex-grow': 1
-        }
+    return container;
+}
+
+
+function getPerspectiveContainer(sentenceClasses) {
+    let container = $('<span/>', {
+        'css': {'flex-grow': 1}
     });
 
-    let perspectiveDropdown = $('<select/>', {
+    let dropdown = $('<select/>', {
         'css': {
             'padding': '5px',
             'border-radius': '7.5px',
@@ -165,35 +225,40 @@ function addPartialDashboard(sentenceClasses) {
 
     // Populate perspective dropdown
     for (const key in sentenceClasses) {
-        let perspectiveOption = $('<option/>', {'text': key});
-        perspectiveDropdown.append(perspectiveOption);
+        dropdown.append(
+            $('<option/>', {'text': key})
+        );
     }
 
     // Update sentence classes upon changing perspective
-    perspectiveDropdown.on('change', function () {
-        updateSentenceClasses(sentenceClasses[perspectiveDropdown.value]);
+    dropdown.on('change', function () {
+        updateSentenceClasses(sentenceClasses[dropdown.value]);
         updateGraphs();
     });
 
-    let perspectiveTooltipContainer = $('<div/>', {
+    let tooltipContainer = $('<div/>', {
         'class': 'troogl-tooltip',
         'html': '&#x1F6C8;'
     });
 
-    let perspectiveTooltip = $('<span/>', {
+    let tooltip = $('<span/>', {
         'class': 'troogl-tooltip-text',
         'text': 'See the article sentiment from different perspectives'
     });
 
-    perspectiveTooltipContainer.append(perspectiveTooltip);
+    tooltipContainer.append(tooltip);
 
-    perspectiveContainer.append([
-        perspectiveDropdown,
-        perspectiveTooltipContainer
+    container.append([
+        dropdown,
+        tooltipContainer
     ]);
 
-    // Construct graph container
-    let graphContainer = $('<span/>', {
+    return container;
+}
+
+
+function getGraphContainer() {
+    let container = $('<span/>', {
         'id': 'troogl-graph-container',
         'css': {
             'flex-grow': 2
@@ -213,12 +278,17 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    graphContainer.append([
+    container.append([
         sparklineChart,
         piechartChart
     ]);
 
-    let optionContainer = $('<span/>', {
+    return container;
+}
+
+
+function getOptionContainer() {
+    let container = $('<span/>', {
         'id': 'troogl-option-container',
         'css': {
             'cursor': 'pointer',
@@ -227,7 +297,7 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    let fullDashboardbutton = $('<span/>', {
+    let fullDashboardButton = $('<span/>', {
         'id': 'troogl-full-dashboard-button',
         'text': 'Full Dashboard',
         'css': {
@@ -250,57 +320,12 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    optionContainer.append([
-        fullDashboardbutton,
+    container.append([
+        fullDashboardButton,
         hideButton
     ]);
 
-    let expandButton = $('<button/>', {
-        'id': 'troogl-expand-button',
-        'text': 'Show Dashboard',
-        'css': {
-            'background-color': 'rgb(83, 51, 237)',
-            'cursor': 'pointer',
-            'color': 'white',
-            'border-radius': '0px 0px 5px 5px',
-            'top': '0',
-            'right': '0',
-            'padding': '5px',
-            'margin-right': '5%',
-            'outline': 'none',
-            'display': 'none',
-            'font-size': '16px',
-            'position': 'fixed',
-            'border': 'none',
-            'font-family': 'Tahoma, Geneva, sans-serif',
-            'box-shadow': '0 0 2px #333',
-            'z-index': 2147483647,
-        }
-    });
-
-    // Populate dashboard
-    dashboard.append([
-        dragContainer,
-        perspectiveContainer,
-        graphContainer,
-        optionContainer
-    ]);
-
-    dashboardContainer.append(dashboard);
-
-    $('body').append([
-        expandButton,
-        dashboardContainer
-    ]);
-
-    // Enable dragging of dashboard
-    $('#troogl-partial-dashboard-bar').draggable({
-        handle: '#troogl-draggable-button',
-        containment: 'window',
-        cursor: 'grabbing',
-        axis: 'y',
-        scroll: false
-    });
+    return container;
 }
 
 
@@ -386,20 +411,28 @@ function addCompleteDashboard(article) {
 }
 
 
-function getReadTimeContainer(readTime) {
+function constructContainer(styles) {
     let container = $('<div/>', {
         'css': {
-            'flexGrow': '1',
-            'margin': '2.5% 0.5% 0.5% 2.5%',
             'backgroundColor': 'white',
             'borderRadius': '5px',
             'padding': '1%',
-            'boxShadow': '0 0 2px #333'
+            'boxShadow': '0 0 2px #333',
+            'flex-grow': '1'
         }
     });
 
+    for (const key in styles) {
+        container.css(key, styles[key]);
+    }
+
+    return container;
+}
+
+
+function constructHeader(headerText, tooltipText) {
     let header = $('<span/>', {
-        'text': 'Read Time',
+        'text': headerText,
         'css': {
             'color': 'rgb(83, 51, 237)',
             'fontWeight': 'bold',
@@ -415,15 +448,29 @@ function getReadTimeContainer(readTime) {
 
     let tooltip = $('<span/>', {
         'class': 'troogl-tooltip-text',
-        'text': 'Estimates the time required to read the article'
-    });
-
-    let content = $('<span/>', {
-        'text': readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs'
+        'text': tooltipText
     });
 
     tooltipContainer.append(tooltip);
     header.append(tooltipContainer);
+
+    return header;
+}
+
+
+function getReadTimeContainer(readTime) {
+    let container = constructContainer({
+        'margin': '2.5% 0.5% 0.5% 2.5%'
+    });
+
+    let header = constructHeader(
+        'Read Time',
+        'Estimates the time required to read the article'
+    );
+
+    let content = $('<span/>', {
+        'text': readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs'
+    });
     
     container.append([
         header,
@@ -435,43 +482,19 @@ function getReadTimeContainer(readTime) {
 
 
 function getReadibilityContainer(readibilityLevel) {
-    let container = $('<div/>', {
-        'css': {
-            'flexGrow': '1',
-            'margin': '2.5% 0.5% 0.5% 0.5%',
-            'backgroundColor': 'white',
-            'borderRadius': '5px',
-            'padding': '1%',
-            'boxShadow': '0 0 2px #333'
-        }
+    let container = constructContainer({
+        'margin': '2.5% 0.5% 0.5% 0.5%'
     });
 
-    let header = $('<span/>', {
-        'text': 'Readibility',
-        'css': {
-            'color': 'rgb(83, 51, 237)',
-            'fontWeight': 'bold',
-            'marginBottom': '0.5%',
-            'display': 'block'
-        }
-    });
-
-    let tooltipContainer = $('<div/>', {
-        'class': 'troogl-tooltip',
-        'html': '&#x1F6C8;'
-    });
-
-    let tooltip = $('<span/>', {
-        'class': 'troogl-tooltip-text',
-        'text': 'Gauges the understandibility of the article using the Automated Readibility Index'
-    });
+    let header = constructHeader(
+        'Readibility',
+        'Gauges the understandibility of the article \
+         using the Automated Readibility Index'
+    );
 
     let content = $('<span/>', {
         'text': readibilityLevel
     });
-
-    tooltipContainer.append(tooltip);
-    header.append(tooltipContainer);
     
     container.append([
         header,
@@ -483,43 +506,19 @@ function getReadibilityContainer(readibilityLevel) {
 
 
 function getSubjectivityContainer(subjectivity) {
-    let container = $('<div/>', {
-        'css': {
-            'flexGrow': '1',
-            'margin': '2.5% 2.5% 0.5% 0.5%',
-            'backgroundColor': 'white',
-            'borderRadius': '5px',
-            'padding': '1%',
-            'boxShadow': '0 0 2px #333'
-        }
+    let container = constructContainer({
+        'margin': '2.5% 2.5% 0.5% 0.5%'
     });
 
-    let header = $('<span/>', {
-        'text': 'Subjectivity',
-        'css': {
-            'color': 'rgb(83, 51, 237)',
-            'fontWeight': 'bold',
-            'marginBottom': '0.5%',
-            'display': 'block'
-        }
-    });
-
-    let tooltipContainer = $('<div/>', {
-        'class': 'troogl-tooltip',
-        'html': '&#x1F6C8;'
-    });
-
-    let tooltip = $('<span/>', {
-        'class': 'troogl-tooltip-text',
-        'text': 'Gauges how objective or opinionated the article is (does not correspond with factuality)'
-    });
+    let header = constructHeader(
+        'Subjectivity',
+        'Gauges how objective or opinionated the \
+         article is (does not correspond with factuality)'
+    );
 
     let content = $('<span/>', {
         'text': subjectivity
     });
-
-    tooltipContainer.append(tooltip);
-    header.append(tooltipContainer);
     
     container.append([
         header,
@@ -531,36 +530,16 @@ function getSubjectivityContainer(subjectivity) {
 
 
 function getSummaryContainer(summarySentences) {
-    let container = $('<div/>', {
-        'css': {
-            'flexGrow': '2',
-            'margin': '0.5% 2.5% 0.5% 2.5%',
-            'backgroundColor': 'white',
-            'borderRadius': '5px',
-            'padding': '1%',
-            'boxShadow': '0 0 2px #333'
-        }
+    let container = constructContainer({
+        'flex-grow': '2',
+        'margin': '0.5% 2.5% 0.5% 2.5%'
     });
 
-    let header = $('<span/>', {
-        'text': 'TL;DR',
-        'css': {
-            'color': 'rgb(83, 51, 237)',
-            'fontWeight': 'bold',
-            'marginBottom': '0.5%',
-            'display': 'block'
-        }
-    });
-
-    let tooltipContainer = $('<div/>', {
-        'class': 'troogl-tooltip',
-        'html': '&#x1F6C8;'
-    });
-
-    let tooltip = $('<span/>', {
-        'class': 'troogl-tooltip-text',
-        'text': 'Summarizes the article with the three most relevant sentences'
-    });
+    let header = constructHeader(
+        'TL;DR',
+        'Summarizes the article with the three \
+         most relevant sentences'
+    );
 
     let content = $('<ul/>', {
         'css': {
@@ -580,9 +559,6 @@ function getSummaryContainer(summarySentences) {
 
         content.append(bullet);
     }
-
-    tooltipContainer.append(tooltip);
-    header.append(tooltipContainer);
     
     container.append([
         header,
@@ -594,42 +570,25 @@ function getSummaryContainer(summarySentences) {
 
 
 function getEntitySentimentContainer(type, entitySentiments) {
-    let container = $('<div/>', {
-        'css': {
-            'flexGrow': '1',
-            'max-width': '45%',
-            'background-color': 'white',
-            'border-radius': '5px',
-            'padding': '1%',
-            'boxShadow': '0 0 2px #333'
-        }
-    });
+    let container;
 
     if (type == 'Negative') {
-        container.css('margin', '0.5% 0.5% 0.5% 2.5%');
+        container = constructContainer({
+            'margin': '0.5% 0.5% 0.5% 2.5%',
+            'max-width': '45%'
+        });
     } else {
-        container.css('margin', '0.5% 2.5% 0.5% 0.5%');
+        container = constructContainer({
+            'margin': '0.5% 2.5% 0.5% 0.5%',
+            'max-width': '45%'
+        });
     }
 
-    let header = $('<span/>', {
-        'text': type + ' Towards',
-        'css': {
-            'color': 'rgb(83, 51, 237)',
-            'fontWeight': 'bold',
-            'marginBottom': '0.5%',
-            'display': 'block'
-        }
-    });
-
-    let tooltipContainer = $('<div/>', {
-        'class': 'troogl-tooltip',
-        'html': '&#x1F6C8;'
-    });
-
-    let tooltip = $('<span/>', {
-        'class': 'troogl-tooltip-text',
-        'text': 'Highlights people and organizations that are mentioned in a ' + type + ' manner'
-    });
+    let header = constructHeader(
+        type + ' Towards',
+        'Highlights people and organizations that \
+         are mentioned in a ' + type + ' manner'
+    );
 
     let content = $('<span/>');
 
@@ -658,9 +617,6 @@ function getEntitySentimentContainer(type, entitySentiments) {
         content.append(entity);
     }
 
-    tooltipContainer.append(tooltip);
-    header.append(tooltipContainer);
-    
     container.append([
         header,
         content
@@ -695,18 +651,16 @@ function getNewline() {
 
 
 function getFeedbackContainer() {
-    let container = $('<div/>', {
-        'css': {
-            'flexGrow': '1',
-            'margin': '0.5% 0.5% 2.5% 2.5%',
-            'font-size': '13px',
-            'border-radius': '5px',
-            'padding': '1%',
-        }
+    let container = constructContainer({
+        'margin': '0.5% 0.5% 2.5% 2.5%',
+        'font-size': '13px',
+        'background-color': 'transparent',
+        'boxShadow': 'none'
     });
 
     let content = $('<span/>', {
-        'html': 'Help us improve! <a href="https://form.jotformeu.com/201655282823354" target="_blank" style="color: rgb(83, 51, 237);">Share your feedback.</a>'
+        'html': 'Help us improve! <a href="https://form.jotformeu.com/201655282823354" \
+                 target="_blank" style="color: rgb(83, 51, 237);">Share your feedback.</a>'
     });
 
     container.append(content);
@@ -716,19 +670,17 @@ function getFeedbackContainer() {
 
 
 function getLogoContainer() {
-    let container = $('<div/>', {
-        'css': {
-            'flexGrow': '1',
-            'margin': '0.5% 2.5% 2.5% 0.5%',
-            'font-size': '13px',
-            'border-radius': '5px',
-            'padding': '1%',
-            'text-align': 'right'
-        }
+    let container = constructContainer({
+        'margin': '0.5% 2.5% 2.5% 0.5%',
+        'font-size': '13px',
+        'text-align': 'right',
+        'background-color': 'transparent',
+        'boxShadow': 'none'
     });
 
     let content = $('<span/>', {
-        'html': 'Powered by <a href="https://samueldobbie.github.io/troogl/" target="_blank" style="color: rgb(83, 51, 237);">Troogl (alpha)</a> - Version 0.0.2'
+        'html': 'Powered by <a href="https://samueldobbie.github.io/troogl/" target="_blank" \
+                 style="color: rgb(83, 51, 237);">Troogl (alpha)</a> - Version 0.0.2'
     });
 
     container.append(content);
