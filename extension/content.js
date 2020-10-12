@@ -92,7 +92,7 @@ function insertDashboard(article) {
 
 
 function addPartialDashboard(sentenceClasses) {
-    let container = $('<div/>', {
+    let dashboardContainer = $('<div/>', {
         'id': 'troogl-partial-dashboard-container',
         'css': {
             'position': 'relative',
@@ -165,9 +165,7 @@ function addPartialDashboard(sentenceClasses) {
 
     // Populate perspective dropdown
     for (const key in sentenceClasses) {
-        let perspectiveOption = $('<option/>', {
-            'text': key
-        });
+        let perspectiveOption = $('<option/>', {'text': key});
         perspectiveDropdown.append(perspectiveOption);
     }
 
@@ -188,8 +186,11 @@ function addPartialDashboard(sentenceClasses) {
     });
 
     perspectiveTooltipContainer.append(perspectiveTooltip);
-    perspectiveContainer.append(perspectiveDropdown);
-    perspectiveContainer.append(perspectiveTooltipContainer);
+
+    perspectiveContainer.append([
+        perspectiveDropdown,
+        perspectiveTooltipContainer
+    ]);
 
     // Construct graph container
     let graphContainer = $('<span/>', {
@@ -212,8 +213,10 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    graphContainer.append(sparklineChart);
-    graphContainer.append(piechartChart);
+    graphContainer.append([
+        sparklineChart,
+        piechartChart
+    ]);
 
     let optionContainer = $('<span/>', {
         'id': 'troogl-option-container',
@@ -247,8 +250,10 @@ function addPartialDashboard(sentenceClasses) {
         }
     });
 
-    optionContainer.append(fullDashboardbutton);
-    optionContainer.append(hideButton);
+    optionContainer.append([
+        fullDashboardbutton,
+        hideButton
+    ]);
 
     let expandButton = $('<button/>', {
         'id': 'troogl-expand-button',
@@ -257,10 +262,9 @@ function addPartialDashboard(sentenceClasses) {
             'background-color': 'rgb(83, 51, 237)',
             'cursor': 'pointer',
             'color': 'white',
-            'border-bottom-left-radius': '5px',
-            'border-bottom-right-radius': '5px',
-            'top': 0,
-            'right': 0,
+            'border-radius': '0px 0px 5px 5px',
+            'top': '0',
+            'right': '0',
             'padding': '5px',
             'margin-right': '5%',
             'outline': 'none',
@@ -275,15 +279,19 @@ function addPartialDashboard(sentenceClasses) {
     });
 
     // Populate dashboard
-    dashboard.append(dragContainer);
-    dashboard.append(perspectiveContainer);
-    dashboard.append(graphContainer);
-    dashboard.append(optionContainer);
-    container.append(dashboard);
+    dashboard.append([
+        dragContainer,
+        perspectiveContainer,
+        graphContainer,
+        optionContainer
+    ]);
 
-    // Inject dashboard into page
-    $('body').append(expandButton);
-    $('body').append(container);
+    dashboardContainer.append(dashboard);
+
+    $('body').append([
+        expandButton,
+        dashboardContainer
+    ]);
 
     // Enable dragging of dashboard
     $('#troogl-partial-dashboard-bar').draggable({
@@ -303,363 +311,433 @@ function addCompleteDashboard(article) {
     const subjectivity = article['subjectivity'];
     const positiveTowards = article['positive_towards'];
     const negativeTowards = article['negative_towards'];
-    
+
     // Container for all dashboard items
-    var dashboardContainer = document.createElement('div');
-    dashboardContainer.id = 'troogl-full-dashboard-container';
-    dashboardContainer.style.position = 'fixed';
-    dashboardContainer.style.width = '100vw';
-    dashboardContainer.style.height = '100vh';
-    dashboardContainer.style.display = 'none';
-    dashboardContainer.style.zIndex = 2147483647;
+    let dashboard = $('<div/>', {
+        'id': 'troogl-full-dashboard-container',
+        'css': {
+            'position': 'fixed',
+            'width': '100vw',
+            'height': '100vh',
+            'display': 'none',
+            'z-index': 2147483647
+        }
+    });
 
     // Overlay that can be clicked to exit complete dashboard
-    var overlay = document.createElement('div');
-    overlay.id = 'troogl-full-dashboard-overlay';
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100vw';
-    overlay.style.height = '100vh';
-    overlay.style.backgroundColor = 'black';
-    overlay.style.opacity = 0.7;
+    let overlay = $('<div/>', {
+        'id': 'troogl-full-dashboard-overlay',
+        'css': {
+            'position': 'fixed',
+            'top': '0',
+            'left': '0',
+            'width': '100vw',
+            'height': '100vh',
+            'background-color': 'black',
+            'opacity': 0.7
+        }
+    });
 
-    dashboardContainer.appendChild(overlay);
-    
     // Button to exit dashboard
-    var closeButton = document.createElement('a');
-    closeButton.classList.add('troogl-exit-button');
-
-    dashboardContainer.appendChild(closeButton);
+    let closeButton = $('<a/>', {
+        'class': 'troogl-exit-button'
+    });
 
     // Container for content-related dashboard items
-    var contentContainer = document.createElement('div');
-    contentContainer.style.position = 'absolute';
-    contentContainer.style.display = 'flex';
-    contentContainer.style.flexWrap = 'wrap';
-    contentContainer.style.width = '80vw';
-    contentContainer.style.maxHeight = '95vh';
-    contentContainer.style.overflowY = 'auto';
-    contentContainer.style.top = '50%';
-    contentContainer.style.left = '50%';
-    contentContainer.style.transform = 'translate(-50%, -50%)';
-    contentContainer.style.borderRadius = '5px';
-    contentContainer.style.backgroundColor = '#f1f1f1';
-    contentContainer.style.fontSize = '16px';
-    contentContainer.style.fontFamily = 'Tahoma, Geneva, sans-serif';
-
-    // Container for read time item
-    var readTimeContainer = document.createElement('div');
-    readTimeContainer.style.flexGrow = '1';
-    readTimeContainer.style.margin = '2.5% 0.5% 0.5% 2.5%';
-    readTimeContainer.style.backgroundColor = 'white';
-    readTimeContainer.style.borderRadius = '5px';
-    readTimeContainer.style.padding = '1%';
-    readTimeContainer.style.boxShadow = '0 0 2px #333';
-
-    var readTimeHeader = document.createElement('span');
-    readTimeHeader.innerText = 'Read Time';
-    readTimeHeader.style.color = 'rgb(83, 51, 237)';
-    readTimeHeader.style.fontWeight = 'bold';
-    readTimeHeader.style.marginBottom = '0.5%';
-    readTimeHeader.style.display = 'block';
-
-    var readTimeTooltipContainer = document.createElement('div');
-    readTimeTooltipContainer.classList.add('troogl-tooltip');
-    readTimeTooltipContainer.innerHTML = '&#x1F6C8;';
-
-    var readTimeTooltip = document.createElement('span');
-    readTimeTooltip.classList.add('troogl-tooltip-text');
-    readTimeTooltip.innerText = 'Estimates the time required to read the article';
-
-    var readTimeContent = document.createElement('span');
-    readTimeContent.innerText = readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs';
-
-    readTimeTooltipContainer.appendChild(readTimeTooltip);
-    readTimeHeader.appendChild(readTimeTooltipContainer);
-    readTimeContainer.appendChild(readTimeHeader);
-    readTimeContainer.appendChild(readTimeContent);
-    contentContainer.appendChild(readTimeContainer);
-
-    // Container for readibility item
-    var readibilityContainer = document.createElement('div');
-    readibilityContainer.style.flexGrow = '1';
-    readibilityContainer.style.margin = '2.5% 0.5% 0.5% 0.5%';
-    readibilityContainer.style.backgroundColor = 'white';
-    readibilityContainer.style.borderRadius = '5px';
-    readibilityContainer.style.padding = '1%';
-    readibilityContainer.style.boxShadow = '0 0 2px #333';
-
-    var readibilityHeader = document.createElement('span');
-    readibilityHeader.innerText = 'Readibility';
-    readibilityHeader.style.color = 'rgb(83, 51, 237)';
-    readibilityHeader.style.fontWeight = 'bold';
-    readibilityHeader.style.marginBottom = '0.5%';
-    readibilityHeader.style.display = 'block';
-
-    var readibilityTooltipContainer = document.createElement('div');
-    readibilityTooltipContainer.classList.add('troogl-tooltip');
-    readibilityTooltipContainer.innerHTML = '&#x1F6C8;';
-
-    var readibilityTooltip = document.createElement('span');
-    readibilityTooltip.classList.add('troogl-tooltip-text');
-    readibilityTooltip.innerText = 'Gauges the understandibility of the article using the Automated Readibility Index';
-
-    var readibilityContent = document.createElement('span');
-    readibilityContent.innerText = readibilityLevel;
-
-    readibilityTooltipContainer.appendChild(readibilityTooltip);
-    readibilityHeader.appendChild(readibilityTooltipContainer);
-    readibilityContainer.appendChild(readibilityHeader);
-    readibilityContainer.appendChild(readibilityContent);
-    contentContainer.appendChild(readibilityContainer);
-
-    // Container for subjectivity item
-    var subjectivityContainer = document.createElement('div');
-    subjectivityContainer.style.flexGrow = '1';
-    subjectivityContainer.style.margin = '2.5% 2.5% 0.5% 0.5%';
-    subjectivityContainer.style.backgroundColor = 'white';
-    subjectivityContainer.style.borderRadius = '5px';
-    subjectivityContainer.style.padding = '1%';
-    subjectivityContainer.style.boxShadow = '0 0 2px #333';
-
-    var subjectivityHeader = document.createElement('span');
-    subjectivityHeader.innerText = 'Subjectivity';
-    subjectivityHeader.style.color = 'rgb(83, 51, 237)';
-    subjectivityHeader.style.fontWeight = 'bold';
-    subjectivityHeader.style.marginBottom = '0.5%';
-    subjectivityHeader.style.display = 'block';
-
-    var subjectivityTooltipContainer = document.createElement('div');
-    subjectivityTooltipContainer.classList.add('troogl-tooltip');
-    subjectivityTooltipContainer.innerHTML = '&#x1F6C8;';
-
-    var subjectivityTooltip = document.createElement('span');
-    subjectivityTooltip.classList.add('troogl-tooltip-text');
-    subjectivityTooltip.innerText = 'Gauges how objective or opinionated the article is (does not correspond with factuality)';
-
-    var subjectivityContent = document.createElement('span');
-    subjectivityContent.innerText = subjectivity;
-
-    subjectivityTooltipContainer.appendChild(subjectivityTooltip);
-    subjectivityHeader.appendChild(subjectivityTooltipContainer);
-    subjectivityContainer.appendChild(subjectivityHeader);
-    subjectivityContainer.appendChild(subjectivityContent);
-    contentContainer.appendChild(subjectivityContainer);
-
-    // Container for summary item
-    var summaryContainer = document.createElement('div');
-    summaryContainer.style.flexGrow = '2';
-    summaryContainer.style.margin = '0.5% 2.5% 0.5% 2.5%';
-    summaryContainer.style.backgroundColor = 'white';
-    summaryContainer.style.borderRadius = '5px';
-    summaryContainer.style.padding = '1%';
-    summaryContainer.style.boxShadow = '0 0 2px #333';
-
-    var summaryHeader = document.createElement('span');
-    summaryHeader.innerText = 'TL;DR';
-    summaryHeader.style.color = 'rgb(83, 51, 237)';
-    summaryHeader.style.fontWeight = 'bold';
-    summaryHeader.style.marginBottom = '0.5%';
-    summaryHeader.style.display = 'block';
-
-    var summaryTooltipContainer = document.createElement('div');
-    summaryTooltipContainer.classList.add('troogl-tooltip');
-    summaryTooltipContainer.innerHTML = '&#x1F6C8;';
-
-    var summaryTooltip = document.createElement('span');
-    summaryTooltip.classList.add('troogl-tooltip-text');
-    summaryTooltip.innerText = 'Summarizes the article with the three most relevant sentences';
-
-    var summaryContent = document.createElement('ul');
-    summaryContent.style.listStyleType = 'disc';
-    summaryContent.style.margin = '1% 5%';
-    for (var i = 0; i < summarySentences.length; i++) {
-        var summaryBulletPoint = document.createElement('li');
-        summaryBulletPoint.innerText = summarySentences[i];
-        if (i != (summarySentences.length - 1)) {
-            summaryBulletPoint.style.marginBottom = '1.5%';
+    let content = $('<div/>', {
+        'css': {
+            'position': 'absolute',
+            'display': 'flex',
+            'flex-wrap': 'wrap',
+            'width': '80vw',
+            'max-height': '95vh',
+            'overflow-y': 'auto',
+            'top': '50%',
+            'left': '50%',
+            'transform': 'translate(-50%, -50%)',
+            'border-radius': '5px',
+            'background-color': '#f1f1f1',
+            'font-size': '16px',
+            'font-family': 'Tahoma, Geneva, sans-serif'
         }
-        summaryContent.appendChild(summaryBulletPoint);
-    }
-    summaryTooltipContainer.appendChild(summaryTooltip);
-    summaryHeader.appendChild(summaryTooltipContainer);
-    summaryContainer.appendChild(summaryHeader);
-    summaryContainer.appendChild(summaryContent);
-    contentContainer.appendChild(summaryContainer);
-    
-    // Container for negative entities
-    var negativeTowardsContainer = document.createElement('div');
-    negativeTowardsContainer.style.flexGrow = '1';
-    negativeTowardsContainer.style.maxWidth = '45%';
-    negativeTowardsContainer.style.margin = '0.5% 0.5% 0.5% 2.5%';
-    negativeTowardsContainer.style.backgroundColor = 'white';
-    negativeTowardsContainer.style.borderRadius = '5px';
-    negativeTowardsContainer.style.padding = '1%';
-    negativeTowardsContainer.style.boxShadow = '0 0 2px #333';
+    });
 
-    var negativeTowardsHeader = document.createElement('span');
-    negativeTowardsHeader.innerText = 'Negative Towards';
-    negativeTowardsHeader.style.color = 'rgb(83, 51, 237)';
-    negativeTowardsHeader.style.fontWeight = 'bold';
-    negativeTowardsHeader.style.marginBottom = '0.5%';
-    negativeTowardsHeader.style.display = 'block';
-
-    var negativeTowardsTooltipContainer = document.createElement('div');
-    negativeTowardsTooltipContainer.classList.add('troogl-tooltip');
-    negativeTowardsTooltipContainer.innerHTML = '&#x1F6C8;';
-
-    var negativeTowardsTooltip = document.createElement('span');
-    negativeTowardsTooltip.classList.add('troogl-tooltip-text');
-    negativeTowardsTooltip.innerText = 'Highlights people and organizations that are mentioned in a negative manner';
-
-    var negativeTowardsContent = document.createElement('span');
-
-    if (Object.keys(negativeTowards).length == 0) {
-        negativeTowardsContent.innerText = 'Not clearly negative towards any person / organization.';
-    }
-
-    for (var key in negativeTowards) {
-        var negativeEntity = document.createElement('span');
-        negativeEntity.innerText = key;
-        negativeEntity.style.fontWeight = 'bold';
-        negativeEntity.style.padding = '5px';
-        negativeEntity.style.borderRadius = '5px';
-        negativeEntity.style.display = 'inline-block';
-        negativeEntity.style.margin = '3px 5px';
-        negativeEntity.style.color = '#333';
-
-        if (negativeTowards[key]['type'] == 'PERSON') {
-            negativeEntity.style.backgroundColor = '#fffbb5';
-        } else if (negativeTowards[key]['type'] == 'ORGANIZATION') {
-            negativeEntity.style.backgroundColor = '#ceffb5';
-        } else if (negativeTowards[key]['type'] == 'OTHER') {
-            negativeEntity.style.backgroundColor = '#ffefcf';
-        } else if (negativeTowards[key]['type'] == 'EVENT') {
-            negativeEntity.style.backgroundColor = '#dab5ff';
-        } else if (negativeTowards[key]['type'] == 'LOCATION') {
-            negativeEntity.style.backgroundColor = '#ffb5c3';
-        } else if (negativeTowards[key]['type'] == 'WORK_OF_ART') {
-            negativeEntity.style.backgroundColor = '#fcccfb';
-        } else if (negativeTowards[key]['type'] == 'CONSUMER_GOOD') {
-            negativeEntity.style.backgroundColor = '#c2d1ff';
-        }
-        negativeTowardsContent.appendChild(negativeEntity);
-    }
-    negativeTowardsTooltipContainer.appendChild(negativeTowardsTooltip);
-    negativeTowardsHeader.appendChild(negativeTowardsTooltipContainer);
-    negativeTowardsContainer.appendChild(negativeTowardsHeader);
-    negativeTowardsContainer.appendChild(negativeTowardsContent);
-    contentContainer.appendChild(negativeTowardsContainer);
-
-    // Container for positive entities
-    var positiveTowardsContainer = document.createElement('div');
-    positiveTowardsContainer.style.flexGrow = '1';
-    positiveTowardsContainer.style.maxWidth = '45%';
-    positiveTowardsContainer.style.margin = '0.5% 2.5% 0.5% 0.5%';
-    positiveTowardsContainer.style.backgroundColor = 'white';
-    positiveTowardsContainer.style.borderRadius = '5px';
-    positiveTowardsContainer.style.padding = '1%';
-    positiveTowardsContainer.style.boxShadow = '0 0 2px #333';
-
-    var positiveTowardsHeader = document.createElement('span');
-    positiveTowardsHeader.innerText = 'Positive Towards';
-    positiveTowardsHeader.style.color = 'rgb(83, 51, 237)';
-    positiveTowardsHeader.style.fontWeight = 'bold';
-    positiveTowardsHeader.style.marginBottom = '0.5%';
-    positiveTowardsHeader.style.display = 'block';
-
-    var positiveTowardsTooltipContainer = document.createElement('div');
-    positiveTowardsTooltipContainer.classList.add('troogl-tooltip');
-    positiveTowardsTooltipContainer.innerHTML = '&#x1F6C8;';
-
-    var positiveTowardsTooltip = document.createElement('span');
-    positiveTowardsTooltip.classList.add('troogl-tooltip-text');
-    positiveTowardsTooltip.innerText = 'Highlights people and organizations that are mentioned in a positive manner';
-
-    var positiveTowardsContent = document.createElement('span');
-
-    if (Object.keys(positiveTowards).length == 0) {
-        positiveTowardsContent.innerText = 'Not clearly positive towards any person / organization.';
-    }
-
-    for (var key in positiveTowards) {
-        var positiveEntity = document.createElement('span');
-        positiveEntity.innerText = key;
-        positiveEntity.style.fontWeight = 'bold';
-        positiveEntity.style.padding = '5px';
-        positiveEntity.style.borderRadius = '5px';
-        positiveEntity.style.display = 'inline-block';
-        positiveEntity.style.margin = '3px 5px';
-        positiveEntity.style.color = '#333';
-
-        if (positiveTowards[key]['type'] == 'PERSON') {
-            positiveEntity.style.backgroundColor = '#fffbb5';
-        } else if (positiveTowards[key]['type'] == 'ORGANIZATION') {
-            positiveEntity.style.backgroundColor = '#ceffb5';
-        } else if (positiveTowards[key]['type'] == 'OTHER') {
-            positiveEntity.style.backgroundColor = '#ffefcf';
-        } else if (positiveTowards[key]['type'] == 'EVENT') {
-            positiveEntity.style.backgroundColor = '#dab5ff';
-        } else if (positiveTowards[key]['type'] == 'LOCATION') {
-            positiveEntity.style.backgroundColor = '#ffb5c3';
-        } else if (positiveTowards[key]['type'] == 'WORK_OF_ART') {
-            positiveEntity.style.backgroundColor = '#fcccfb';
-        } else if (positiveTowards[key]['type'] == 'CONSUMER_GOOD') {
-            positiveEntity.style.backgroundColor = '#c2d1ff';
-        }
-        positiveTowardsContent.appendChild(positiveEntity);
-    }
-    positiveTowardsTooltipContainer.appendChild(positiveTowardsTooltip);
-    positiveTowardsHeader.appendChild(positiveTowardsTooltipContainer);
-    positiveTowardsContainer.appendChild(positiveTowardsHeader);
-    positiveTowardsContainer.appendChild(positiveTowardsContent);
-    contentContainer.appendChild(positiveTowardsContainer);
-
-    // Newline item
-    var newline = document.createElement('div');
-    newline.style.flexBasis = '100%';
-    newline.style.height = 0;
-    
-    contentContainer.appendChild(newline);
-
-    // Container for feedback item
-    var feedbackContainer = document.createElement('div');
-    feedbackContainer.style.flexGrow = '1';
-    feedbackContainer.style.margin = '0.5% 0.5% 2.5% 2.5%';
-    feedbackContainer.style.fontSize = '13px';
-    feedbackContainer.style.borderRadius = '5px';
-    feedbackContainer.style.padding = '1%';
-
-    var feedbackContent = document.createElement('span');
-    feedbackContent.innerHTML = 'Help us improve! <a href="https://form.jotformeu.com/201655282823354" target="_blank" style="color: rgb(83, 51, 237);">Share your feedback.</a>';
-
-    feedbackContainer.appendChild(feedbackContent);
-    contentContainer.appendChild(feedbackContainer);
-
-    // Container for logo item
-    var logoContainer = document.createElement('div');
-    logoContainer.style.flexGrow = '1';
-    logoContainer.style.margin = '0.5% 2.5% 2.5% 0.5%';
-    logoContainer.style.fontSize = '13px';
-    logoContainer.style.textAlign = 'right';
-    logoContainer.style.borderRadius = '5px';
-    logoContainer.style.padding = '1%';
-
-    var logoContent = document.createElement('span');
-    logoContent.innerHTML = 'Powered by <a href="https://samueldobbie.github.io/troogl/" target="_blank" style="color: rgb(83, 51, 237);">Troogl (alpha)</a> - Version 0.0.2';
-
-    logoContainer.appendChild(logoContent);
-    contentContainer.appendChild(logoContainer);
+    // Construct dashboard
+    content.append([
+        getReadTimeContainer(readTime),
+        getReadibilityContainer(readibilityLevel),
+        getSubjectivityContainer(subjectivity),
+        getSummaryContainer(summarySentences),
+        getEntitySentimentContainer('Negative', negativeTowards),
+        getEntitySentimentContainer('Positive', positiveTowards),
+        getNewline(),
+        getFeedbackContainer(),
+        getLogoContainer()
+    ]);
 
     // Inject dashboard into page
-    dashboardContainer.appendChild(contentContainer);
-    document.body.prepend(dashboardContainer);
+    dashboard.append([
+        overlay,
+        closeButton,
+        content
+    ]);
+
+    $('body').prepend(dashboard);
+}
+
+
+function getReadTimeContainer(readTime) {
+    let container = $('<div/>', {
+        'css': {
+            'flexGrow': '1',
+            'margin': '2.5% 0.5% 0.5% 2.5%',
+            'backgroundColor': 'white',
+            'borderRadius': '5px',
+            'padding': '1%',
+            'boxShadow': '0 0 2px #333'
+        }
+    });
+
+    let header = $('<span/>', {
+        'text': 'Read Time',
+        'css': {
+            'color': 'rgb(83, 51, 237)',
+            'fontWeight': 'bold',
+            'marginBottom': '0.5%',
+            'display': 'block'
+        }
+    });
+
+    let tooltipContainer = $('<div/>', {
+        'class': 'troogl-tooltip',
+        'html': '&#x1F6C8;'
+    });
+
+    let tooltip = $('<span/>', {
+        'class': 'troogl-tooltip-text',
+        'text': 'Estimates the time required to read the article'
+    });
+
+    let content = $('<span/>', {
+        'text': readTime['minutes'] + ' min ' + readTime['seconds'] + ' secs'
+    });
+
+    tooltipContainer.append(tooltip);
+    header.append(tooltipContainer);
+    
+    container.append([
+        header,
+        content
+    ]);
+
+    return container;
+}
+
+
+function getReadibilityContainer(readibilityLevel) {
+    let container = $('<div/>', {
+        'css': {
+            'flexGrow': '1',
+            'margin': '2.5% 0.5% 0.5% 0.5%',
+            'backgroundColor': 'white',
+            'borderRadius': '5px',
+            'padding': '1%',
+            'boxShadow': '0 0 2px #333'
+        }
+    });
+
+    let header = $('<span/>', {
+        'text': 'Readibility',
+        'css': {
+            'color': 'rgb(83, 51, 237)',
+            'fontWeight': 'bold',
+            'marginBottom': '0.5%',
+            'display': 'block'
+        }
+    });
+
+    let tooltipContainer = $('<div/>', {
+        'class': 'troogl-tooltip',
+        'html': '&#x1F6C8;'
+    });
+
+    let tooltip = $('<span/>', {
+        'class': 'troogl-tooltip-text',
+        'text': 'Gauges the understandibility of the article using the Automated Readibility Index'
+    });
+
+    let content = $('<span/>', {
+        'text': readibilityLevel
+    });
+
+    tooltipContainer.append(tooltip);
+    header.append(tooltipContainer);
+    
+    container.append([
+        header,
+        content
+    ]);
+
+    return container;
+}
+
+
+function getSubjectivityContainer(subjectivity) {
+    let container = $('<div/>', {
+        'css': {
+            'flexGrow': '1',
+            'margin': '2.5% 2.5% 0.5% 0.5%',
+            'backgroundColor': 'white',
+            'borderRadius': '5px',
+            'padding': '1%',
+            'boxShadow': '0 0 2px #333'
+        }
+    });
+
+    let header = $('<span/>', {
+        'text': 'Subjectivity',
+        'css': {
+            'color': 'rgb(83, 51, 237)',
+            'fontWeight': 'bold',
+            'marginBottom': '0.5%',
+            'display': 'block'
+        }
+    });
+
+    let tooltipContainer = $('<div/>', {
+        'class': 'troogl-tooltip',
+        'html': '&#x1F6C8;'
+    });
+
+    let tooltip = $('<span/>', {
+        'class': 'troogl-tooltip-text',
+        'text': 'Gauges how objective or opinionated the article is (does not correspond with factuality)'
+    });
+
+    let content = $('<span/>', {
+        'text': subjectivity
+    });
+
+    tooltipContainer.append(tooltip);
+    header.append(tooltipContainer);
+    
+    container.append([
+        header,
+        content
+    ]);
+
+    return container;
+}
+
+
+function getSummaryContainer(summarySentences) {
+    let container = $('<div/>', {
+        'css': {
+            'flexGrow': '2',
+            'margin': '0.5% 2.5% 0.5% 2.5%',
+            'backgroundColor': 'white',
+            'borderRadius': '5px',
+            'padding': '1%',
+            'boxShadow': '0 0 2px #333'
+        }
+    });
+
+    let header = $('<span/>', {
+        'text': 'TL;DR',
+        'css': {
+            'color': 'rgb(83, 51, 237)',
+            'fontWeight': 'bold',
+            'marginBottom': '0.5%',
+            'display': 'block'
+        }
+    });
+
+    let tooltipContainer = $('<div/>', {
+        'class': 'troogl-tooltip',
+        'html': '&#x1F6C8;'
+    });
+
+    let tooltip = $('<span/>', {
+        'class': 'troogl-tooltip-text',
+        'text': 'Summarizes the article with the three most relevant sentences'
+    });
+
+    let content = $('<ul/>', {
+        'css': {
+            'list-style-type': 'disc',
+            'margin': '1% 5%'
+        }
+    });
+
+    for (let i = 0; i < summarySentences.length; i++) {
+        let bullet = $('<li/>', {
+            'text': summarySentences[i]
+        });
+
+        if (i != summarySentences.length - 1) {
+            bullet.css('margin-bottom', '1.5%');
+        }
+
+        content.append(bullet);
+    }
+
+    tooltipContainer.append(tooltip);
+    header.append(tooltipContainer);
+    
+    container.append([
+        header,
+        content
+    ]);
+
+    return container;
+}
+
+
+function getEntitySentimentContainer(type, entitySentiments) {
+    let container = $('<div/>', {
+        'css': {
+            'flexGrow': '1',
+            'max-width': '45%',
+            'background-color': 'white',
+            'border-radius': '5px',
+            'padding': '1%',
+            'boxShadow': '0 0 2px #333'
+        }
+    });
+
+    if (type == 'Negative') {
+        container.css('margin', '0.5% 0.5% 0.5% 2.5%');
+    } else {
+        container.css('margin', '0.5% 2.5% 0.5% 0.5%');
+    }
+
+    let header = $('<span/>', {
+        'text': type + ' Towards',
+        'css': {
+            'color': 'rgb(83, 51, 237)',
+            'fontWeight': 'bold',
+            'marginBottom': '0.5%',
+            'display': 'block'
+        }
+    });
+
+    let tooltipContainer = $('<div/>', {
+        'class': 'troogl-tooltip',
+        'html': '&#x1F6C8;'
+    });
+
+    let tooltip = $('<span/>', {
+        'class': 'troogl-tooltip-text',
+        'text': 'Highlights people and organizations that are mentioned in a ' + type + ' manner'
+    });
+
+    let content = $('<span/>');
+
+    if (Object.keys(entitySentiments).length == 0) {
+        content.text('Not clearly ' + type + ' towards any person / organization.');
+    }
+
+    for (const key in entitySentiments) {
+        let entityColour = getEntityColour(
+            entitySentiments[key]['type']
+        );
+
+        let entity = $('<span/>', {
+            'text': key,
+            'css': {
+                'fontWeight': 'bold',
+                'padding': '5px',
+                'borderRadius': '5px',
+                'display': 'inline-block',
+                'margin': '3px 5px',
+                'color': '#333',
+                'background-color': entityColour
+            }
+        });
+
+        content.append(entity);
+    }
+
+    tooltipContainer.append(tooltip);
+    header.append(tooltipContainer);
+    
+    container.append([
+        header,
+        content
+    ]);
+
+    return container;
+}
+
+
+function getEntityColour(type) {
+    let colourMappings = {
+        'PERSON': '#fffbb5',
+        'ORGANIZATION': '#ceffb5',
+        'OTHER': '#ffefcf',
+        'EVENT': '#dab5ff',
+        'LOCATION': '#ffb5c3',
+        'WORK_OF_ART': '#fcccfb',
+        'CONSUMER_GOOD': '#c2d1ff'
+    }
+    return colourMappings[type];
+}
+
+
+function getNewline() {
+    return $('<div/>', {
+        'css': {
+            'flex-basis': '100%',
+            'height': '0'
+        }
+    });
+}
+
+
+function getFeedbackContainer() {
+    let container = $('<div/>', {
+        'css': {
+            'flexGrow': '1',
+            'margin': '0.5% 0.5% 2.5% 2.5%',
+            'font-size': '13px',
+            'border-radius': '5px',
+            'padding': '1%',
+        }
+    });
+
+    let content = $('<span/>', {
+        'html': 'Help us improve! <a href="https://form.jotformeu.com/201655282823354" target="_blank" style="color: rgb(83, 51, 237);">Share your feedback.</a>'
+    });
+
+    container.append(content);
+
+    return container;
+}
+
+
+function getLogoContainer() {
+    let container = $('<div/>', {
+        'css': {
+            'flexGrow': '1',
+            'margin': '0.5% 2.5% 2.5% 0.5%',
+            'font-size': '13px',
+            'border-radius': '5px',
+            'padding': '1%',
+            'text-align': 'right'
+        }
+    });
+
+    let content = $('<span/>', {
+        'html': 'Powered by <a href="https://samueldobbie.github.io/troogl/" target="_blank" style="color: rgb(83, 51, 237);">Troogl (alpha)</a> - Version 0.0.2'
+    });
+
+    container.append(content);
+
+    return container;
 }
 
 
 function addSentencePopup() {
-    // Container for all popup items
     var popupContainer = document.createElement('div');
     popupContainer.id = 'troogl-sentence-popup-container';
     popupContainer.style.position = 'fixed';
