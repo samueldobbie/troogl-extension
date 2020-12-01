@@ -37,7 +37,7 @@ function analyseArticle(tabId) {
     chrome.tabs.executeScript(tabId, {file: 'extract-html.js'}, function (result) {
         // Construct query
         const request = new XMLHttpRequest();
-        const queryUrl = 'http://127.0.0.1:5000/v1/api/analyse';
+        const queryUrl = 'http://127.0.0.1:5000/api/v1/analyse';
         const queryData = JSON.stringify({'html': result[0]});
 
         request.open('POST', queryUrl, true);
