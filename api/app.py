@@ -3,15 +3,13 @@ import json
 from flask import Flask, Response, request
 from flask_cors import CORS
 
-from article import Article
+from article import ArticleAnalyzer
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/api/v1/analyse', methods=['GET'])
+@app.route('/api/v1/analyse', methods=['POST'])
 def analyse_article():
-    article_url = json.loads(request.data)['url']
-    article = Article(url=article_url)
-    article.extract_content()
-    article.analyse_content()
+    url = json.loads(request.data)['url']
+    article = ArticleAnalyzer(url=url)
     return Response(json.dumps(article.__dict__))

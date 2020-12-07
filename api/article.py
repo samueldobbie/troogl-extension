@@ -4,13 +4,17 @@ import newspaper
 from nltk.tokenize import sent_tokenize
 from num2words import num2words
 
-class Article:
+from sentiment import SentimentAnalyzer
+
+class ArticleAnalyzer:
     def __init__(self, url):
         self.url = url
+        self.extract_content()
+        self.analyse_content()
+        self.sentiment_sentences = sentiment_analyzer(self.article)
 
     def extract_content(self):
         content = self.parse_content()
-
         self.headline = content.title
         self.body = content.text
         self.summary = content.summary
@@ -43,7 +47,7 @@ class Article:
         self.read_time_minutes = self.get_read_time_minutes()
 
     def get_read_time_minutes(self):
-        return int(self.word_count / 250)
+        return math.ceil(self.word_count / 250)
 
     def categorise_readability(self):
         automated_readability_index = math.ceil(
@@ -57,8 +61,8 @@ class Article:
         elif index < 14:
             return num2words(index, to='ordinal') + ' grade'
         elif index == 14:
-            return 'College grade'
-        return 'Professor'
+            return 'College'
+        else:
+            return 'Professor'
 
-    def extract_sentiment(self):
-        pass
+sentiment_analyzer = SentimentAnalyzer()
