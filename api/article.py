@@ -10,15 +10,15 @@ class ArticleAnalyzer:
     def __init__(self, url):
         self.url = url
         self.extract_content()
-        self.analyse_content()
-        self.sentiment_sentences = sentiment_analyzer(self.article)
+        self.extract_metrics()
+        self.extract_sentiment()
 
     def extract_content(self):
         content = self.parse_content()
         self.headline = content.title
         self.body = content.text
         self.summary = content.summary
-        self.sentences = self.parse_sentences_from_body()
+        self.sentences = self.parse_sentences()
 
     def parse_content(self):
         content = newspaper.Article(self.url)
@@ -27,7 +27,7 @@ class ArticleAnalyzer:
         content.nlp()
         return content
 
-    def parse_sentences_from_body(self):
+    def parse_sentences(self):
         sentences = []
         for paragraph in self.body.split('\n'):
             for sentence in sent_tokenize(paragraph):
@@ -35,10 +35,6 @@ class ArticleAnalyzer:
                     continue
                 sentences.append(sentence.strip())
         return sentences
-
-    def analyse_content(self):
-        self.extract_metrics()
-        self.extract_sentiment()
 
     def extract_metrics(self):
         self.character_count = len(self.body)
@@ -65,4 +61,5 @@ class ArticleAnalyzer:
         else:
             return 'Professor'
 
-sentiment_analyzer = SentimentAnalyzer()
+    def extract_sentiment(self):
+        sentiment = SentimentAnalyzer(self.body, self.sentences)
