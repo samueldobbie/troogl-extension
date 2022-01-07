@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "author": {
-    "name" : "Samuel Dobbie",
-    "email" : "samuel.jordan.dobbie@gmail.com",
-    "url" : "https://github.com/samueldobbie/"
+    "name": "Samuel Dobbie",
+    "email": "samuel.jordan.dobbie@gmail.com",
+    "url": "https://github.com/samueldobbie/"
   },
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -42,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.174"
   }
 }
