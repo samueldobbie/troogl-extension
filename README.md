@@ -1,34 +1,46 @@
-# Troogl - A new way to read the news :newspaper:
+# Getting Started with Create React App
 
-![](extension/images/plugin-demo.gif)
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Troogl is a browser extension that aims to improve the experience of reading news articles by providing you with interesting, real-time insights into articles as you read them. Coming soon to Chrome and Firefox!
+## Available Scripts
 
-### How do I use it?
+In the project directory, you can run:
 
-1. Add the extension to your browser (links coming soon).
-2. Visit any news article.
-3. Click the Troogl plugin icon ![](extension/images/icon16.png) in the top right corner of your browser.
+### `npm start`
 
-Troogl will analyse the article and display the results directly within the article, as shown in the GIF above.
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-### What can I do with Troogl?
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-Right now, Troogl primarily provides insights into the sentiment of articles (e.g. how positive, neutral or negative sentences are).
+### `npm test`
 
-The current features of Troogl include:
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-- Colour-coded sentences based on sentiment (![](extension/images/pos.png) positive, ![](extension/images/neu.png) neutral, ![](extension/images/neg.png) negative).
-- A graph demonstrating the changing sentence sentiments over the course of the article.
-- Easy article navigation by hovering over different points within the graph.
-- Ability to view sentence sentiments from the perspective of those mentioned in the article.
-- Neutral summary of the article.
-- A dashboard of metrics such as the read time, readability level, objectivity.
-- An overview of the people and orgs who are mentioned positively or negatively.
-- ...many other features in the works!
+### `npm run build`
 
-### Things to keep in mind
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The Troogl browser extension is very much a proof-of-concept, so there's likely to be a ton of issues that have yet to be discovered (to go along with the bunch that already have been). One of the main areas that needs improvement is the accuracy of sentiment ratings.
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-Troogl doesn't store any data at all and only operates on the tab you're viewing after you click the plugin icon.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
