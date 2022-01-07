@@ -1,25 +1,22 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+  "manifest_version": 2,
+  "name": "Troogl",
+  "short_name": "Troogl",
+  "version": "1.0.0",
+  "description": "A new way to read the news",
+  "permissions": [ "activeTab" ],
+  "browser_action": {
+    "default_icon": {
+      "16": "./assets/icon16.png",
+      "32": "./assets/icon32.png",
+      "48": "./assets/icon48.png",
+      "128": "./assets/icon128.png"
     }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  },
+  "icons": {
+    "16": "./assets/icon16.png",
+    "32": "./assets/icon32.png",
+    "48": "./assets/icon48.png",
+    "128": "./assets/icon128.png"
+  }
 }
