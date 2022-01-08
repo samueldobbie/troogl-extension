@@ -23,6 +23,11 @@ module.exports = {
     }],
   },
   plugins: [
+    new HTMLWebpackPlugin({
+      template: "src/popup/popup.html",
+      filename: "popup.html",
+      chunks: ["popup"],
+    }),
     new CopyWebpackPlugin({
       patterns: [{
         from: "public",
