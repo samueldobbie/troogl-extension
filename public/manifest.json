@@ -5,10 +5,8 @@
   "version": "1.0.0",
   "description": "A new way to read the news",
   "permissions": [ "activeTab" ],
-  "browser_action": {},
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+  "browser_action": {
+    "default_popup": "popup.html"
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
