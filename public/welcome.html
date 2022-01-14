@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Thanks for using Troogl!</title>
+
+    <style>
+      body {
+        background-color: #f1f1f1;
+        font-family: 'Roboto', sans-serif;
+        font-size:17px;
+        color: #333;
+      }
+
+      li {
+        padding: 5px;
+      }
+
+      .sentiment-tag {
+        padding: 1px 4px;
+        border-radius: 5px;
+      }
+
+      .positive {
+        color: green;
+        background-color: rgb(189, 255, 189);
+      }
+
+      .neutral {
+        color: gray;
+        background-color: rgb(221, 221, 221);
+      }
+
+      .negative {
+        color: red;
+        background-color: rgb(255, 196, 196);
+      }
+
+      .outer-content-container {
+        background-color: white;
+        max-width: 75vw;
+        margin: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgb(214, 214, 214);
+      }
+
+      .inner-content-container {
+        padding: 4% 0;
+        margin: 3% 12.5% 3% 12.5%;
+      }
+
+      .header {
+        color: rgb(83, 51, 237);
+      }
+
+      .demo-gif {
+        width: 90%;
+        margin: 1.5%;
+        box-shadow: 0 0 5px #333;
+        border-radius: 5px;
+      }
+
+      .link {
+        color: rgb(83, 51, 237);
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="outer-content-container">
+      <div class="inner-content-container">
+        <h1 class="header">Hey there!</h1>
+        <div style="margin-bottom: 2.5%;">
+          <p>
+            Thanks for being one of the first to try Troogl!
+          </p>
+          <p>
+            Troogl aims to improve the experience of reading news articles by providing
+            you with interesting, real-time insights into each article as you read them.
+          </p>
+        </div>
+
+        <h1 class="header">How do I use it?</h1>
+        <div>
+          <p>
+            To get started:
+
+          <ol>
+            <li>Add the extension to your browser, <a class="link" href="#">here</a>.</li>
+            <li>Visit any news article.</li>
+            <li>Click the Troogl plugin icon <img style="width: 20px;" src="images/icon32.png"> in the top right corner of your browser window.</li>
+          </ol>
+          </p>
+          <p>
+            Troogl will analyse the article and display the results directly within the page, as shown below.
+          </p>
+          <p style="text-align: center;">
+            <img class="demo-gif" src="images/plugin-demo.gif">
+          </p>
+        </div>
+
+        <h1 class="header" style="margin-top: 2.5%;">What can I do with Troogl?</h1>
+        <div>
+          <p>
+            Right now, Troogl primarily provides insights into the sentiment of articles (e.g. how positive, neutral or negative sentences are).
+          </p>
+
+          <p>
+            The current features of Troogl include:
+          <ul>
+            <li>Colour-coded sentences based on the sentiment
+              (<span class="sentiment-tag positive">positive</span>,
+              <span class="sentiment-tag neutral">neutral</span>,
+              <span class="sentiment-tag negative">negative</span>).
+            </li>
+            <li>A graph demonstrating the changing sentence sentiments over the course of the article.</li>
+            <li>Easy article navigation by hovering over different points within the graph.</li>
+            <li>Ability to view sentence sentiments from the perspective of those mentioned in the article.</li>
+            <li>Neutral summary of the article.</li>
+            <li>A dashboard providing metrics such as the read time, readability level, objectivity.</li>
+            <li>Overview of the people and orgs who are mentioned positively or negatively.</li>
+            <li>...many other features in the works!</li>
+          </ul>
+          </p>
+        </div>
+
+        <h1 class="header" style="margin-top: 2.5%;">Things to keep in mind</h1>
+        <div>
+          <p>
+            Troogl is very much a proof-of-concept, so there's likely to be a ton of issues that have yet to be discovered (to go along with the bunch that already have been). One of the main areas that needs improvement is the accuracy of sentiment ratings.
+          </p>
+          <p>
+            Troogl doesn't store any data at all and only operates on the tab you're viewing after you click the plugin icon.
+          </p>
+          <p>
+            If you want to get in touch then feel free to DM me on <a class="link" href="https://twitter.com/samueldobbie" target="_blank">twitter</a>.
+
+            Thanks again for giving it a go - I hope you have fun and make some interesting discoveries!
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

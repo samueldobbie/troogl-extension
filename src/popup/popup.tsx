@@ -48,8 +48,16 @@ function Popup(): JSX.Element {
 }
 
 const analyzePage = () => {
-  console.log(1)
-  alert(2)
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    const tabId = tabs[0].id
+
+    if (tabId) {
+      chrome.tabs.sendMessage(tabId, {
+        topic: "AnalyzeButtonClicked",
+        payload: { url: document.location.href },
+      })
+    }
+  })
 }
 
 render(<Popup />, document.getElementById("root"))
