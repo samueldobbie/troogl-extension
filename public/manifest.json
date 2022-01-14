@@ -4,13 +4,16 @@
   "short_name": "Troogl",
   "version": "1.0.0",
   "description": "A new way to read the news",
-  "permissions": [ "activeTab" ],
+  "permissions": [ "activeTab", "tabs" ],
+  "background": {
+    "scripts": [ "background.js" ]
+  },
   "browser_action": {
     "default_popup": "popup.html"
   },
   "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["contentScript.js"]
+    "matches": [ "<all_urls>" ],
+    "js": [ "content.js" ]
   }],
   "icons": {
     "16": "./assets/icon16.png",
