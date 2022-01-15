@@ -1,6 +1,9 @@
 import extractor from "unfluffjs"
 import tokenizer from "sbd"
 import Sentiment from "sentiment"
+import React from "react"
+import ReactDOM from "react-dom"
+import { CircularProgress } from "@mui/material"
 
 declare global {
   interface Window {
@@ -9,13 +12,15 @@ declare global {
 }
 
 // TODO subjectivity
-
-const sentiment = new Sentiment();
+const html = document.documentElement.innerHTML
+const sentiment = new Sentiment()
 
 const analyzeArticle = (url: string) => {
   if (hasBeenAnalyzed()) return
 
-  const sentences = getSentences(url).map(sentence => {
+  addLoader()
+
+  const sentences = getSentences(html).map(sentence => {
     const score = sentiment.analyze(sentence).score
 
     if (score > 4) {
@@ -69,14 +74,63 @@ const analyzeArticle = (url: string) => {
   disablePageEditing()
   window.scrollTo(0, 0)
   window.getSelection()?.collapse(document.body, 0)
+
+  removeLoader()
+}
+
+const addLoader = () => {
+  addContainer("div", "troogl-loader")
+  ReactDOM.render(<Abc />, document.getElementById("troogl-loader"))
+}
+
+const addContainer = (tagName: string, id: string) => {
+  const container = document.createElement(tagName)
+  container.id = id
+  document.body.appendChild(container)
+}
+
+const removeLoader = () => {
+  const loader = document.getElementById("troogl-loader")
+  
+  if (loader) {
+    document.body.removeChild(loader)
+  }
+}
+
+function Abc(): JSX.Element {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: "0",
+        left: "0",
+        width: "100vw",
+        height: "100vh",
+        zIndex: "2147483647",
+        backgroundColor: "black",
+        opacity: "0.7",
+      }}
+    >
+      // center the loader
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    </div>
+  )
 }
 
 const hasBeenAnalyzed = () => {
   return document.getElementById("troogl-extension") !== null
 }
 
-const getSentences = (url: string) => {
-  const html = document.documentElement.innerHTML
+const getSentences = (html: string) => {  
   const data = extractor(html)
   const sentences = [data.softTitle]
 
