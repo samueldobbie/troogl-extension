@@ -1,5 +1,6 @@
 import extractor from "unfluffjs"
 import tokenizer from "sbd"
+import Sentiment from "sentiment"
 
 declare global {
   interface Window {
@@ -7,31 +8,59 @@ declare global {
   }
 }
 
+// TODO subjectivity
+
+const sentiment = new Sentiment();
+
 const analyzeArticle = (url: string) => {
   if (hasBeenAnalyzed()) return
 
-  const sentences = getSentences(url)
+  const sentences = getSentences(url).map(sentence => {
+    const score = sentiment.analyze(sentence).score
 
-  console.log(sentences)
+    if (score > 4) {
+      return {
+        type: "positive",
+        sentence,
+      }
+    } else if (score >= -4 && score <= 4) {
+      return {
+        type: "neutral",
+        sentence,
+      }
+    } else {
+      return {
+        type: "negative",
+        sentence,
+      }
+    }
+  })
 
   enablePageEditing()
   window.getSelection()?.collapse(document.body, 0)
 
   for (let i = 0; i < sentences.length; i++) {
-    if (window.find(sentences[i])) {
+    if (window.find(sentences[i].sentence)) {
       const range = window.getSelection()?.getRangeAt(0)
   
       if (range) {
         const anchorTag = document.createElement("a")
-        anchorTag.id = `troogl-sentence-${i}`
+        // anchorTag.id = `troogl-sentence-${i}`
     
         const sentenceContainer = document.createElement("span")
         sentenceContainer.appendChild(anchorTag)
-        sentenceContainer.setAttribute("troogl-sentence-index", i.toString())
-        sentenceContainer.classList.add("troogl-sentence")
+        // sentenceContainer.setAttribute("troogl-sentence-index", i.toString())
+        // sentenceContainer.classList.add("troogl-sentence")
         sentenceContainer.appendChild(range.extractContents())
-        sentenceContainer.style.backgroundColor = "red"
-    
+
+        if (sentences[i].type === "positive") {
+          sentenceContainer.style.backgroundColor = "#d3ffd3"
+        } else if (sentences[i].type === "neutral") {
+          sentenceContainer.style.backgroundColor = "#efefef"
+        } else {
+          sentenceContainer.style.backgroundColor = "#ffe6e6"
+        }
+
         range.insertNode(sentenceContainer)
       }
     }
@@ -49,23 +78,20 @@ const hasBeenAnalyzed = () => {
 const getSentences = (url: string) => {
   const html = document.documentElement.innerHTML
   const data = extractor(html)
-  const title = data.softTitle
-  const text = data.text
+  const sentences = [data.softTitle]
 
-  const sentences = [title]
+  tokenizer
+    .sentences(data.text)
+    .forEach(sentence => {
+      const subSentences = sentence.split("\n")
 
-  tokenizer.sentences(text).forEach(sentence => {
-    const s = sentence.split("\n")
-    s.forEach(x => {
-      if (x !== "") {
-        sentences.push(x)
-      }
+      subSentences.forEach(subSentece => {
+        if (subSentece !== "") {
+          sentences.push(subSentece)
+        }
+      })
     })
-  })
 
-  // const sentences = tokenizer.sentences(text)
-  // sentences.unshift(title)
-  
   const cleanedSentences = sentences
     .map(sentence => sentence.trim())
     .filter(sentence => sentence.length > 0)
@@ -74,11 +100,11 @@ const getSentences = (url: string) => {
 }
 
 const enablePageEditing = () => {
-  document.designMode = 'on'
+  document.designMode = "on"
 }
 
 const disablePageEditing = () => {
-  document.designMode = 'off'
+  document.designMode = "off"
 
   // if (window && window.getSelection) {
   //   window.getSelection().collapse(document.body, 0)
