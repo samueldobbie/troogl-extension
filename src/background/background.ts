@@ -13,7 +13,7 @@ const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   if (changeInfo.status === "complete" && tabUrl) {
     const hasMatch = wildCards.some(wildCard => tabUrl.match(wildCard))
 
-    if (hasMatch) {
+    if (hasMatch || true) {
       chrome.tabs.sendMessage(tabId, {
         topic: "TabUpdated",
         payload: { url: tabUrl },
