@@ -22,5 +22,5 @@ const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   }
 }
 
-chrome.runtime.onInstalled.addListener(handleInstall)
+// chrome.runtime.onInstalled.addListener(handleInstall)
 chrome.tabs.onUpdated.addListener(handleUpdated)

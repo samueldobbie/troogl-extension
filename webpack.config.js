@@ -15,6 +15,14 @@ module.exports = {
     filename: "[name].js",
     path: resolve(__dirname, "build"),
   },
+  resolve: {
+    extensions: [
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx",
+    ],
+  },
   module: {
     rules: [{
       test: /\.ts(x?)$/,
