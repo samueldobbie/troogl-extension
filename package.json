@@ -13,10 +13,12 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.7",
     "node-nlp": "^4.22.9",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-draggable": "^4.4.4",
     "sbd": "^1.0.19",
     "sentiment": "^5.0.2",
     "unfluffjs": "^3.3.4"

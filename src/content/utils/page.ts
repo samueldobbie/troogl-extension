@@ -1,3 +1,5 @@
+import ReactDOM from "react-dom"
+
 function injectElement(tagName: string, id: string) {
   const element = document.createElement(tagName)
   element.id = id
@@ -16,4 +18,12 @@ function disableEditing(): void {
   document.designMode = "off"
 }
 
-export { injectElement, enableEditing, disableEditing }
+function replaceContainerWithComponent (element: HTMLElement, component: JSX.Element): void {
+  const parent = document.createElement("div")
+  document.body.append(parent)
+  
+
+  ReactDOM.render(component, parent)
+}
+
+export { injectElement, enableEditing, disableEditing, replaceContainerWithComponent }

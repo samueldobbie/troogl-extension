@@ -1,5 +1,7 @@
+import React from "react"
+import Dashboard from "./components/dashboard"
 import { injectLoader, removeLoader } from "./components/loader"
-import { enableEditing, disableEditing } from "./utils/page"
+import { enableEditing, disableEditing, replaceContainerWithComponent } from "./utils/page"
 import { getSentences, buildSentenceWrapper } from "./utils/sentence"
 
 declare global {
@@ -34,14 +36,41 @@ function injectSentenceSentiments(html: string): void {
 }
 
 function injectDashboard() {
-  // Inject visual elements and bind events
-  // addPartialDashboard(article['sentence_sentiment_classes']);
-  // addCompleteDashboard(article);
-  // addSentencePopup();
-  // bindDashboardEvents();
+  addPartialDashboard()
+
+  // addCompleteDashboard(article)
+  // addSentencePopup()
+  // bindDashboardEvents()
 
   // // Populate graphs
-  // updateGraphs();
+  // updateGraphs()
+}
+
+function appendJsxToBody(component: JSX.Element): void {
+  const container = document.createElement("div")
+  document.body.appendChild(container)
+  replaceContainerWithComponent(container, component)
+}
+
+function addPartialDashboard(): void {
+  appendJsxToBody(<Dashboard />)
+
+  // const dashboard = getPartialDashboard()
+  // document.body.append(dashboard)
+
+  // $('body').append([
+  //     getExpandButton(),
+  //     getPartialDashboard(sentenceClasses)
+  // ])
+
+  // // Enable dragging of dashboard
+  // $('#troogl-partial-dashboard-bar').draggable({
+  //     handle: '#troogl-draggable-button',
+  //     containment: 'window',
+  //     cursor: 'grabbing',
+  //     axis: 'y',
+  //     scroll: false
+  // })
 }
 
 export { analyzeHtml }

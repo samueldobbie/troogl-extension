@@ -25,7 +25,7 @@ function Popup(): JSX.Element {
       <TextField
         multiline
         fullWidth
-        rows={10}
+        rows={8}
         label="Update Wildcards"
         placeholder="https://www.bbc.co.uk/news/*"
         variant="filled"
