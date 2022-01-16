@@ -50,7 +50,7 @@ function injectSentenceSentiments(sentenceData: ISentenceData[]): void {
       const range = window.getSelection()?.getRangeAt(0)
       
       if (range) {
-        const wrapper = buildSentenceWrapper(item.sentimentData.color, range)
+        const wrapper = buildSentenceWrapper(item, range)
         range.insertNode(wrapper)
       }
     }
