@@ -1,6 +1,5 @@
 import extractor from "unfluffjs"
 import tokenizer from "sbd"
-import { getSentimentLabel, getSentimentLabelColor } from "./sentiment"
 
 function getSentences(html: string): string[] {  
   const data = extractor(html)
@@ -25,10 +24,8 @@ function getSentences(html: string): string[] {
   return cleanedSentences
 }
 
-function buildSentenceWrapper(sentence: string, range: Range): HTMLSpanElement {
+function buildSentenceWrapper(sentimentLabelColor: string, range: Range): HTMLSpanElement {
   const span = document.createElement("span")
-  const sentimentLabel = getSentimentLabel(sentence)
-  const sentimentLabelColor = getSentimentLabelColor(sentimentLabel)
 
   span.appendChild(range.extractContents())
   span.style.backgroundColor = sentimentLabelColor

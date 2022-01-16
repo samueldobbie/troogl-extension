@@ -3,8 +3,15 @@ import React, { useState } from "react"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import Draggable from "react-draggable"
 import Graph from "./graph"
+import { ISentenceData } from "../analyze-html"
 
-function Dashboard(): JSX.Element {
+interface IProps {
+  sentenceData: ISentenceData[]
+}
+
+function Dashboard(props: IProps): JSX.Element {
+  const { sentenceData } = props
+
   const [metricType, setMetricType] = useState("entity")
 
   const toggleMetricType = (type: string) => {
@@ -67,7 +74,7 @@ function Dashboard(): JSX.Element {
           </Grid>
 
           <Grid item xs={6}>
-            <Graph />
+            <Graph sentenceData={sentenceData} />
           </Grid>
 
           <Grid item xs={2}>
