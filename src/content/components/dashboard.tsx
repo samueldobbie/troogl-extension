@@ -1,56 +1,60 @@
-import { Grid, ToggleButton, ToggleButtonGroup } from "@mui/material"
+import { Button, Grid, ToggleButton, ToggleButtonGroup } from "@mui/material"
 import React, { useState } from "react"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import Draggable from "react-draggable"
+import Graph from "./graph"
 
 function Dashboard(): JSX.Element {
-  const [type, setType] = useState("entity")
+  const [metricType, setMetricType] = useState("entity")
 
-  const handleType = (type: string) => {
-    setType(type)
+  const toggleMetricType = (type: string) => {
+    setMetricType(type)
   }
 
   return (
     <div
-      id="dsadasds"
+      id="troogl-dashboard-container"
       style={{ height: "100vh" }}
     >
       <Draggable
         axis="y"
-        bounds="#dsadasds"
+        handle="#troogl-drag-handler"
+        bounds="#troogl-dashboard-container"
         defaultPosition={{ x: 0, y: 0 }}
       >
         <Grid
           container
-          spacing={2}
+          spacing={0}
           alignItems="center"
           sx={{
             position: "fixed",
-            top: "0",
-            left: "0",
+            bottom: 0,
+            left: 0,
+            zIndex: 2147483647,
             width: "100vw",
             height: "12.5vh",
-            backgroundColor: "rgb(83, 51, 237)",
-            boxShadow: "0 0 5px #333",
             textAlign: "center",
-            zIndex: "2147483647",
+            boxShadow: "0 0 5px #333",
+            backgroundColor: "rgb(93 123 255)",
           }}
         >
-          <Grid item xs={2}>
+          <Grid item xs={1}>
             <DragIndicatorIcon
+              id="troogl-drag-handler"
               sx={{
                 fontSize: "3rem",
-                color: "white",
+                color: "#ECEDED",
+                cursor: "grab",
               }}
             />
           </Grid>
 
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <ToggleButtonGroup
               exclusive
-              value={type}
-              onChange={(_, type) => handleType(type)}
-              sx={{ backgroundColor: "white" }}
+              value={metricType}
+              onChange={(_, type) => toggleMetricType(type)}
+              sx={{ backgroundColor: "#ECEDED" }}
             >
               <ToggleButton value="entity">
                 Entity
@@ -62,54 +66,35 @@ function Dashboard(): JSX.Element {
             </ToggleButtonGroup>
           </Grid>
 
-          <Grid item xs={4}>
-            <DragIndicatorIcon
-              sx={{
-                fontSize: "3rem",
-                color: "white",
-              }}
-            />
+          <Grid item xs={6}>
+            <Graph />
           </Grid>
 
           <Grid item xs={2}>
-            <DragIndicatorIcon
+            <Button
+              variant="contained"
               sx={{
-                fontSize: "3rem",
-                color: "white",
+                marginRight: 1,
+                backgroundColor: "#ECEDED",
+                color: "#333",
               }}
-            />
+            >
+              Expand
+            </Button>
+
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#ECEDED",
+                color: "#333",
+              }}
+            >
+              Hide
+            </Button>
           </Grid>
         </Grid>
       </Draggable>
     </div>
-
-    // <Container
-    //   style={{
-    //     position: "relative",
-    //     width: "100%",
-    //     height: "12.5vh",
-    //   }}
-    // >
-    //   <Box
-    //     style={{
-    //       position: "fixed",
-    //       width: "100%",
-    //       height: "12.5vh",
-    //       top: "0",
-    //       left: "0",
-    //       display: "flex",
-    //       flexWrap: "nowrap",
-    //       alignItems: "center",
-    //       backgroundColor: "rgb(83, 51, 237)",
-    //       boxShadow: "0 0 5px #333",
-    //       padding: "0 2%",
-    //       fontFamily: "Tahoma, Geneva, sans-serif",
-    //       zIndex: "10000",
-    //     }}
-    //   >
-
-    //   </Box>
-    // </Container>
   )
 }
 
