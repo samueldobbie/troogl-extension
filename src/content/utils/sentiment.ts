@@ -1,27 +1,35 @@
 import Sentiment from "sentiment"
 
-const sentiment = new Sentiment()
-
-function getSentimentLabelColor(label: string): string {
-  if (label === "positive") {
-    return "rgb(182, 255, 200)"
-  } else if (label === "neutral") {
-    return "rgb(243, 243, 243)"
-  } else {
-    return "rgb(255, 196, 196)"
-  } 
+export interface ISentimentData {
+  label: string
+  score: number
+  color: string
 }
 
-function getSentimentLabel(sentence: string): string {
+const sentiment = new Sentiment()
+
+function getSentimentData(sentence: string): ISentimentData {
   const score = sentiment.analyze(sentence).score
 
   if (score > 4) {
-    return "positive"
+    return {
+      label: "positive",
+      score: 1,
+      color: "rgb(182, 255, 200)",
+    }
   } else if (score >= -4 && score <= 4) {
-    return "neutral"
+    return {
+      label: "neutral",
+      score: 0,
+      color: "rgb(243, 243, 243)",
+    }
   } else {
-    return "negative"
+    return {
+      label: "negative",
+      score: -1,
+      color: "rgb(255, 196, 196)",
+    }
   }
 }
 
-export { getSentimentLabel, getSentimentLabelColor }
+export { getSentimentData }

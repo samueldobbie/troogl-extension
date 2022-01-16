@@ -3,6 +3,7 @@ import Dashboard from "./components/dashboard"
 import { injectLoader, removeLoader } from "./components/loader"
 import { enableEditing, disableEditing, replaceContainerWithComponent } from "./utils/page"
 import { getSentences, buildSentenceWrapper } from "./utils/sentence"
+import { getSentimentData, ISentimentData } from "./utils/sentiment"
 
 declare global {
   interface Window {
@@ -10,23 +11,46 @@ declare global {
   }
 }
 
+export interface ISentenceData {
+  index: number
+  sentence: string
+  sentimentData: ISentimentData
+}
+
 function analyzeHtml(html: string): void {
   injectLoader()
-  injectSentenceSentiments(html)
-  injectDashboard()
+
+  const sentenceData = getSentenceData(html)
+  injectSentenceSentiments(sentenceData)
+  injectDashboard(sentenceData)
+
   removeLoader()
 }
 
-function injectSentenceSentiments(html: string): void {
+function getSentenceData(html: string): ISentenceData[] {
+  const sentences = getSentences(html)
+
+  return sentences.map((sentence, index) => {
+    const sentimentData = getSentimentData(sentence)
+
+    return {
+      index,
+      sentence,
+      sentimentData,
+    }
+  })
+}
+
+function injectSentenceSentiments(sentenceData: ISentenceData[]): void {
   enableEditing()
 
   // TODO subjectivity
-  getSentences(html).map((sentence) => {
-    if (window.find(sentence)) {
+  sentenceData.map((item) => {
+    if (window.find(item.sentence)) {
       const range = window.getSelection()?.getRangeAt(0)
       
       if (range) {
-        const wrapper = buildSentenceWrapper(sentence, range)
+        const wrapper = buildSentenceWrapper(item.sentimentData.color, range)
         range.insertNode(wrapper)
       }
     }
@@ -35,8 +59,8 @@ function injectSentenceSentiments(html: string): void {
   disableEditing()
 }
 
-function injectDashboard() {
-  addPartialDashboard()
+function injectDashboard(sentenceData: ISentenceData[]) {
+  addPartialDashboard(sentenceData)
 
   // addCompleteDashboard(article)
   // addSentencePopup()
@@ -52,8 +76,8 @@ function appendJsxToBody(component: JSX.Element): void {
   replaceContainerWithComponent(container, component)
 }
 
-function addPartialDashboard(): void {
-  appendJsxToBody(<Dashboard />)
+function addPartialDashboard(sentenceData: ISentenceData[]): void {
+  appendJsxToBody(<Dashboard sentenceData={sentenceData} />)
 
   // const dashboard = getPartialDashboard()
   // document.body.append(dashboard)
