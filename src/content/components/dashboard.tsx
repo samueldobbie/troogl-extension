@@ -2,8 +2,10 @@ import { Button, Grid, ToggleButton, ToggleButtonGroup } from "@mui/material"
 import React, { useState } from "react"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import Draggable from "react-draggable"
-import Graph from "./graph"
 import { ISentence } from "../commons/interfaces/sentence"
+import LineChart from "./line-chart"
+import { ThemeProvider } from "@emotion/react"
+import { theme } from "../commons/configs/theme"
 
 interface IProps {
   sentences: ISentence[]
@@ -11,6 +13,56 @@ interface IProps {
 
 function Dashboard(props: IProps): JSX.Element {
   const { sentences } = props
+
+  const [hide, setHide] = useState(false)
+
+  return (
+    <ThemeProvider theme={theme}>
+      {
+        hide
+          ? <CollapsedDashboard setHide={setHide} />
+          : <FullDashboard
+              sentences={sentences}
+              setHide={setHide}
+            />
+      }
+    </ThemeProvider>
+  )
+}
+
+interface ICollapsedProps {
+  setHide: (hide: boolean) => void
+}
+
+function CollapsedDashboard(props: ICollapsedProps): JSX.Element {
+  const { setHide } = props
+
+  return (
+    <Button
+      variant="contained"
+      onClick={() => setHide(false)}
+      sx={{
+        position: "fixed",
+        bottom: 0,
+        right: "5%",
+        fontWeight: "bold",
+        zIndex: 2147483647,
+        backgroundColor: "primary.main",
+        color: "text.secondary"
+      }}
+    >
+      Show Dashboard
+    </Button>
+  )
+}
+
+interface IFullDashboardProps {
+  sentences: ISentence[]
+  setHide: (value: boolean) => void
+}
+
+function FullDashboard(props: IFullDashboardProps): JSX.Element {
+  const { sentences, setHide } = props
 
   const [metricType, setMetricType] = useState("entity")
 
@@ -34,15 +86,15 @@ function Dashboard(props: IProps): JSX.Element {
           spacing={0}
           alignItems="center"
           sx={{
-            position: "fixed",
             bottom: 0,
             left: 0,
             zIndex: 2147483647,
+            position: "fixed",
             width: "100vw",
-            height: "12.5vh",
+            height: "10vh",
             textAlign: "center",
             boxShadow: "0 0 5px #333",
-            backgroundColor: "rgb(93 123 255)",
+            backgroundColor: "primary.main",
           }}
         >
           <Grid item xs={1}>
@@ -50,8 +102,8 @@ function Dashboard(props: IProps): JSX.Element {
               id="troogl-drag-handler"
               sx={{
                 fontSize: "3rem",
-                color: "#ECEDED",
                 cursor: "grab",
+                color: "text.secondary"
               }}
             />
           </Grid>
@@ -74,27 +126,22 @@ function Dashboard(props: IProps): JSX.Element {
           </Grid>
 
           <Grid item xs={6}>
-            <Graph sentences={sentences} />
+            <LineChart sentences={sentences} />
           </Grid>
 
           <Grid item xs={2}>
             <Button
               variant="contained"
-              sx={{
-                marginRight: 1,
-                backgroundColor: "#ECEDED",
-                color: "#333",
-              }}
+              color="secondary"
+              sx={{ marginRight: 1 }}
             >
               Expand
             </Button>
 
             <Button
               variant="contained"
-              sx={{
-                backgroundColor: "#ECEDED",
-                color: "#333",
-              }}
+              color="secondary"
+              onClick={(): void => setHide(true)}
             >
               Hide
             </Button>

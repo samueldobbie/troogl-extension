@@ -15,7 +15,7 @@ interface IProps {
   sentences: ISentence[]
 }
 
-function Graph(props: IProps): JSX.Element {
+function LineChart(props: IProps): JSX.Element {
   const { sentences } = props
 
   const chartRef = useRef<ChartJSOrUndefined<"line">>(null)
@@ -69,7 +69,7 @@ function Graph(props: IProps): JSX.Element {
     },
     onHover: (event: ChartEvent, elements: ActiveElement[]) => {
       if (elements.length > 0) {
-        const sentenceIndex = elements[0].index
+        const sentenceIndex = Math.max(0, elements[0].index - 1)
         const sentenceElement = document.getElementById(`troogl-sentence-${sentenceIndex}`)
 
         if (sentenceElement) {
@@ -95,4 +95,4 @@ function Graph(props: IProps): JSX.Element {
   )
 }
 
-export default Graph
+export default LineChart
