@@ -1,5 +1,6 @@
 import extractor from "unfluffjs"
 import tokenizer from "sbd"
+import { ISentenceData } from "../analyze-html"
 
 function getSentences(html: string): string[] {  
   const data = extractor(html)
@@ -24,11 +25,12 @@ function getSentences(html: string): string[] {
   return cleanedSentences
 }
 
-function buildSentenceWrapper(sentimentLabelColor: string, range: Range): HTMLSpanElement {
+function buildSentenceWrapper(sentence: ISentenceData, range: Range): HTMLSpanElement {
   const span = document.createElement("span")
+  span.id = `troogl-sentence-${sentence.index}`
 
   span.appendChild(range.extractContents())
-  span.style.backgroundColor = sentimentLabelColor
+  span.style.backgroundColor = sentence.sentimentData.color
   span.style.borderRadius = "5px"
   span.style.cursor = "pointer"
 
