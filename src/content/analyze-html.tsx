@@ -1,56 +1,51 @@
 import React from "react"
 import Dashboard from "./components/dashboard"
 import { injectLoader, removeLoader } from "./components/loader"
-import { enableEditing, disableEditing, replaceContainerWithComponent } from "./utils/page"
-import { getSentences, buildSentenceWrapper } from "./utils/sentence"
-import { getSentimentData, ISentimentData } from "./utils/sentiment"
+import { ISentence } from "./commons/interfaces/sentence"
+import { enableEditing, disableEditing, replaceContainerWithComponent } from "./commons/utils/page"
+import { getSentences, buildSentenceWrapper } from "./commons/utils/sentence"
+import { getSentiment } from "./commons/utils/sentiment"
 
 declare global {
   interface Window {
-      find: (text: string) => boolean
+    find: (text: string) => boolean
   }
-}
-
-export interface ISentenceData {
-  index: number
-  sentence: string
-  sentimentData: ISentimentData
 }
 
 function analyzeHtml(html: string): void {
   injectLoader()
 
-  const sentenceData = getSentenceData(html)
-  injectSentenceSentiments(sentenceData)
-  injectDashboard(sentenceData)
+  const sentence = getSentence(html)
+  injectSentenceSentiments(sentence)
+  injectDashboard(sentence)
 
   removeLoader()
 }
 
-function getSentenceData(html: string): ISentenceData[] {
+function getSentence(html: string): ISentence[] {
   const sentences = getSentences(html)
 
-  return sentences.map((sentence, index) => {
-    const sentimentData = getSentimentData(sentence)
+  return sentences.map((text, index) => {
+    const sentiment = getSentiment(text)
 
     return {
       index,
-      sentence,
-      sentimentData,
+      text,
+      sentiment,
     }
   })
 }
 
-function injectSentenceSentiments(sentenceData: ISentenceData[]): void {
+function injectSentenceSentiments(sentences: ISentence[]): void {
   enableEditing()
 
   // TODO subjectivity
-  sentenceData.map((item) => {
-    if (window.find(item.sentence)) {
+  sentences.map((sentence) => {
+    if (window.find(sentence.text)) {
       const range = window.getSelection()?.getRangeAt(0)
       
       if (range) {
-        const wrapper = buildSentenceWrapper(item, range)
+        const wrapper = buildSentenceWrapper(sentence, range)
         range.insertNode(wrapper)
       }
     }
@@ -59,42 +54,14 @@ function injectSentenceSentiments(sentenceData: ISentenceData[]): void {
   disableEditing()
 }
 
-function injectDashboard(sentenceData: ISentenceData[]) {
-  addPartialDashboard(sentenceData)
-
-  // addCompleteDashboard(article)
-  // addSentencePopup()
-  // bindDashboardEvents()
-
-  // // Populate graphs
-  // updateGraphs()
+function injectDashboard(sentences: ISentence[]): void {
+  appendJsxToBody(<Dashboard sentences={sentences} />)
 }
 
 function appendJsxToBody(component: JSX.Element): void {
   const container = document.createElement("div")
   document.body.appendChild(container)
   replaceContainerWithComponent(container, component)
-}
-
-function addPartialDashboard(sentenceData: ISentenceData[]): void {
-  appendJsxToBody(<Dashboard sentenceData={sentenceData} />)
-
-  // const dashboard = getPartialDashboard()
-  // document.body.append(dashboard)
-
-  // $('body').append([
-  //     getExpandButton(),
-  //     getPartialDashboard(sentenceClasses)
-  // ])
-
-  // // Enable dragging of dashboard
-  // $('#troogl-partial-dashboard-bar').draggable({
-  //     handle: '#troogl-draggable-button',
-  //     containment: 'window',
-  //     cursor: 'grabbing',
-  //     axis: 'y',
-  //     scroll: false
-  // })
 }
 
 export { analyzeHtml }

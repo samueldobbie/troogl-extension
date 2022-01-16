@@ -1,15 +1,10 @@
 import Sentiment from "sentiment"
-
-export interface ISentimentData {
-  label: string
-  score: number
-  color: string
-}
+import { ISentiment } from "../interfaces/sentiment"
 
 const sentiment = new Sentiment()
 
-function getSentimentData(sentence: string): ISentimentData {
-  const score = sentiment.analyze(sentence).score
+function getSentiment(text: string): ISentiment {
+  const score = sentiment.analyze(text).score
 
   if (score > 4) {
     return {
@@ -32,4 +27,4 @@ function getSentimentData(sentence: string): ISentimentData {
   }
 }
 
-export { getSentimentData }
+export { getSentiment }
