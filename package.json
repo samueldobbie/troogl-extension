@@ -17,6 +17,7 @@
     "@mui/material": "^5.2.7",
     "chart.js": "^3.7.0",
     "node-nlp": "^4.22.9",
+    "node-summary": "^1.2.0",
     "react": "^17.0.1",
     "react-chartjs-2": "^4.0.0",
     "react-dom": "^17.0.1",
@@ -24,10 +25,12 @@
     "react-sparklines": "^1.7.0",
     "sbd": "^1.0.19",
     "sentiment": "^5.0.2",
+    "text-summary": "^2.0.4",
     "unfluffjs": "^3.3.4"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.128",
+    "@types/node-summary": "^1.2.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-sparklines": "^1.7.2",
