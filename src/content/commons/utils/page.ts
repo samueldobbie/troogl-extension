@@ -21,8 +21,6 @@ function disableEditing(): void {
 function replaceContainerWithComponent (element: HTMLElement, component: JSX.Element): void {
   const parent = document.createElement("div")
   document.body.append(parent)
-  
-
   ReactDOM.render(component, parent)
 }
 

@@ -1,7 +1,7 @@
 import { CircularProgress } from "@mui/material"
 import React from "react"
 import ReactDOM from "react-dom"
-import { injectElement } from "../utils/page"
+import { injectElement } from "../commons/utils/page"
 
 function Loader(): JSX.Element {
   return (

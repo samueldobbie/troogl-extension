@@ -1,8 +1,8 @@
 import React, { useRef } from "react"
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, ChartEvent, ActiveElement } from "chart.js"
 import { Line } from "react-chartjs-2"
-import { ISentenceData } from "../analyze-html"
 import { ChartJSOrUndefined } from "react-chartjs-2/dist/types"
+import { ISentence } from "../commons/interfaces/sentence"
 
 Chart.register(
   CategoryScale,
@@ -12,19 +12,19 @@ Chart.register(
 )
 
 interface IProps {
-  sentenceData: ISentenceData[]
+  sentences: ISentence[]
 }
 
 function Graph(props: IProps): JSX.Element {
-  const { sentenceData } = props
+  const { sentences } = props
 
   const chartRef = useRef<ChartJSOrUndefined<"line">>(null)
-  const labels = sentenceData.map((item) => item.sentimentData.label)
+  const labels = sentences.map((item) => item.sentiment.label)
 
   const data = {
     labels,
     datasets: [{
-      data: sentenceData.map((item) => item.sentimentData.score),
+      data: sentences.map((item) => item.sentiment.score),
       pointBackgroundColor: function(context: any): string {
         const index = context.dataIndex
         const label = labels[index]
