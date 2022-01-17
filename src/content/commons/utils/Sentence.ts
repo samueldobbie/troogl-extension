@@ -1,8 +1,10 @@
 import extractor from "unfluffjs"
 import tokenizer from "sbd"
-import { ISentence } from "../interfaces/sentence"
+import { ISentence } from "../interfaces/ISentence"
+import { enableEditing, disableEditing } from "./Page"
+import { getSentiment } from "./Sentiment"
 
-function getSentences(html: string): string[] {  
+function getSentences(html: string): ISentence[] {
   const data = extractor(html)
   const sentences = [data.softTitle]
 
@@ -21,6 +23,33 @@ function getSentences(html: string): string[] {
   return sentences
     .map(sentence => sentence.trim())
     .filter(sentence => sentence.length > 0)
+    .map((text, index) => {
+      const sentiment = getSentiment(text)
+
+      return {
+        index,
+        text,
+        sentiment,
+      }
+    })
+}
+
+function injectSentenceWrappers(sentences: ISentence[]): void {
+  enableEditing()
+
+  // TODO subjectivity
+  sentences.map((sentence) => {
+    if (window.find(sentence.text)) {
+      const range = window.getSelection()?.getRangeAt(0)
+      
+      if (range) {
+        const wrapper = buildSentenceWrapper(sentence, range)
+        range.insertNode(wrapper)
+      }
+    }
+  })
+  
+  disableEditing()
 }
 
 function buildSentenceWrapper(sentence: ISentence, range: Range): HTMLSpanElement {
@@ -43,4 +72,4 @@ function buildSentenceWrapper(sentence: ISentence, range: Range): HTMLSpanElemen
   return span
 }
 
-export { getSentences, buildSentenceWrapper }
+export { getSentences, injectSentenceWrappers, buildSentenceWrapper }

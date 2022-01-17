@@ -7,9 +7,9 @@ module.exports = {
   mode: "development",
   devtool: "cheap-module-source-map",
   entry: {
-    background: "./src/background/background.ts",
-    content: "./src/content/content.tsx",
-    popup: "./src/popup/popup.tsx",
+    background: "./src/background/Background.ts",
+    content: "./src/content/Content.ts",
+    popup: "./src/popup/Popup.tsx",
   },
   output: {
     filename: "[name].js",

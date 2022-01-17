@@ -2,7 +2,7 @@ import React, { useRef } from "react"
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, ChartEvent, ActiveElement } from "chart.js"
 import { Line } from "react-chartjs-2"
 import { ChartJSOrUndefined } from "react-chartjs-2/dist/types"
-import { ISentence } from "../commons/interfaces/sentence"
+import { ISentence } from "../../commons/interfaces/ISentence"
 
 Chart.register(
   CategoryScale,

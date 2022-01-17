@@ -1,5 +1,5 @@
 import Sentiment from "sentiment"
-import { ISentiment } from "../interfaces/sentiment"
+import { ISentiment } from "../interfaces/ISentiment"
 
 const sentiment = new Sentiment()
 
