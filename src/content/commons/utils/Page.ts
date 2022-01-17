@@ -18,10 +18,10 @@ function disableEditing(): void {
   document.designMode = "off"
 }
 
-function replaceContainerWithComponent (element: HTMLElement, component: JSX.Element): void {
-  const parent = document.createElement("div")
-  document.body.append(parent)
-  ReactDOM.render(component, parent)
+function appendJsxToBody(component: JSX.Element): void {
+  const container = document.createElement("div")
+  document.body.appendChild(container)
+  ReactDOM.render(component, container)
 }
 
-export { injectElement, enableEditing, disableEditing, replaceContainerWithComponent }
+export { injectElement, enableEditing, disableEditing, appendJsxToBody }

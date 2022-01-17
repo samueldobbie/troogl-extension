@@ -1,4 +1,4 @@
-import { ISentiment } from "./sentiment";
+import { ISentiment } from "./ISentiment";
 
 interface ISentence {
   index: number

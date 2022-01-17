@@ -1,7 +1,7 @@
 import { CircularProgress } from "@mui/material"
 import React from "react"
 import ReactDOM from "react-dom"
-import { injectElement } from "../commons/utils/page"
+import { injectElement } from "../../commons/utils/Page"
 
 function Loader(): JSX.Element {
   return (
@@ -17,7 +17,6 @@ function Loader(): JSX.Element {
         opacity: "0.7",
       }}
     >
-      // center the loader
       <div
         style={{
           position: "absolute",
