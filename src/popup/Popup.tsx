@@ -3,6 +3,19 @@ import { render } from "react-dom"
 import { Button, Paper, TextField, Typography } from "@mui/material"
 
 function Popup(): JSX.Element {
+  const analyzePage = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      const tabId = tabs[0].id
+  
+      if (tabId) {
+        chrome.tabs.sendMessage(tabId, {
+          topic: "AnalyzeButtonClicked",
+          payload: { url: document.location.href },
+        })
+      }
+    })
+  }
+
   return (
     <Paper
       sx={{
@@ -45,19 +58,6 @@ function Popup(): JSX.Element {
       </Button>
     </Paper>
   )
-}
-
-const analyzePage = () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    const tabId = tabs[0].id
-
-    if (tabId) {
-      chrome.tabs.sendMessage(tabId, {
-        topic: "AnalyzeButtonClicked",
-        payload: { url: document.location.href },
-      })
-    }
-  })
 }
 
 render(<Popup />, document.getElementById("root"))
