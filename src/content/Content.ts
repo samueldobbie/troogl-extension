@@ -1,4 +1,6 @@
-import { getSentences, injectSentenceWrappers } from "./commons/utils/Sentence"
+import { readArticle } from "./commons/utils/Article"
+import { injectSentenceWrappers } from "./commons/utils/Sentence"
+import { injectToast } from "./commons/utils/Toast"
 import { injectDashboard } from "./components/dashboard/Dashboard"
 import { injectLoader, removeLoader } from "./components/loader/Loader"
 
@@ -27,11 +29,15 @@ function hasBeenAnalyzed(): boolean {
 function analyzeHtml(html: string): void {
   injectLoader()
 
-  const sentences = getSentences(html)
-  injectSentenceWrappers(sentences)
-  injectDashboard(sentences)
+  readArticle(html)
+    .then(sentences => {
+      console.log(sentences)
 
-  removeLoader()
+      injectSentenceWrappers(sentences)
+      injectDashboard(sentences)
+    })
+    .catch(() => injectToast("Failed to analyze article"))
+    .finally(() => removeLoader())
 }
 
 chrome.runtime.onMessage.addListener(handleMessage)

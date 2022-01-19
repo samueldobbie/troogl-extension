@@ -2,54 +2,36 @@ import extractor from "unfluffjs"
 import tokenizer from "sbd"
 import { ISentence } from "../interfaces/ISentence"
 import { enableEditing, disableEditing } from "./Page"
-import { getSentiment } from "./Sentiment"
-import { Title } from "chart.js"
 
-function getSentences(html: string): ISentence[] {
+function parseSentences(html: string): string[] {
   const data = extractor(html)
+  const sentences = []
+  const cleanedTitle = data.softTitle.trim()
 
-  fetch("https://v14kene0ng.execute-api.us-west-2.amazonaws.com/dev/public/v1/analyze", {
-    method: "POST",
-    body: JSON.stringify({ title: data.title, text: data.text }),
-  })
-    .then(j => j.json())
-    .then(console.log)
+  if (cleanedTitle) {
+    sentences.push(cleanedTitle)
+  }
 
-  return []
+  tokenizer
+    .sentences(data.text)
+    .forEach(section => {
+      section
+        .split("\n")
+        .forEach(sentence => {
+          const cleanSentence = sentence.trim()
 
-  // const data = extractor(html)
-  // const sentences = [data.softTitle]
+          if (cleanSentence) {
+            sentences.push(cleanSentence)
+          }
+      })
+    })
 
-  // tokenizer
-  //   .sentences(data.text)
-  //   .forEach(sentence => {
-  //     const subSentences = sentence.split("\n")
-
-  //     subSentences.forEach(subSentece => {
-  //       if (subSentece !== "") {
-  //         sentences.push(subSentece)
-  //       }
-  //     })
-  //   })
-
-  // return sentences
-  //   .map(sentence => sentence.trim())
-  //   .filter(sentence => sentence.length > 0)
-  //   .map((text, index) => {
-  //     const sentiment = getSentiment(text)
-
-  //     return {
-  //       index,
-  //       text,
-  //       sentiment,
-  //     }
-  //   })
+  return sentences
 }
 
 function injectSentenceWrappers(sentences: ISentence[]): void {
   enableEditing()
 
-  // TODO subjectivity
   sentences.map((sentence) => {
     if (window.find(sentence.text)) {
       const range = window.getSelection()?.getRangeAt(0)
@@ -84,4 +66,4 @@ function buildSentenceWrapper(sentence: ISentence, range: Range): HTMLSpanElemen
   return span
 }
 
-export { getSentences, injectSentenceWrappers, buildSentenceWrapper }
+export { parseSentences, injectSentenceWrappers, buildSentenceWrapper }

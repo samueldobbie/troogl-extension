@@ -11,19 +11,57 @@ nltk.download("punkt", download_dir = "/tmp")
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/public/v1/analyze", methods=["POST"])
-def analyze():
+@app.route("/public/v1/analyze-sentences", methods=["POST"])
+def analyze_sentences():
     data = request.get_json(force=True)
     sentences = data["sentences"]
 
-    response = []
-    for sentence in sentences:
+    sentence_data = []
+    for i, sentence in enumerate(sentences):
         blob = TextBlob(sentence)
+        sentiment = getSentimentLabel(blob.sentiment.polarity)
+        subjectivity = getSubjectivityLabel(blob.sentiment.subjectivity)
 
-        response.append({
-            "sentence": sentence,
-            "polarity": blob.sentiment.polarity,
-            "subjectivity": blob.sentiment.subjectivity
+        sentence_data.append({
+            "index": i,
+            "text": sentence,
+            "sentiment": sentiment,
+            "subjectivity": subjectivity
         })
 
-    return jsonify({ "response": response })
+    return jsonify({ "data": sentence_data })
+
+def getSentimentLabel(score):
+    # TODO RGB scale based on score
+
+    if score <= -0.5:
+        label = "negative"
+        color = "rgb(255, 193, 193)"
+    elif score < 0.5:
+        label = "neutral"
+        color = "rgb(227, 227, 227)"
+    else:
+        label = "positive"
+        color = "rgb(183, 255, 197)"
+
+    return {
+        "score": score,
+        "label": label,
+        "color": color,
+    }
+
+def getSubjectivityLabel(score):
+    # TODO RGB scale based on score
+
+    if score <= 0.66:
+        label = "neutral"
+        color = "rgb(227, 227, 227)"
+    else:
+        label = "subjective"
+        color = "rgb(255, 200, 133)"
+
+    return {
+        "score": score,
+        "label": label,
+        "color": color,
+    }

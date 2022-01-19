@@ -30,11 +30,11 @@ function LineChart(props: IProps): JSX.Element {
         const label = labels[index]
   
         if (label == "positive") {
-          return "rgb(183 255 197)"
+          return "rgb(183, 255, 197)"
         } else if (label == "neutral") {
-          return "rgb(227 227 227)"
+          return "rgb(227, 227, 227)"
         } else {
-          return "rgb(255 193 193)"
+          return "rgb(255, 193, 193)"
         }
       },
     }],
