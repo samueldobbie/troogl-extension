@@ -3,35 +3,47 @@ import tokenizer from "sbd"
 import { ISentence } from "../interfaces/ISentence"
 import { enableEditing, disableEditing } from "./Page"
 import { getSentiment } from "./Sentiment"
+import { Title } from "chart.js"
 
 function getSentences(html: string): ISentence[] {
   const data = extractor(html)
-  const sentences = [data.softTitle]
 
-  tokenizer
-    .sentences(data.text)
-    .forEach(sentence => {
-      const subSentences = sentence.split("\n")
+  fetch("https://v14kene0ng.execute-api.us-west-2.amazonaws.com/dev/public/v1/analyze", {
+    method: "POST",
+    body: JSON.stringify({ title: data.title, text: data.text }),
+  })
+    .then(j => j.json())
+    .then(console.log)
 
-      subSentences.forEach(subSentece => {
-        if (subSentece !== "") {
-          sentences.push(subSentece)
-        }
-      })
-    })
+  return []
 
-  return sentences
-    .map(sentence => sentence.trim())
-    .filter(sentence => sentence.length > 0)
-    .map((text, index) => {
-      const sentiment = getSentiment(text)
+  // const data = extractor(html)
+  // const sentences = [data.softTitle]
 
-      return {
-        index,
-        text,
-        sentiment,
-      }
-    })
+  // tokenizer
+  //   .sentences(data.text)
+  //   .forEach(sentence => {
+  //     const subSentences = sentence.split("\n")
+
+  //     subSentences.forEach(subSentece => {
+  //       if (subSentece !== "") {
+  //         sentences.push(subSentece)
+  //       }
+  //     })
+  //   })
+
+  // return sentences
+  //   .map(sentence => sentence.trim())
+  //   .filter(sentence => sentence.length > 0)
+  //   .map((text, index) => {
+  //     const sentiment = getSentiment(text)
+
+  //     return {
+  //       index,
+  //       text,
+  //       sentiment,
+  //     }
+  //   })
 }
 
 function injectSentenceWrappers(sentences: ISentence[]): void {
