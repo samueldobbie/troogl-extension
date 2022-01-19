@@ -1,7 +1,8 @@
-import extractor from "unfluffjs"
 import tokenizer from "sbd"
+import extractor from "unfluffjs"
+import MetricType from "../configs/MetricType"
 import { ISentence } from "../interfaces/ISentence"
-import { enableEditing, disableEditing } from "./Page"
+import { disableEditing, enableEditing, hasElementWithId } from "./Page"
 
 function parseSentences(html: string): string[] {
   const data = extractor(html)
@@ -29,34 +30,56 @@ function parseSentences(html: string): string[] {
   return sentences
 }
 
-function injectSentenceWrappers(sentences: ISentence[]): void {
+function injectSentenceWrappers(sentences: ISentence[], metricType: string): void {
   enableEditing()
 
   sentences.map((sentence) => {
     if (window.find(sentence.text)) {
       const range = window.getSelection()?.getRangeAt(0)
-      
+
       if (range) {
-        const wrapper = buildSentenceWrapper(sentence, range)
-        range.insertNode(wrapper)
+        const id = `troogl-sentence-${sentence.index}`
+
+        const color = metricType == MetricType.Sentiment
+          ? sentence.sentiment.color
+          : sentence.subjectivity.color
+      
+        const label = metricType == MetricType.Sentiment
+          ? sentence.sentiment.label
+          : sentence.subjectivity.label
+      
+        if (hasElementWithId(id)) {
+          updateWrapper(id, color, label)
+        } else {
+          const wrapper = buildWrapper(id, color, label, range)
+          range.insertNode(wrapper)
+        }
       }
     }
   })
-  
+
   disableEditing()
 }
 
-function buildSentenceWrapper(sentence: ISentence, range: Range): HTMLSpanElement {
-  const span = document.createElement("span")
-  span.id = `troogl-sentence-${sentence.index}`
+function updateWrapper(id: string, color: string, label: string) {
+  const element = document.getElementById(id)!
+  element.title = label
+  element.style.backgroundColor = color
+}
 
-  span.appendChild(range.extractContents())
-  span.style.backgroundColor = sentence.sentiment.color
+function buildWrapper(id: string, color: string, label: string, range: Range): HTMLSpanElement {
+  const span = document.createElement("span")
+
+  span.id = id
+  span.title = label
+  span.style.backgroundColor = color
   span.style.borderRadius = "5px"
   span.style.cursor = "pointer"
 
+  span.appendChild(range.extractContents())
+
   span.addEventListener("mouseover", () => {
-    span.style.filter = "brightness(95%)"
+    span.style.filter = "brightness(103%)"
   })
 
   span.addEventListener("mouseout", () => {
@@ -66,4 +89,4 @@ function buildSentenceWrapper(sentence: ISentence, range: Range): HTMLSpanElemen
   return span
 }
 
-export { parseSentences, injectSentenceWrappers, buildSentenceWrapper }
+export { parseSentences, injectSentenceWrappers }

@@ -54,7 +54,7 @@ def getSubjectivityLabel(score):
     # TODO RGB scale based on score
 
     if score <= 0.66:
-        label = "neutral"
+        label = "objective"
         color = "rgb(227, 227, 227)"
     else:
         label = "subjective"

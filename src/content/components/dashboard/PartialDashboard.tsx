@@ -1,11 +1,12 @@
 import { Grid, ToggleButtonGroup, ToggleButton, Button } from "@mui/material"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Draggable from "react-draggable"
 import { ISentence } from "../../commons/interfaces/ISentence"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import LineChart from "../line-chart/LineChart"
 import DashboardMode from "../../commons/configs/DashboardMode"
 import MetricType from "../../commons/configs/MetricType"
+import { injectSentenceWrappers } from "../../commons/utils/Sentence"
 
 interface IProps {
   sentences: ISentence[]
@@ -22,6 +23,10 @@ function PartialDashboard(props: IProps): JSX.Element {
       setMetricType(type)
     }
   }
+
+  useEffect(() => {
+    injectSentenceWrappers(sentences, metricType)
+  }, [metricType])
 
   return (
     <div
@@ -79,7 +84,10 @@ function PartialDashboard(props: IProps): JSX.Element {
           </Grid>
 
           <Grid item xs={6}>
-            <LineChart sentences={sentences} />
+            <LineChart
+              sentences={sentences}
+              metricType={metricType}  
+            />
           </Grid>
 
           <Grid item xs={2}>
