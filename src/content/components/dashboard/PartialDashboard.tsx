@@ -4,8 +4,8 @@ import Draggable from "react-draggable"
 import { ISentence } from "../../commons/interfaces/ISentence"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import LineChart from "../line-chart/LineChart"
-import DashboardMode from "../../commons/utils/DashboardMode"
-import MetricType from "../../commons/utils/MetricType"
+import DashboardMode from "../../commons/configs/DashboardMode"
+import MetricType from "../../commons/configs/MetricType"
 
 interface IProps {
   sentences: ISentence[]

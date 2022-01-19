@@ -2,7 +2,7 @@ import { IconButton, Grid, Typography } from "@mui/material"
 import React from "react"
 import { ISentence } from "../../commons/interfaces/ISentence"
 import CloseIcon from "@mui/icons-material/Close"
-import DashboardMode from "../../commons/utils/DashboardMode"
+import DashboardMode from "../../commons/configs/DashboardMode"
 
 interface IProps {
   sentences: ISentence[]

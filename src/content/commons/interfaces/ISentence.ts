@@ -1,9 +1,10 @@
-import { ISentiment } from "./ISentiment";
+import { IMetric } from "./IMetric"
 
 interface ISentence {
   index: number
   text: string
-  sentiment: ISentiment
+  sentiment: IMetric
+  subjectivity: IMetric
 }
 
 export type { ISentence }
