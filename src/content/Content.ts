@@ -1,4 +1,6 @@
+import MetricType from "./commons/configs/MetricType"
 import { readArticle } from "./commons/utils/Article"
+import { hasElementWithId } from "./commons/utils/Page"
 import { injectSentenceWrappers } from "./commons/utils/Sentence"
 import { injectToast } from "./commons/utils/Toast"
 import { injectDashboard } from "./components/dashboard/Dashboard"
@@ -11,7 +13,7 @@ declare global {
 }
 
 function handleMessage(request: any): void {
-  if (hasBeenAnalyzed()) return
+  if (hasElementWithId("troogl-extension")) return
 
   const html = document.documentElement.innerHTML
 
@@ -22,10 +24,6 @@ function handleMessage(request: any): void {
   }
 }
 
-function hasBeenAnalyzed(): boolean {
-  return document.getElementById("troogl-extension") !== null
-}
-
 function analyzeHtml(html: string): void {
   injectLoader()
 
@@ -33,7 +31,7 @@ function analyzeHtml(html: string): void {
     .then(sentences => {
       console.log(sentences)
 
-      injectSentenceWrappers(sentences)
+      injectSentenceWrappers(sentences, MetricType.Sentiment)
       injectDashboard(sentences)
     })
     .catch(() => injectToast("Failed to analyze article"))

@@ -24,4 +24,8 @@ function appendJsxToBody(component: JSX.Element): void {
   ReactDOM.render(component, container)
 }
 
-export { injectElement, enableEditing, disableEditing, appendJsxToBody }
+function hasElementWithId(id: string): boolean {
+  return document.getElementById(id) !== null
+}
+
+export { injectElement, enableEditing, disableEditing, appendJsxToBody, hasElementWithId }

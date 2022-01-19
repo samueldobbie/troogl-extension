@@ -1,7 +1,7 @@
-import React, { useRef } from "react"
-import { Chart, CategoryScale, LinearScale, PointElement, LineElement, ChartEvent, ActiveElement } from "chart.js"
+import { ActiveElement, CategoryScale, Chart, ChartEvent, LinearScale, LineElement, PointElement } from "chart.js"
+import React from "react"
 import { Line } from "react-chartjs-2"
-import { ChartJSOrUndefined } from "react-chartjs-2/dist/types"
+import MetricType from "../../commons/configs/MetricType"
 import { ISentence } from "../../commons/interfaces/ISentence"
 
 Chart.register(
@@ -13,28 +13,46 @@ Chart.register(
 
 interface IProps {
   sentences: ISentence[]
+  metricType: string
 }
 
 function LineChart(props: IProps): JSX.Element {
-  const { sentences } = props
+  const { sentences, metricType } = props
 
-  const chartRef = useRef<ChartJSOrUndefined<"line">>(null)
-  const labels = sentences.map((item) => item.sentiment.label)
+  const labels = metricType == MetricType.Sentiment
+    ? sentences.map((item) => item.sentiment.label)
+    : sentences.map((item) => item.subjectivity.label)
+
+  const scores = metricType == MetricType.Sentiment
+    ? sentences.map((item) => item.sentiment.score)
+    : sentences.map((item) => item.subjectivity.score)
+
+  const minY = metricType == MetricType.Sentiment
+    ? -1
+    : 0
 
   const data = {
     labels,
     datasets: [{
-      data: sentences.map((item) => item.sentiment.score),
+      data: scores,
       pointBackgroundColor: function(context: any): string {
         const index = context.dataIndex
         const label = labels[index]
   
-        if (label == "positive") {
-          return "rgb(183, 255, 197)"
-        } else if (label == "neutral") {
-          return "rgb(227, 227, 227)"
+        if (metricType == MetricType.Sentiment) {
+          if (label == "positive") {
+            return "rgb(183, 255, 197)"
+          } else if (label == "neutral") {
+            return "rgb(227, 227, 227)"
+          } else {
+            return "rgb(255, 193, 193)"
+          }
         } else {
-          return "rgb(255, 193, 193)"
+          if (label == "subjective") {
+            return "rgb(255, 200, 133)"
+          } else {
+            return "rgb(227, 227, 227)"
+          }
         }
       },
     }],
@@ -63,7 +81,7 @@ function LineChart(props: IProps): JSX.Element {
       },
       y: {
         display: false,
-        min: -1,
+        min: minY,
         max: 1  
       },
     },
@@ -89,7 +107,6 @@ function LineChart(props: IProps): JSX.Element {
       <Line
         data={data}
         options={options}
-        ref={chartRef}
       />
     </div>
   )
