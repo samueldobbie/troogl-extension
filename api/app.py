@@ -1,9 +1,13 @@
+
 import nltk
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from textblob import TextBlob
+from article.chart import get_pie_chart
+from article.keywords import get_keywords
+from article.sentence import analyze_sentences
+from article.summary import get_summary
 
 nltk.data.path.append("/tmp")
 nltk.download("punkt", download_dir = "/tmp")
@@ -11,57 +15,22 @@ nltk.download("punkt", download_dir = "/tmp")
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/public/v1/analyze-sentences", methods=["POST"])
-def analyze_sentences():
+@app.route("/public/v1/analyze-article", methods=["POST"])
+def analyze_article():
     data = request.get_json(force=True)
-    sentences = data["sentences"]
+    raw_sentences = data["sentences"]
+    full_text = "\n".join(raw_sentences)
+    
+    summary = get_summary(full_text)
+    keywords = get_keywords(full_text)
+    analyzed_sentences = analyze_sentences(raw_sentences)
+    metric_pie_charts = get_pie_chart(analyzed_sentences)
 
-    sentence_data = []
-    for i, sentence in enumerate(sentences):
-        blob = TextBlob(sentence)
-        sentiment = getSentimentLabel(blob.sentiment.polarity)
-        subjectivity = getSubjectivityLabel(blob.sentiment.subjectivity)
-
-        sentence_data.append({
-            "index": i,
-            "text": sentence,
-            "sentiment": sentiment,
-            "subjectivity": subjectivity
-        })
-
-    return jsonify({ "data": sentence_data })
-
-def getSentimentLabel(score):
-    # TODO RGB scale based on score
-
-    if score <= -0.5:
-        label = "negative"
-        color = "rgb(255, 193, 193)"
-    elif score < 0.5:
-        label = "neutral"
-        color = "rgb(227, 227, 227)"
-    else:
-        label = "positive"
-        color = "rgb(183, 255, 197)"
-
-    return {
-        "score": score,
-        "label": label,
-        "color": color,
+    article = {
+        "summary": summary,
+        "keywords": keywords,
+        "sentences": analyzed_sentences,
+        "metric_pie_charts": metric_pie_charts,
     }
 
-def getSubjectivityLabel(score):
-    # TODO RGB scale based on score
-
-    if score <= 0.66:
-        label = "objective"
-        color = "rgb(227, 227, 227)"
-    else:
-        label = "subjective"
-        color = "rgb(255, 200, 133)"
-
-    return {
-        "score": score,
-        "label": label,
-        "color": color,
-    }
+    return jsonify({ "article": article })
