@@ -1,8 +1,9 @@
-import { IconButton, Grid, Typography } from "@mui/material"
+import { IconButton, Grid, Typography, Button, Card, CardActions, CardContent, Chip } from "@mui/material"
 import React from "react"
 import { ISentence } from "../../commons/interfaces/ISentence"
 import CloseIcon from "@mui/icons-material/Close"
 import DashboardMode from "../../commons/configs/DashboardMode"
+import PieChart from "../chart/PieChart"
 
 interface IProps {
   sentences: ISentence[]
@@ -14,6 +15,7 @@ function FullDashboard(props: IProps): JSX.Element {
 
   const text = sentences.map(sentence => sentence.text).join(" ")
   const summary = text.slice(0, 200)
+  const keywords = ["some", "random", "keywords"]
 
   return (
     <div
@@ -24,7 +26,9 @@ function FullDashboard(props: IProps): JSX.Element {
         height: "100vh",
         width: "100vw",
         zIndex: 2147483647,
-        backgroundColor: "#eceded",
+        backgroundColor: "white",
+        overflowY: "scroll",
+        overflowX: "hidden",
       }}
     >
       <IconButton
@@ -41,32 +45,84 @@ function FullDashboard(props: IProps): JSX.Element {
 
       <Grid
         container
-        spacing={0}
+        spacing={3}
         alignItems="center"
         sx={{
           marginTop: "5%",
           textAlign: "center",
+          paddingLeft: "17.5%",
+          paddingRight: "17.5%",
         }}
       >
-        <Grid item xs={12}>
-          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-            Summary
-          </Typography>
-
-          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-            {summary}
-          </Typography>
+        <Grid item xs={12} md={6}>
+          <DashboardCard>
+            <Typography variant="h5" gutterBottom>
+              Summary
+            </Typography>
+            
+            <Typography variant="body2">
+              {summary}
+            </Typography>
+          </DashboardCard>
         </Grid>
 
-        <Grid item xs={3}>
-          MORE DETAILS
+        <Grid item xs={12} md={6}>
+          <DashboardCard>
+            <Typography variant="h5" gutterBottom>
+              Keywords
+            </Typography>
+
+            <>
+              {keywords.map((keyword) => {
+                return (
+                  <Chip
+                    key={keyword}
+                    label={keyword}
+                    sx={{ marginRight: 1 }}  
+                  />
+                )
+              })}
+            </>
+          </DashboardCard>
         </Grid>
 
-        <Grid item xs={9}>
-          SOME LONGER DETAILS
+        <Grid item xs={12} md={6}>
+          <DashboardCard>
+            <Typography variant="h5" gutterBottom>
+              Sentiment (Sentences)
+            </Typography>
+            
+            <PieChart />
+          </DashboardCard>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <DashboardCard>
+            <Typography variant="h5" gutterBottom>
+              Subjectivity (Sentences)
+            </Typography>
+            
+            <PieChart />
+          </DashboardCard>
         </Grid>
       </Grid>
     </div>
+  )
+}
+
+function DashboardCard({ children }: any): JSX.Element {
+  return (
+    <Card
+      sx={{
+        minWidth: 275,
+        minHeight: 225,
+        textAlign: "left",
+      }}
+    >
+      <CardContent>
+       {children}
+      </CardContent>
+    </Card>
   )
 }
 

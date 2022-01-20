@@ -29,8 +29,6 @@ function analyzeHtml(html: string): void {
 
   readArticle(html)
     .then(sentences => {
-      console.log(sentences)
-
       injectSentenceWrappers(sentences, MetricType.Sentiment)
       injectDashboard(sentences)
     })
