@@ -1,5 +1,6 @@
 import tokenizer from "sbd"
 import extractor from "unfluffjs"
+import { injectToast } from "../../components/toast/Toast"
 import MetricType from "../configs/MetricType"
 import { ISentence } from "../interfaces/ISentence"
 import { disableEditing, enableEditing, hasElementWithId } from "./Page"
@@ -77,15 +78,10 @@ function buildWrapper(id: string, color: string, label: string, range: Range): H
   span.style.cursor = "pointer"
 
   span.appendChild(range.extractContents())
-
-  span.addEventListener("mouseover", () => {
-    span.style.filter = "brightness(103%)"
-  })
-
-  span.addEventListener("mouseout", () => {
-    span.style.filter = "brightness(100%)"
-  })
-
+  span.onmouseover = () => { span.style.filter = "brightness(103%)" }
+  span.onmouseout = () => { span.style.filter = "brightness(100%)" }
+  span.onclick = () => { injectToast("Ability to vote on ratings coming soon :)") }
+  
   return span
 }
 

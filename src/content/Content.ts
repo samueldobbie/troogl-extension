@@ -2,9 +2,9 @@ import MetricType from "./commons/configs/MetricType"
 import { readArticle } from "./commons/utils/Article"
 import { hasElementWithId } from "./commons/utils/Page"
 import { injectSentenceWrappers } from "./commons/utils/Sentence"
-import { injectToast } from "./commons/utils/Toast"
 import { injectDashboard } from "./components/dashboard/Dashboard"
 import { injectLoader, removeLoader } from "./components/loader/Loader"
+import { injectToast } from "./components/toast/Toast"
 
 declare global {
   interface Window {
