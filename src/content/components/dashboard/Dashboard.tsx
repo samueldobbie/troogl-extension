@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@emotion/react"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { theme } from "../../commons/configs/Theme"
 import { ISentence } from "../../commons/interfaces/ISentence"
 import DashboardMode from "../../commons/configs/DashboardMode"
@@ -16,6 +16,14 @@ function Dashboard(props: IProps): JSX.Element {
   const { sentences } = props
 
   const [mode, setMode] = useState(DashboardMode.Partial)
+
+  useEffect(() => {
+    if (mode === DashboardMode.Full) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "auto"
+    }
+  }, [mode])
 
   return (
     <ThemeProvider theme={theme}>

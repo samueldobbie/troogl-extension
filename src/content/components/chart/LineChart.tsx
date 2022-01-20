@@ -28,8 +28,8 @@ function LineChart(props: IProps): JSX.Element {
     : sentences.map((item) => item.subjectivity.score)
 
   const minY = metricType == MetricType.Sentiment
-    ? -1
-    : 0
+    ? -1.1
+    : -0.1
 
   const data = {
     labels,
@@ -82,7 +82,7 @@ function LineChart(props: IProps): JSX.Element {
       y: {
         display: false,
         min: minY,
-        max: 1  
+        max: 1.1,
       },
     },
     onHover: (event: ChartEvent, elements: ActiveElement[]) => {
