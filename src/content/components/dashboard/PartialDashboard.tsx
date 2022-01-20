@@ -31,7 +31,11 @@ function PartialDashboard(props: IProps): JSX.Element {
   return (
     <div
       id="troogl-dashboard-container"
-      style={{ height: "100vh" }}
+      style={{
+        height: "100vh",
+        position: "fixed",
+        zIndex: 2147483647,
+      }}
     >
       <Draggable
         axis="y"
@@ -44,10 +48,9 @@ function PartialDashboard(props: IProps): JSX.Element {
           spacing={0}
           alignItems="center"
           sx={{
+            position: "fixed",
             bottom: 0,
             left: 0,
-            zIndex: 2147483647,
-            position: "fixed",
             width: "100vw",
             height: "10vh",
             textAlign: "center",
