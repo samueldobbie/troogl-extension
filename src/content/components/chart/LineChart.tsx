@@ -66,6 +66,11 @@ function LineChart(props: IProps): JSX.Element {
       axis: "x" as const,
       intersect: false,
     },
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
     elements: {
       line: {
         borderColor: "#ECEDED",

@@ -29,6 +29,7 @@ function FullDashboard(props: IProps): JSX.Element {
         backgroundColor: "white",
         overflowY: "scroll",
         overflowX: "hidden",
+        padding: "50px",
       }}
     >
       <IconButton
@@ -48,7 +49,7 @@ function FullDashboard(props: IProps): JSX.Element {
         spacing={3}
         alignItems="center"
         sx={{
-          marginTop: "5%",
+          marginTop: "2.5%%",
           textAlign: "center",
           paddingLeft: "17.5%",
           paddingRight: "17.5%",
