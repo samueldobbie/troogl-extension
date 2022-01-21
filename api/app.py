@@ -10,7 +10,8 @@ from article.sentence import analyze_sentences
 from article.summary import get_summary
 
 nltk.data.path.append("/tmp")
-nltk.download("punkt", download_dir = "/tmp")
+nltk.download("punkt", download_dir="/tmp")
+nltk.download("stopwords", download_dir="/tmp")
 
 app = Flask(__name__)
 CORS(app)
@@ -19,10 +20,9 @@ CORS(app)
 def analyze_article():
     data = request.get_json(force=True)
     raw_sentences = data["sentences"]
-    full_text = "\n".join(raw_sentences)
     
-    summary = get_summary(full_text)
-    keywords = get_keywords(full_text)
+    summary = get_summary(raw_sentences)
+    keywords = get_keywords(raw_sentences)
     analyzed_sentences = analyze_sentences(raw_sentences)
     metric_pie_charts = get_pie_chart(analyzed_sentences)
 
