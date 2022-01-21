@@ -1,9 +1,9 @@
-
 import nltk
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+from article.metric import MetricType
 from article.chart import get_pie_chart
 from article.keywords import get_keywords
 from article.sentence import analyze_sentences
@@ -30,7 +30,8 @@ def analyze_article():
         "summary": summary,
         "keywords": keywords,
         "sentences": analyzed_sentences,
-        "metric_pie_charts": metric_pie_charts,
+        "sentimentPieChart": metric_pie_charts[MetricType.Sentiment],
+        "subjectivityPieChart": metric_pie_charts[MetricType.Subjectivity],
     }
 
     return jsonify({ "article": article })

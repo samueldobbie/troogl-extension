@@ -28,9 +28,9 @@ function analyzeHtml(html: string): void {
   injectLoader()
 
   readArticle(html)
-    .then(sentences => {
-      injectSentenceWrappers(sentences, MetricType.Sentiment)
-      injectDashboard(sentences)
+    .then(article => {
+      injectSentenceWrappers(article.sentences, MetricType.Sentiment)
+      injectDashboard(article)
     })
     .catch(() => injectToast("Failed to analyze article"))
     .finally(() => removeLoader())

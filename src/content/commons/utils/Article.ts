@@ -1,16 +1,16 @@
-import Endpoint from "../configs/Endpoint";
-import { ISentence } from "../interfaces/ISentence";
-import { parseSentences } from "./Sentence";
+import Endpoint from "../configs/Endpoint"
+import IArticle from "../interfaces/IArticle"
+import { parseSentences } from "./Sentence"
 
-async function readArticle(html: string): Promise<ISentence[]> {
+async function readArticle(html: string): Promise<IArticle> {
   const sentences = parseSentences(html)
   
-  return fetch(Endpoint.AnalyzeSentences, {
+  return fetch(Endpoint.AnalyzeArticle, {
     method: "POST",
-    body: JSON.stringify({"sentences": sentences}),
+    body: JSON.stringify({ "sentences": sentences }),
   })
     .then(response => response.json())
-    .then(response => response["data"])
+    .then(response => response["article"])
 }
 
 export { readArticle }
