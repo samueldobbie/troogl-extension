@@ -1,19 +1,19 @@
 import { ThemeProvider } from "@emotion/react"
 import React, { useEffect, useState } from "react"
 import { theme } from "../../commons/configs/Theme"
-import { ISentence } from "../../commons/interfaces/ISentence"
 import DashboardMode from "../../commons/configs/DashboardMode"
 import { appendJsxToBody } from "../../commons/utils/Page"
 import FullDashboard from "./FullDashboard"
 import HiddenDashboard from "./HiddenDashboard"
 import PartialDashboard from "./PartialDashboard"
+import IArticle from "../../commons/interfaces/IArticle"
 
 interface IProps {
-  sentences: ISentence[]
+  article: IArticle
 }
 
 function Dashboard(props: IProps): JSX.Element {
-  const { sentences } = props
+  const { article } = props
 
   const [mode, setMode] = useState(DashboardMode.Partial)
 
@@ -35,14 +35,14 @@ function Dashboard(props: IProps): JSX.Element {
 
       {mode === DashboardMode.Partial &&
         <PartialDashboard
-          sentences={sentences}
+          sentences={article.sentences}
           setMode={setMode}
         />
       }
 
       {mode === DashboardMode.Full &&
         <FullDashboard
-          sentences={sentences}
+          article={article}
           setMode={setMode}
         />
       }
@@ -50,8 +50,8 @@ function Dashboard(props: IProps): JSX.Element {
   )
 }
 
-function injectDashboard(sentences: ISentence[]): void {
-  appendJsxToBody(<Dashboard sentences={sentences} />)
+function injectDashboard(article: IArticle): void {
+  appendJsxToBody(<Dashboard article={article} />)
 }
 
 export default Dashboard

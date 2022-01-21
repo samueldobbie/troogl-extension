@@ -4,18 +4,15 @@ import { ISentence } from "../../commons/interfaces/ISentence"
 import CloseIcon from "@mui/icons-material/Close"
 import DashboardMode from "../../commons/configs/DashboardMode"
 import PieChart from "../chart/PieChart"
+import IArticle from "../../commons/interfaces/IArticle"
 
 interface IProps {
-  sentences: ISentence[]
+  article: IArticle
   setMode: (mode: string) => void
 }
 
 function FullDashboard(props: IProps): JSX.Element {
-  const { sentences, setMode } = props
-
-  const text = sentences.map(sentence => sentence.text).join(" ")
-  const summary = text.slice(0, 200)
-  const keywords = ["some", "random", "keywords"]
+  const { article, setMode } = props
 
   return (
     <div
@@ -62,7 +59,7 @@ function FullDashboard(props: IProps): JSX.Element {
             </Typography>
             
             <Typography variant="body2">
-              {summary}
+              {article.summary}
             </Typography>
           </DashboardCard>
         </Grid>
@@ -74,7 +71,7 @@ function FullDashboard(props: IProps): JSX.Element {
             </Typography>
 
             <>
-              {keywords.map((keyword) => {
+              {article.keywords.map((keyword) => {
                 return (
                   <Chip
                     key={keyword}
