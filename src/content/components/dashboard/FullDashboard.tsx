@@ -1,10 +1,10 @@
-import { IconButton, Grid, Typography, Button, Card, CardActions, CardContent, Chip } from "@mui/material"
+import { IconButton, Grid, Typography, Card, CardContent, Chip } from "@mui/material"
 import React from "react"
-import { ISentence } from "../../commons/interfaces/ISentence"
 import CloseIcon from "@mui/icons-material/Close"
 import DashboardMode from "../../commons/configs/DashboardMode"
-import PieChart from "../chart/PieChart"
 import IArticle from "../../commons/interfaces/IArticle"
+import SentimentPieChart from "../chart/SentimentPieChart"
+import SubjectivityPieChart from "../chart/SubjectivityPieChart"
 
 interface IProps {
   article: IArticle
@@ -76,7 +76,7 @@ function FullDashboard(props: IProps): JSX.Element {
                   <Chip
                     key={keyword}
                     label={keyword}
-                    sx={{ marginRight: 1 }}  
+                    sx={{ margin: "2px" }}  
                   />
                 )
               })}
@@ -90,7 +90,9 @@ function FullDashboard(props: IProps): JSX.Element {
               Sentiment (Sentences)
             </Typography>
             
-            <PieChart />
+            <SentimentPieChart
+              chartData={article.sentimentPieChart}
+            />
           </DashboardCard>
         </Grid>
 
@@ -100,7 +102,9 @@ function FullDashboard(props: IProps): JSX.Element {
               Subjectivity (Sentences)
             </Typography>
             
-            <PieChart />
+            <SubjectivityPieChart
+              chartData={article.subjectivityPieChart}
+            />
           </DashboardCard>
         </Grid>
       </Grid>

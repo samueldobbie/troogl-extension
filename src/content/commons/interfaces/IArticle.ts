@@ -20,3 +20,5 @@ interface ISubjectivityPieChart {
 }
 
 export default IArticle
+
+export type { ISentimentPieChart, ISubjectivityPieChart }
