@@ -4,12 +4,10 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 
-def get_summary(raw_sentences):
-    full_text = " ".join(raw_sentences)
+def get_summary(full_text):
     parser = PlaintextParser.from_string(full_text, Tokenizer(LANGUAGE))
     summarizer.stop_words = get_stop_words(LANGUAGE)
-    sentences = [str(s) for s in summarizer(parser.document, SENTENCES_COUNT)]
-    return " ".join(sentences)
+    return [str(s) for s in summarizer(parser.document, SENTENCES_COUNT)]
 
 LANGUAGE = "english"
 SENTENCES_COUNT = 3
