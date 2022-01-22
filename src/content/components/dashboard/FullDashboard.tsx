@@ -52,14 +52,50 @@ function FullDashboard(props: IProps): JSX.Element {
           paddingRight: "17.5%",
         }}
       >
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <DashboardCard>
             <Typography variant="h5" gutterBottom>
               Summary
             </Typography>
             
             <Typography variant="body2">
-              {article.summary}
+              {article.summarySentences.map((sentence, index) => {
+                return (
+                  <Typography
+                    paragraph
+                    gutterBottom
+                    key={index}
+                  >
+                    • {sentence}
+                  </Typography>
+                )
+              })}
+            </Typography>
+          </DashboardCard>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <DashboardCard>
+            <Typography variant="h5" gutterBottom>
+              Overview
+            </Typography>
+            
+            <Typography variant="body2">
+              <Typography paragraph gutterBottom>
+                Read time: {article.meta.readTime}
+              </Typography>
+
+              <Typography paragraph gutterBottom>
+                Read complexity: {article.meta.readComplexity}
+              </Typography>
+
+              <Typography paragraph gutterBottom>
+                Char count: {article.meta.charCount}
+              </Typography>
+
+              <Typography paragraph gutterBottom>
+                Sentence count: {article.meta.sentenceCount}
+              </Typography>
             </Typography>
           </DashboardCard>
         </Grid>
@@ -76,7 +112,12 @@ function FullDashboard(props: IProps): JSX.Element {
                   <Chip
                     key={keyword}
                     label={keyword}
-                    sx={{ margin: "2px" }}  
+                    color="primary"
+                    sx={{
+                      margin: "2px",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}  
                   />
                 )
               })}

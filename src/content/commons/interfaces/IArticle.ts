@@ -1,11 +1,19 @@
 import { ISentence } from "./ISentence";
 
 interface IArticle {
-  summary: string
+  meta: IMeta,
   keywords: string[]
   sentences: ISentence[]
+  summarySentences: string[]
   sentimentPieChart: ISentimentPieChart
   subjectivityPieChart: ISubjectivityPieChart
+}
+
+interface IMeta {
+  readTime: string,
+  readComplexity: string,
+  charCount: number,
+  sentenceCount: number,
 }
 
 interface ISentimentPieChart {

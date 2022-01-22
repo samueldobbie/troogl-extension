@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from article.metric import MetricType
+from article.meta import get_meta_data
 from article.chart import get_pie_chart
 from article.keywords import get_keywords
 from article.sentence import analyze_sentences
@@ -20,16 +21,19 @@ CORS(app)
 def analyze_article():
     data = request.get_json(force=True)
     raw_sentences = data["sentences"]
+    full_text = " ".join(raw_sentences)
     
-    summary = get_summary(raw_sentences)
+    meta_data = get_meta_data(raw_sentences, full_text)
     keywords = get_keywords(raw_sentences)
     analyzed_sentences = analyze_sentences(raw_sentences)
+    summary_sentences = get_summary(full_text)
     metric_pie_charts = get_pie_chart(analyzed_sentences)
 
     article = {
-        "summary": summary,
+        "meta": meta_data,
         "keywords": keywords,
         "sentences": analyzed_sentences,
+        "summarySentences": summary_sentences,
         "sentimentPieChart": metric_pie_charts[MetricType.Sentiment],
         "subjectivityPieChart": metric_pie_charts[MetricType.Subjectivity],
     }
