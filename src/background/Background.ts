@@ -11,14 +11,14 @@ const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   const tabUrl = tab.url
 
   if (changeInfo.status === "complete" && tabUrl) {
-    const hasMatch = wildCards.some(wildCard => tabUrl.match(wildCard))
+    // const hasMatch = wildCards.some(wildCard => tabUrl.match(wildCard))
 
-    if (hasMatch || true) {
-      chrome.tabs.sendMessage(tabId, {
-        topic: "TabUpdated",
-        payload: { url: tabUrl },
-      })
-    }
+    // if (hasMatch) {
+    chrome.tabs.sendMessage(tabId, {
+      topic: "TabUpdated",
+      payload: { url: tabUrl },
+    })
+    // }
   }
 }
 

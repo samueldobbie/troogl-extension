@@ -1,7 +1,7 @@
 import tokenizer from "sbd"
 import extractor from "unfluffjs"
 import { injectToast } from "../../components/toast/Toast"
-import MetricType from "../configs/MetricType"
+import MetricType from "../vo/MetricType"
 import { ISentence } from "../interfaces/ISentence"
 import { disableEditing, enableEditing, hasElementWithId } from "./Page"
 

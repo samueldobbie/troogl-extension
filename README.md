@@ -1,6 +1,6 @@
 # Troogl - A new way to read the news :newspaper:
 
-![](https://i.imgur.com/JRRFyHm.mp4)
+![](https://i.giphy.com/media/XRsruyFbHmqrID8sZA/giphy.webp)
 
 Troogl is a browser extension that aims to improve the experience of reading news articles by providing you with interesting, real-time insights into articles as you read them.
 

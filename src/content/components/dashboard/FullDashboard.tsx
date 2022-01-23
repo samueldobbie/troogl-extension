@@ -1,7 +1,7 @@
 import { IconButton, Grid, Typography, Card, CardContent, Chip } from "@mui/material"
 import React from "react"
 import CloseIcon from "@mui/icons-material/Close"
-import DashboardMode from "../../commons/configs/DashboardMode"
+import DashboardMode from "../../commons/vo/DashboardMode"
 import IArticle from "../../commons/interfaces/IArticle"
 import SentimentPieChart from "../chart/SentimentPieChart"
 import SubjectivityPieChart from "../chart/SubjectivityPieChart"

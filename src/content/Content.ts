@@ -1,10 +1,11 @@
-import MetricType from "./commons/configs/MetricType"
+import MetricType from "./commons/vo/MetricType"
 import { readArticle } from "./commons/utils/Article"
 import { hasElementWithId } from "./commons/utils/Page"
 import { injectSentenceWrappers } from "./commons/utils/Sentence"
 import { injectDashboard } from "./components/dashboard/Dashboard"
 import { injectLoader, removeLoader } from "./components/loader/Loader"
 import { injectToast } from "./components/toast/Toast"
+import { parse } from "node-html-parser"
 
 declare global {
   interface Window {
@@ -16,12 +17,17 @@ function handleMessage(request: any): void {
   if (hasElementWithId("troogl-extension")) return
 
   const html = document.documentElement.innerHTML
+  const root = parse(html)
+  const metaTags = root.querySelectorAll("meta")
 
-  if (request.topic === "TabUpdated") {
-    analyzeHtml(html)
-  } else if (request.topic === "AnalyzeButtonClicked") {
-    analyzeHtml(html)
-  }
+  metaTags.forEach((metaTag) => {
+    const property = metaTag.getAttribute("property")
+    const content = metaTag.getAttribute("content")
+
+    if (property == "og:type" && content == "article") {
+      analyzeHtml(html)
+    }
+  })
 }
 
 function analyzeHtml(html: string): void {
