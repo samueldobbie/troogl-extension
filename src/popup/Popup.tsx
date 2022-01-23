@@ -1,46 +1,15 @@
 import React, { useEffect, useState } from "react"
 import { render } from "react-dom"
-import { Button, Paper } from "@mui/material"
+import { Paper } from "@mui/material"
 import { ThemeProvider } from "@emotion/react"
 import { theme } from "../commons/Theme"
+import AnalyzeDomainToggle from "./components/analyze/AnalyzeDomainToggle"
+import SettingsMenu from "./components/settings/SettingsMenu"
+import AnalyzeButton from "./components/analyze/AnalyzeButton"
 
 function Popup(): JSX.Element {
   const [activeUrl, setActiveUrl] = useState("")
   const [originUrl, setOriginUrl] = useState("")
-  const [isOriginEnabled, setIsOriginEnabled] = useState(true)
-  
-  const analyzePage = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tabId = tabs[0].id
-  
-      if (tabId) {
-        chrome.tabs.sendMessage(tabId, {
-          topic: "AnalyzeButtonClicked",
-          payload: { url: activeUrl },
-        })
-      }
-    })
-  }
-
-  const enableOrigin = () => {
-    chrome.storage.sync.get("disabledUrls", (item) => {
-      const disabledUrls = (item.disabledUrls || []) as string[]
-      const updatedUrls = disabledUrls.filter((url) => url !== originUrl)
-      chrome.storage.sync.set({ disabledUrls: updatedUrls })
-      chrome.tabs.reload()
-      setIsOriginEnabled(true)
-    })
-  }
-
-  const disableOrigin = () => {
-    chrome.storage.sync.get("disabledUrls", (item) => {
-      const disabledUrls = (item.disabledUrls || []) as string[]
-      disabledUrls.push(originUrl)
-      chrome.storage.sync.set({ disabledUrls })
-      chrome.tabs.reload()
-      setIsOriginEnabled(false)
-    })
-  }
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -59,16 +28,6 @@ function Popup(): JSX.Element {
     }
   }, [activeUrl])
 
-  useEffect(() => {
-    if (originUrl !== "") {
-      chrome.storage.sync.get("disabledUrls", (item) => {
-        const disabledUrls = (item.disabledUrls || []) as string[]
-        const isEnabled = !disabledUrls.includes(originUrl)
-        setIsOriginEnabled(isEnabled)
-      })
-    }
-  }, [originUrl])
-
   return (
     <ThemeProvider theme={theme}>≈
       <Paper
@@ -78,49 +37,11 @@ function Popup(): JSX.Element {
           padding: 2,
         }}
       >
-        <Button
-          fullWidth
-          onClick={analyzePage}
-          variant="contained"
-          color="primary"
-          sx={{
-            marginBottom: 1,
-            color: "white",
-            fontWeight: "bold",
-          }}
-        >
-          Troogl This Page
-        </Button>
+        <AnalyzeButton activeUrl={activeUrl} />
 
-        {isOriginEnabled == false &&
-          <Button
-            fullWidth
-            onClick={enableOrigin}
-            variant="text"
-            color="success"
-            sx={{
-              fontSize: 11,
-              fontWeight: "bold",
-            }}
-          >
-            Enable on {originUrl}
-          </Button>
-        }
-
-        {isOriginEnabled == true &&
-          <Button
-            fullWidth
-            onClick={disableOrigin}
-            variant="text"
-            color="error"
-            sx={{
-              fontSize: 11,
-              fontWeight: "bold",
-            }}
-          >
-            Disable on {originUrl}
-          </Button>
-        }
+        <AnalyzeDomainToggle originUrl={originUrl}/>
+        
+        <SettingsMenu />
       </Paper>
     </ThemeProvider>
   )

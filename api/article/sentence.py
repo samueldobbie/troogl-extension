@@ -20,7 +20,7 @@ def analyze_sentences(raw_sentences):
     return sentences
 
 def get_sentiment_label(score):
-    # TODO RGB scale based on score
+    # TODO scale colour based on score
 
     if score <= -0.5:
         label = SentimentLabel.Negative
@@ -39,7 +39,7 @@ def get_sentiment_label(score):
     }
 
 def get_subjectivity_label(score):
-    # TODO RGB scale based on score
+    # TODO scale colour based on score
 
     if score <= 0.66:
         label = SubjectivityLabel.Objective

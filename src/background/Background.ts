@@ -10,25 +10,25 @@ const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   
   if (changeInfo.status === "complete" && tabUrl) {
     const originUrl = new URL(tabUrl).hostname
+    
+    chrome.storage.sync.get("autoRun", (item) => {
+      const autoRunEnabled = item.autoRun == undefined || item.autoRun == true
 
-    chrome.storage.sync.get("disabledUrls", (item) => {
-      const disabledUrls = item.disabledUrls || []
-
-      console.log(disabledUrls)
-      console.log(disabledUrls)
-      console.log(disabledUrls)
-      console.log(disabledUrls)
-      console.log(disabledUrls)
-
-      const isDisabled = disabledUrls.includes(originUrl)
-
-      if (!isDisabled) {
-        chrome.tabs.sendMessage(tabId, {
-          topic: "TabUpdated",
-          payload: { url: tabUrl },
+      if (autoRunEnabled) {
+        chrome.storage.sync.get("disabledUrls", (item) => {
+          const disabledUrls = item.disabledUrls || []
+          const isOriginEnabled = !disabledUrls.includes(originUrl)
+    
+          if (isOriginEnabled) {
+            chrome.tabs.sendMessage(tabId, {
+              topic: "TabUpdated",
+              payload: { url: tabUrl },
+            })
+          }
         })
       }
     })
+
   }
 }
 
