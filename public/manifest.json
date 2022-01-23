@@ -4,7 +4,11 @@
   "short_name": "Troogl",
   "version": "1.0.0",
   "description": "A new way to read the news",
-  "permissions": [ "activeTab", "tabs" ],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
   "background": {
     "scripts": [ "background.js" ]
   },

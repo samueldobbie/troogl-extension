@@ -1,24 +1,34 @@
 import TabChangeInfo = chrome.tabs.TabChangeInfo
 import Tab = chrome.tabs.Tab
 
-const wildCards = [ "https://www.bbc.co.uk/news/*" ]
-
 const handleInstall = () => {
   chrome.tabs.create({ url: "welcome.html" })
 }
 
 const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   const tabUrl = tab.url
-
+  
   if (changeInfo.status === "complete" && tabUrl) {
-    // const hasMatch = wildCards.some(wildCard => tabUrl.match(wildCard))
+    const originUrl = new URL(tabUrl).hostname
 
-    // if (hasMatch) {
-    chrome.tabs.sendMessage(tabId, {
-      topic: "TabUpdated",
-      payload: { url: tabUrl },
+    chrome.storage.sync.get("disabledUrls", (item) => {
+      const disabledUrls = item.disabledUrls || []
+
+      console.log(disabledUrls)
+      console.log(disabledUrls)
+      console.log(disabledUrls)
+      console.log(disabledUrls)
+      console.log(disabledUrls)
+
+      const isDisabled = disabledUrls.includes(originUrl)
+
+      if (!isDisabled) {
+        chrome.tabs.sendMessage(tabId, {
+          topic: "TabUpdated",
+          payload: { url: tabUrl },
+        })
+      }
     })
-    // }
   }
 }
 
