@@ -73,6 +73,7 @@ function buildWrapper(id: string, color: string, label: string, range: Range): H
 
   span.id = id
   span.title = label
+  span.style.color = "#333"
   span.style.backgroundColor = color
   span.style.borderRadius = "5px"
   span.style.cursor = "pointer"

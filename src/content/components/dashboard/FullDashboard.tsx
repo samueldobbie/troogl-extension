@@ -26,143 +26,144 @@ function FullDashboard(props: IProps): JSX.Element {
         backgroundColor: "white",
         overflowY: "scroll",
         overflowX: "hidden",
-        padding: "50px",
       }}
     >
-      <IconButton
-        color="primary"
-        onClick={() => setMode(DashboardMode.Partial)}
-        sx={{
-          position: "absolute",
-          top: "2.5%",
-          right: "2.5%",
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
+      <div style={{ padding: "50px" }}>
+        <IconButton
+          color="primary"
+          onClick={() => setMode(DashboardMode.Partial)}
+          sx={{
+            position: "absolute",
+            top: "2.5%",
+            right: "2.5%",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
 
-      <Grid
-        container
-        spacing={3}
-        alignItems="center"
-        sx={{
-          marginTop: "2.5%%",
-          textAlign: "center",
-          paddingLeft: "17.5%",
-          paddingRight: "17.5%",
-        }}
-      >
-        <Grid item xs={12}>
-          <DashboardCard>
-            <Typography variant="h5" gutterBottom>
-              Summary
-            </Typography>
+        <Grid
+          container
+          spacing={3}
+          alignItems="center"
+          sx={{
+            marginTop: "2.5%%",
+            textAlign: "center",
+            paddingLeft: "17.5%",
+            paddingRight: "17.5%",
+          }}
+        >
+          <Grid item xs={12}>
+            <DashboardCard>
+              <Typography variant="h5" gutterBottom>
+                Summary
+              </Typography>
 
-            {article.summarySentences.map((sentence, index) => {
-              return (
-                <Typography
-                  variant="body2"
-                  paragraph
-                  gutterBottom
-                  key={index}
-                >
-                  • {sentence}
-                </Typography>
-              )
-            })}
-          </DashboardCard>
+              {article.summarySentences.map((sentence, index) => {
+                return (
+                  <Typography
+                    variant="body2"
+                    paragraph
+                    gutterBottom
+                    key={index}
+                  >
+                    • {sentence}
+                  </Typography>
+                )
+              })}
+            </DashboardCard>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DashboardCard>
+              <Typography
+                gutterBottom
+                variant="h5"
+              >
+                Overview
+              </Typography>
+              
+              <Typography
+                paragraph
+                gutterBottom
+                variant="body2"
+              >
+                Read time: {article.meta.readTime}
+              </Typography>
+
+              <Typography
+                paragraph
+                gutterBottom
+                variant="body2"
+              >
+                Read complexity: {article.meta.readComplexity}
+              </Typography>
+
+              <Typography
+                paragraph
+                gutterBottom
+                variant="body2"
+              >
+                Char count: {article.meta.charCount}
+              </Typography>
+
+              <Typography
+                paragraph
+                gutterBottom
+                variant="body2"
+              >
+                Sentence count: {article.meta.sentenceCount}
+              </Typography>
+            </DashboardCard>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DashboardCard>
+              <Typography variant="h5" gutterBottom>
+                Keywords
+              </Typography>
+
+              {article.keywords.map((keyword) => {
+                return (
+                  <Chip
+                    key={keyword}
+                    label={keyword}
+                    color="primary"
+                    sx={{
+                      margin: "2px",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}  
+                  />
+                )
+              })}
+            </DashboardCard>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DashboardCard>
+              <Typography variant="h5" gutterBottom>
+                Sentiment (Sentences)
+              </Typography>
+              
+              <SentimentPieChart
+                chartData={article.sentimentPieChart}
+              />
+            </DashboardCard>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <DashboardCard>
+              <Typography variant="h5" gutterBottom>
+                Subjectivity (Sentences)
+              </Typography>
+              
+              <SubjectivityPieChart
+                chartData={article.subjectivityPieChart}
+              />
+            </DashboardCard>
+          </Grid>
         </Grid>
-
-        <Grid item xs={12} md={6}>
-          <DashboardCard>
-            <Typography
-              gutterBottom
-              variant="h5"
-            >
-              Overview
-            </Typography>
-            
-            <Typography
-              paragraph
-              gutterBottom
-              variant="body2"
-            >
-              Read time: {article.meta.readTime}
-            </Typography>
-
-            <Typography
-              paragraph
-              gutterBottom
-              variant="body2"
-            >
-              Read complexity: {article.meta.readComplexity}
-            </Typography>
-
-            <Typography
-              paragraph
-              gutterBottom
-              variant="body2"
-            >
-              Char count: {article.meta.charCount}
-            </Typography>
-
-            <Typography
-              paragraph
-              gutterBottom
-              variant="body2"
-            >
-              Sentence count: {article.meta.sentenceCount}
-            </Typography>
-          </DashboardCard>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <DashboardCard>
-            <Typography variant="h5" gutterBottom>
-              Keywords
-            </Typography>
-
-            {article.keywords.map((keyword) => {
-              return (
-                <Chip
-                  key={keyword}
-                  label={keyword}
-                  color="primary"
-                  sx={{
-                    margin: "2px",
-                    color: "white",
-                    fontWeight: "bold",
-                  }}  
-                />
-              )
-            })}
-          </DashboardCard>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <DashboardCard>
-            <Typography variant="h5" gutterBottom>
-              Sentiment (Sentences)
-            </Typography>
-            
-            <SentimentPieChart
-              chartData={article.sentimentPieChart}
-            />
-          </DashboardCard>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <DashboardCard>
-            <Typography variant="h5" gutterBottom>
-              Subjectivity (Sentences)
-            </Typography>
-            
-            <SubjectivityPieChart
-              chartData={article.subjectivityPieChart}
-            />
-          </DashboardCard>
-        </Grid>
-      </Grid>
+      </div>
     </div>
   )
 }

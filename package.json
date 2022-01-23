@@ -1,10 +1,11 @@
 {
   "name": "troogl-extension",
+  "description": "A new way to read the news",
   "version": "0.1.0",
   "author": {
     "name": "Samuel Dobbie",
     "email": "samuel.jordan.dobbie@gmail.com",
-    "url": "https://github.com/samueldobbie/"
+    "url": "https://github.com/samueldobbie"
   },
   "scripts": {
     "watch": "webpack --watch",
