@@ -1,11 +1,11 @@
 import readtime
 import textstat
 
-def get_meta_data(sentences, full_text):
+def get_meta_data(raw_sentences, full_text):
     read_time = get_read_time(full_text)
     read_complexity = get_read_complexity(full_text)
     char_count = len(full_text)
-    sentence_count = len(sentences)
+    sentence_count = len(raw_sentences)
 
     return {
         "readTime": read_time,

@@ -57,45 +57,61 @@ function FullDashboard(props: IProps): JSX.Element {
             <Typography variant="h5" gutterBottom>
               Summary
             </Typography>
-            
-            <Typography variant="body2">
-              {article.summarySentences.map((sentence, index) => {
-                return (
-                  <Typography
-                    paragraph
-                    gutterBottom
-                    key={index}
-                  >
-                    • {sentence}
-                  </Typography>
-                )
-              })}
-            </Typography>
+
+            {article.summarySentences.map((sentence, index) => {
+              return (
+                <Typography
+                  variant="body2"
+                  paragraph
+                  gutterBottom
+                  key={index}
+                >
+                  • {sentence}
+                </Typography>
+              )
+            })}
           </DashboardCard>
         </Grid>
 
         <Grid item xs={12} md={6}>
           <DashboardCard>
-            <Typography variant="h5" gutterBottom>
+            <Typography
+              gutterBottom
+              variant="h5"
+            >
               Overview
             </Typography>
             
-            <Typography variant="body2">
-              <Typography paragraph gutterBottom>
-                Read time: {article.meta.readTime}
-              </Typography>
+            <Typography
+              paragraph
+              gutterBottom
+              variant="body2"
+            >
+              Read time: {article.meta.readTime}
+            </Typography>
 
-              <Typography paragraph gutterBottom>
-                Read complexity: {article.meta.readComplexity}
-              </Typography>
+            <Typography
+              paragraph
+              gutterBottom
+              variant="body2"
+            >
+              Read complexity: {article.meta.readComplexity}
+            </Typography>
 
-              <Typography paragraph gutterBottom>
-                Char count: {article.meta.charCount}
-              </Typography>
+            <Typography
+              paragraph
+              gutterBottom
+              variant="body2"
+            >
+              Char count: {article.meta.charCount}
+            </Typography>
 
-              <Typography paragraph gutterBottom>
-                Sentence count: {article.meta.sentenceCount}
-              </Typography>
+            <Typography
+              paragraph
+              gutterBottom
+              variant="body2"
+            >
+              Sentence count: {article.meta.sentenceCount}
             </Typography>
           </DashboardCard>
         </Grid>
@@ -106,22 +122,20 @@ function FullDashboard(props: IProps): JSX.Element {
               Keywords
             </Typography>
 
-            <>
-              {article.keywords.map((keyword) => {
-                return (
-                  <Chip
-                    key={keyword}
-                    label={keyword}
-                    color="primary"
-                    sx={{
-                      margin: "2px",
-                      color: "white",
-                      fontWeight: "bold",
-                    }}  
-                  />
-                )
-              })}
-            </>
+            {article.keywords.map((keyword) => {
+              return (
+                <Chip
+                  key={keyword}
+                  label={keyword}
+                  color="primary"
+                  sx={{
+                    margin: "2px",
+                    color: "white",
+                    fontWeight: "bold",
+                  }}  
+                />
+              )
+            })}
           </DashboardCard>
         </Grid>
 

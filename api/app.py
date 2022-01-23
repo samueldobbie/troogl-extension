@@ -24,7 +24,7 @@ def analyze_article():
     full_text = " ".join(raw_sentences)
     
     meta_data = get_meta_data(raw_sentences, full_text)
-    keywords = get_keywords(raw_sentences)
+    keywords = get_keywords(full_text)
     analyzed_sentences = analyze_sentences(raw_sentences)
     summary_sentences = get_summary(full_text)
     metric_pie_charts = get_pie_chart(analyzed_sentences)
