@@ -7,7 +7,7 @@ import { theme } from "../commons/Theme"
 function Popup(): JSX.Element {
   const [activeUrl, setActiveUrl] = useState("")
   const [originUrl, setOriginUrl] = useState("")
-  const [isOriginDisabled, setIsOriginDisabled] = useState(false)
+  const [isOriginEnabled, setIsOriginEnabled] = useState(true)
   
   const analyzePage = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -27,6 +27,8 @@ function Popup(): JSX.Element {
       const disabledUrls = (item.disabledUrls || []) as string[]
       const updatedUrls = disabledUrls.filter((url) => url !== originUrl)
       chrome.storage.sync.set({ disabledUrls: updatedUrls })
+      chrome.tabs.reload()
+      setIsOriginEnabled(true)
     })
   }
 
@@ -35,6 +37,8 @@ function Popup(): JSX.Element {
       const disabledUrls = (item.disabledUrls || []) as string[]
       disabledUrls.push(originUrl)
       chrome.storage.sync.set({ disabledUrls })
+      chrome.tabs.reload()
+      setIsOriginEnabled(false)
     })
   }
 
@@ -59,8 +63,8 @@ function Popup(): JSX.Element {
     if (originUrl !== "") {
       chrome.storage.sync.get("disabledUrls", (item) => {
         const disabledUrls = (item.disabledUrls || []) as string[]
-        const isDisabled = disabledUrls.includes(originUrl)
-        setIsOriginDisabled(isDisabled)
+        const isEnabled = !disabledUrls.includes(originUrl)
+        setIsOriginEnabled(isEnabled)
       })
     }
   }, [originUrl])
@@ -88,7 +92,7 @@ function Popup(): JSX.Element {
           Troogl This Page
         </Button>
 
-        {isOriginDisabled == true &&
+        {isOriginEnabled == false &&
           <Button
             fullWidth
             onClick={enableOrigin}
@@ -103,7 +107,7 @@ function Popup(): JSX.Element {
           </Button>
         }
 
-        {isOriginDisabled == false &&
+        {isOriginEnabled == true &&
           <Button
             fullWidth
             onClick={disableOrigin}

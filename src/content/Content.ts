@@ -17,17 +17,22 @@ function handleMessage(request: any): void {
   if (hasElementWithId("troogl-extension")) return
 
   const html = document.documentElement.innerHTML
-  const root = parse(html)
-  const metaTags = root.querySelectorAll("meta")
 
-  metaTags.forEach((metaTag) => {
-    const property = metaTag.getAttribute("property")
-    const content = metaTag.getAttribute("content")
-
-    if (property == "og:type" && content == "article") {
-      analyzeHtml(html)
-    }
-  })
+  if (request.topic === "AnalyzeButtonClicked") {
+    analyzeHtml(html)
+  } else if (request.topic === "TabUpdated") {
+    const root = parse(html)
+    const metaTags = root.querySelectorAll("meta")
+  
+    metaTags.forEach((metaTag) => {
+      const property = metaTag.getAttribute("property")
+      const content = metaTag.getAttribute("content")
+  
+      if (property == "og:type" && content == "article") {
+        analyzeHtml(html)
+      }
+    })
+  }
 }
 
 function analyzeHtml(html: string): void {
