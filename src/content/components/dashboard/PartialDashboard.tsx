@@ -58,7 +58,11 @@ function PartialDashboard(props: IProps): JSX.Element {
             backgroundColor: "primary.main",
           }}
         >
-          <Grid item xs={1}>
+          <Grid
+            item
+            xs={2}
+            md={1}
+          >
             <DragIndicatorIcon
               id="troogl-drag-handler"
               sx={{
@@ -69,7 +73,11 @@ function PartialDashboard(props: IProps): JSX.Element {
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid
+            item
+            xs={5}
+            md={3}
+          >
             <ToggleButtonGroup
               exclusive
               value={metricType}
@@ -86,14 +94,28 @@ function PartialDashboard(props: IProps): JSX.Element {
             </ToggleButtonGroup>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid
+            item
+            xs={0}
+            md={6}
+            sx={{
+              display: {
+                xs: "none",
+                md: "block",
+              }
+            }}
+          >
             <LineChart
               sentences={sentences}
-              metricType={metricType}  
+              metricType={metricType}
             />
           </Grid>
 
-          <Grid item xs={2}>
+          <Grid
+            item
+            xs={5}
+            md={2}
+          >
             <Button
               variant="contained"
               color="secondary"
