@@ -1,62 +1,81 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { render } from "react-dom"
-import { Button, Paper, TextField, Typography } from "@mui/material"
+import { Button, Paper } from "@mui/material"
+import { ThemeProvider } from "@emotion/react"
+import { theme } from "../commons/Theme"
 
 function Popup(): JSX.Element {
+  const [activeUrl, setActiveUrl] = useState("")
+  const [originUrl, setOriginUrl] = useState("")
+  
   const analyzePage = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       const tabId = tabs[0].id
   
       if (tabId) {
         chrome.tabs.sendMessage(tabId, {
-          topic: "AnalyzeButtonClicked",
-          payload: { url: document.location.href },
+          topic: "TrooglButtonClicked",
+          payload: { url: activeUrl },
         })
       }
     })
   }
 
+  const disableOnOrigin = () => {
+    alert(1)
+  }
+
+  useEffect(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      const url = tabs[0].url
+
+      if (url) {
+        setActiveUrl(url)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    if (activeUrl !== "") {
+      const url = new URL(activeUrl)
+      setOriginUrl(url.hostname)
+    }
+  }, [activeUrl])
+
   return (
-    <Paper
-      sx={{
-        height: "100%",
-        textAlign: "center",
-        padding: 2,
-      }}
-    >
-      <Typography
-        gutterBottom
+    <ThemeProvider theme={theme}>≈
+      <Paper
         sx={{
-          fontSize: 10,
-          textAlign: "left",
+          height: "100%",
+          textAlign: "center",
+          padding: 2,
         }}
       >
-        Troogl will automatically analyze any page
-        with a URL matching one of the wildcards below.
-      </Typography>
+        <Button
+          fullWidth
+          onClick={analyzePage}
+          variant="contained"
+          color="primary"
+          sx={{
+            marginBottom: 1,
+            color: "white",
+            fontWeight: "bold",
+          }}
+        >
+          Troogl This Page
+        </Button>
 
-      <TextField
-        multiline
-        fullWidth
-        rows={8}
-        label="Update Wildcards"
-        placeholder="https://www.bbc.co.uk/news/*"
-        variant="filled"
-        sx={{ marginBottom: 2 }}
-      />
-
-      <Typography sx={{ marginBottom: 2 }}>
-        --- OR ---
-      </Typography>
-
-      <Button
-        fullWidth
-        onClick={analyzePage}
-        variant="contained"
-      >
-        Analyze open page
-      </Button>
-    </Paper>
+        <Button
+          fullWidth
+          onClick={disableOnOrigin}
+          variant="text"
+          color="error"
+          sx={{ fontSize: 10 }}
+        >
+          Disable on {originUrl}
+        </Button>
+      </Paper>
+    </ThemeProvider>
   )
 }
 

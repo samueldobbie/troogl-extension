@@ -4,8 +4,8 @@ import Draggable from "react-draggable"
 import { ISentence } from "../../commons/interfaces/ISentence"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import LineChart from "../chart/LineChart"
-import DashboardMode from "../../commons/configs/DashboardMode"
-import MetricType from "../../commons/configs/MetricType"
+import DashboardMode from "../../commons/vo/DashboardMode"
+import MetricType from "../../commons/vo/MetricType"
 import { injectSentenceWrappers } from "../../commons/utils/Sentence"
 
 interface IProps {

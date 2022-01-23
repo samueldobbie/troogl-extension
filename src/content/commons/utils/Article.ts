@@ -1,4 +1,4 @@
-import Endpoint from "../configs/Endpoint"
+import Endpoint from "../vo/Endpoint"
 import IArticle from "../interfaces/IArticle"
 import { parseSentences } from "./Sentence"
 

@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.7",
     "chart.js": "^3.7.0",
+    "node-html-parser": "^5.2.0",
     "node-nlp": "^4.22.9",
     "node-summary": "^1.2.0",
     "react": "^17.0.1",
