@@ -32,7 +32,7 @@ module.exports = {
   },
   plugins: [
     new HTMLWebpackPlugin({
-      template: "src/popup/popup.html",
+      template: "src/popup/templates/popup.html",
       filename: "popup.html",
       chunks: ["popup"],
     }),

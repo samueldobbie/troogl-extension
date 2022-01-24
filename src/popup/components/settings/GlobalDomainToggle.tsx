@@ -6,11 +6,13 @@ function GlobalDomainToggle(): JSX.Element {
   
   const enableAutoRun = () => {
     chrome.storage.sync.set({ autoRun: true })
+    chrome.tabs.reload()
     setIsAutoRunEnabled(true)
   }
 
   const disableAutoRun = () => {
     chrome.storage.sync.set({ autoRun: false })
+    chrome.tabs.reload()
     setIsAutoRunEnabled(false)
   }
 
