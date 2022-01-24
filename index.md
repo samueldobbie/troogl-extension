@@ -2,6 +2,8 @@
   
 Troogl is a browser extension that aims to improve the experience of reading news articles by providing you with interesting, real-time insights into articles as you read them (e.g. sentiment & subjectivity of sentences).  
 
+![](https://s10.gifyu.com/images/demodc9c484669f33f97.gif)
+
 ### How to use Troogl?  
   
 To get started with Troogl:  
