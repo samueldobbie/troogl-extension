@@ -1,9 +1,16 @@
 import { IconButton, Menu, MenuItem } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import SettingsIcon from "@mui/icons-material/Settings"
+import GlobalDomainToggle from "./GlobalDomainToggle"
+import CurrentDomainToggle from "./CurrentDomainToggle"
 
-function SettingsMenu(): JSX.Element {
-  const [isAutoRunEnabled, setIsAutoRunEnabled] = useState(true)
+interface IProps {
+  originUrl: string
+}
+
+function SettingsMenu(props: IProps): JSX.Element {
+  const { originUrl } = props
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const open = Boolean(anchorEl)
@@ -16,29 +23,9 @@ function SettingsMenu(): JSX.Element {
     setAnchorEl(null)
   }
 
-  const enableAutoRun = () => {
-    chrome.storage.sync.set({ autoRun: true })
-    setIsAutoRunEnabled(true)
-  }
-
-  const disableAutoRun = () => {
-    chrome.storage.sync.set({ autoRun: false })
-    setIsAutoRunEnabled(false)
-  }
-
   const handleWriteReview = () => {
     window.open("https://google.com")
   }
-
-  useEffect(() => {
-    chrome.storage.sync.get("autoRun", (item) => {
-      const autoRun = item.autoRun
-
-      if (autoRun !== null && autoRun !== undefined) {
-        setIsAutoRunEnabled(autoRun)
-      }
-    })
-  }, [])
 
   return (
     <>
@@ -51,20 +38,12 @@ function SettingsMenu(): JSX.Element {
         anchorEl={anchorEl}
         onClose={handleClose}
       >
-        {isAutoRunEnabled == false &&        
-          <MenuItem onClick={enableAutoRun}>
-            Enable auto-run (all websites)
-          </MenuItem>
-        }
+        <CurrentDomainToggle originUrl={originUrl} />
 
-        {isAutoRunEnabled == true &&        
-          <MenuItem onClick={disableAutoRun}>
-            Disable auto-run (all websites)
-          </MenuItem>
-        }
+        <GlobalDomainToggle />
 
-        <MenuItem onClick={handleWriteReview}>
-          Write review
+        <MenuItem onClick={handleWriteReview} dense>
+          Write review 🤞
         </MenuItem>
       </Menu>
     </>

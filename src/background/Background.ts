@@ -12,21 +12,18 @@ const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
     const originUrl = new URL(tabUrl).hostname
     
     chrome.storage.sync.get("autoRun", (item) => {
-      const autoRunEnabled = item.autoRun == undefined || item.autoRun == true
+      if (item.autoRun == false) return
 
-      if (autoRunEnabled) {
-        chrome.storage.sync.get("disabledUrls", (item) => {
-          const disabledUrls = item.disabledUrls || []
-          const isOriginEnabled = !disabledUrls.includes(originUrl)
-    
-          if (isOriginEnabled) {
-            chrome.tabs.sendMessage(tabId, {
-              topic: "TabUpdated",
-              payload: { url: tabUrl },
-            })
-          }
+      chrome.storage.sync.get("disabledUrls", (item) => {
+        const disabledUrls = item.disabledUrls || []
+  
+        if (disabledUrls.includes(originUrl)) return
+
+        chrome.tabs.sendMessage(tabId, {
+          topic: "TabUpdated",
+          payload: { url: tabUrl },
         })
-      }
+      })
     })
 
   }

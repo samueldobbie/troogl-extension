@@ -3,7 +3,6 @@ import { render } from "react-dom"
 import { Paper } from "@mui/material"
 import { ThemeProvider } from "@emotion/react"
 import { theme } from "../commons/Theme"
-import AnalyzeDomainToggle from "./components/analyze/AnalyzeDomainToggle"
 import SettingsMenu from "./components/settings/SettingsMenu"
 import AnalyzeButton from "./components/analyze/AnalyzeButton"
 
@@ -38,10 +37,7 @@ function Popup(): JSX.Element {
         }}
       >
         <AnalyzeButton activeUrl={activeUrl} />
-
-        <AnalyzeDomainToggle originUrl={originUrl}/>
-        
-        <SettingsMenu />
+        <SettingsMenu originUrl={originUrl} />
       </Paper>
     </ThemeProvider>
   )
