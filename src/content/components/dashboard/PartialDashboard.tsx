@@ -1,12 +1,12 @@
 import { Grid, ToggleButtonGroup, ToggleButton, Button } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import Draggable from "react-draggable"
-import { ISentence } from "../../commons/interfaces/ISentence"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
+import { ISentence } from "content/commons/interfaces/ISentence"
+import { injectSentenceWrappers } from "content/commons/utils/Sentence"
+import DashboardMode from "content/commons/vo/DashboardMode"
+import MetricType from "content/commons/vo/MetricType"
 import LineChart from "../chart/LineChart"
-import DashboardMode from "../../commons/vo/DashboardMode"
-import MetricType from "../../commons/vo/MetricType"
-import { injectSentenceWrappers } from "../../commons/utils/Sentence"
 
 interface IProps {
   sentences: ISentence[]

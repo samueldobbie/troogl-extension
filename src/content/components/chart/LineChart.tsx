@@ -1,8 +1,8 @@
 import { ActiveElement, CategoryScale, Chart, ChartEvent, LinearScale, LineElement, PointElement } from "chart.js"
+import { ISentence } from "content/commons/interfaces/ISentence"
+import MetricType from "content/commons/vo/MetricType"
 import React from "react"
 import { Line } from "react-chartjs-2"
-import MetricType from "../../commons/vo/MetricType"
-import { ISentence } from "../../commons/interfaces/ISentence"
 
 Chart.register(
   CategoryScale,

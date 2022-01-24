@@ -1,5 +1,5 @@
-import Endpoint from "../vo/Endpoint"
 import IArticle from "../interfaces/IArticle"
+import Endpoint from "../vo/Endpoint"
 import { parseSentences } from "./Sentence"
 
 async function readArticle(html: string): Promise<IArticle> {

@@ -1,4 +1,4 @@
-import { ISentence } from "./ISentence";
+import { ISentence } from "./ISentence"
 
 interface IArticle {
   meta: IMeta,

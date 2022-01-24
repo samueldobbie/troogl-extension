@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react"
 import { render } from "react-dom"
 import { Paper } from "@mui/material"
 import { ThemeProvider } from "@emotion/react"
-import { theme } from "../commons/Theme"
-import SettingsMenu from "./components/settings/SettingsMenu"
+import { theme } from "commons/Theme"
 import AnalyzeButton from "./components/analyze/AnalyzeButton"
+import SettingsMenu from "./components/settings/SettingsMenu"
 
 function Popup(): JSX.Element {
   const [activeUrl, setActiveUrl] = useState("")

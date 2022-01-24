@@ -1,6 +1,6 @@
 import { Button } from "@mui/material"
+import DashboardMode from "content/commons/vo/DashboardMode"
 import React from "react"
-import DashboardMode from "../../commons/vo/DashboardMode"
 
 interface IProps {
   setMode: (mode: string) => void

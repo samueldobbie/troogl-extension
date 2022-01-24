@@ -1,6 +1,6 @@
-import { Alert, Snackbar } from "@mui/material"
+import { Snackbar } from "@mui/material"
+import { appendJsxToBody } from "content/commons/utils/Page"
 import React, { useState } from "react"
-import { appendJsxToBody } from "../../commons/utils/Page"
 
 interface IProps {
   message: string

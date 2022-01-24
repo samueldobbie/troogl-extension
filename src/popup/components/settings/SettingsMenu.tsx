@@ -1,5 +1,5 @@
 import { IconButton, Menu, MenuItem } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import SettingsIcon from "@mui/icons-material/Settings"
 import GlobalDomainToggle from "./GlobalDomainToggle"
 import CurrentDomainToggle from "./CurrentDomainToggle"

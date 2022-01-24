@@ -1,9 +1,9 @@
 import tokenizer from "sbd"
 import extractor from "unfluffjs"
-import { injectToast } from "../../components/toast/Toast"
-import MetricType from "../vo/MetricType"
+import { injectToast } from "content/components/toast/Toast"
 import { ISentence } from "../interfaces/ISentence"
-import { disableEditing, enableEditing, hasElementWithId } from "./Page"
+import MetricType from "../vo/MetricType"
+import { enableEditing, hasElementWithId, disableEditing } from "./Page"
 
 function parseSentences(html: string): string[] {
   const data = extractor(html)

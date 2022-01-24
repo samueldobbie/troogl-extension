@@ -1,12 +1,12 @@
 import { ThemeProvider } from "@emotion/react"
 import React, { useEffect, useState } from "react"
-import DashboardMode from "../../commons/vo/DashboardMode"
-import { appendJsxToBody } from "../../commons/utils/Page"
+import { theme } from "commons/Theme"
+import IArticle from "content/commons/interfaces/IArticle"
+import { appendJsxToBody } from "content/commons/utils/Page"
+import DashboardMode from "content/commons/vo/DashboardMode"
 import FullDashboard from "./FullDashboard"
 import HiddenDashboard from "./HiddenDashboard"
 import PartialDashboard from "./PartialDashboard"
-import IArticle from "../../commons/interfaces/IArticle"
-import { theme } from "../../../commons/Theme"
 
 interface IProps {
   article: IArticle
