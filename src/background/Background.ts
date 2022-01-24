@@ -2,7 +2,8 @@ import TabChangeInfo = chrome.tabs.TabChangeInfo
 import Tab = chrome.tabs.Tab
 
 const handleInstall = () => {
-  chrome.tabs.create({ url: "welcome.html" })
+  const welcomePageUrl = "https://samueldobbie.github.io/troogl-extension/"
+  chrome.tabs.create({ url: welcomePageUrl })
 }
 
 const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
@@ -29,5 +30,6 @@ const handleUpdated = (tabId: number, changeInfo: TabChangeInfo, tab: Tab) => {
   }
 }
 
-// chrome.runtime.onInstalled.addListener(handleInstall)
+chrome.runtime.onInstalled.addListener(handleInstall)
+
 chrome.tabs.onUpdated.addListener(handleUpdated)

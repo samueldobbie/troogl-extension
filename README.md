@@ -2,7 +2,7 @@
 
 ![](./src/assets/demo.gif)
 
-Troogl is a browser extension that aims to improve the experience of reading news articles by providing you with interesting, real-time insights into articles as you read them.
+Troogl is a browser extension that aims to improve the experience of reading news articles by providing you with interesting, real-time insights into articles as you read them (e.g. sentiment & subjectivity of sentences).
 
 ## How do I use it?
 
@@ -22,4 +22,4 @@ Right now, Troogl primarily provides insights into the sentiment and subjectivit
 
 ## Privacy
 
-Troogl doesn't store any data and only operates on the tab you're viewing.
+Troogl doesn't store any data and only runs on the tab you're actively viewing.
