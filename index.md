@@ -1,37 +1,32 @@
-## Welcome to GitHub Pages
+## What is Troogl?  
+  
+Troogl is a browser extension that aims to improve the experience of reading news articles by providing you with interesting, real-time insights into articles as you read them (e.g. sentiment & subjectivity of sentences).  
 
-You can use the [editor on GitHub](https://github.com/samueldobbie/troogl-extension/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/samueldobbie/troogl-extension/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+### How to use Troogl?  
+  
+To get started with Troogl:  
+  
+1. Install the extension
+1. Visit any news article
+1. Explore the insights
+  
+### Enable / disable article detection  
+  
+Troogl automatically analyses the page when it detects that it contains a news article (can be manually triggered via the plugin popup).  
+  
+You can enable or disable the automatic article detection and analysis for certain sites (or for all sites) via the settings in the plugin popup.  
+  
+### Privacy  
+  
+The extension is open source and **doesn't store any data**.  
+  
+### Note  
+  
+Please keep in mind that this is just a fun, hacky project, so:  
+  
+- The metrics aren't super accurate right now.  
+- It doesn't work perfectly on every site (struggles to parse sentences on BBC News, etc.).  
+  
+### Contact  
+  
+If you want to get in touch then feel free to DM me on [Twitter](https://twitter.com/samueldobbie).
