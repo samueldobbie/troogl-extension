@@ -6,6 +6,7 @@ import { injectDashboard } from "./components/dashboard/Dashboard"
 import { injectLoader, removeLoader } from "./components/loader/Loader"
 import { injectToast } from "./components/toast/Toast"
 import { parse } from "node-html-parser"
+import IMessage from "./commons/interfaces/IMessage"
 
 declare global {
   interface Window {
@@ -13,7 +14,7 @@ declare global {
   }
 }
 
-function handleMessage(request: any): void {
+function handleMessage(request: IMessage): void {
   if (hasElementWithId("troogl-extension")) return
 
   const html = document.documentElement.innerHTML

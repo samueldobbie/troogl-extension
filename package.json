@@ -26,8 +26,8 @@
     "unfluffjs": "^3.3.4"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.128",
     "@types/react": "^17.0.0",
+    "@types/chrome": "^0.0.177",
     "@types/react-dom": "^17.0.0",
     "@types/sbd": "^1.0.3",
     "clean-webpack-plugin": "^3.0.0",

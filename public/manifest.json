@@ -15,8 +15,11 @@
     "default_popup": "popup.html"
   },
   "content_scripts": [{
-    "matches": [ "<all_urls>" ],
-    "js": [ "content.js" ]
+    "js": [ "content.js" ],
+    "matches": [
+      "http://*/*",
+      "https://*/*"
+    ]
   }],
   "icons": {
     "16": "./assets/icon16.png",
