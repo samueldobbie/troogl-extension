@@ -12,7 +12,6 @@ from article.summary import get_summary
 
 nltk.data.path.append("/tmp")
 nltk.download("punkt", download_dir="/tmp")
-nltk.download("stopwords", download_dir="/tmp")
 
 app = Flask(__name__)
 CORS(app)

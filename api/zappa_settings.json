@@ -1,9 +1,18 @@
 {
-    "dev": {
+    "default": {
         "app_function": "app.app",
         "profile_name": null,
-        "project_name": "api",
         "runtime": "python3.9",
-        "s3_bucket": "zappa-35on0cc8z"
+        "slim_handler": true
+    },
+    "dev": {
+        "extends": "default",
+        "project_name": "troogl-api-dev",
+        "s3_bucket": "zappa-35on0cc8z-dev"
+    },
+    "production": {
+        "extends": "default",
+        "project_name": "troogl-api-prd",
+        "s3_bucket": "zappa-35on0cc8z-prd"
     }
 }
