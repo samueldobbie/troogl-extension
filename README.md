@@ -12,28 +12,32 @@ Troogl is a browser extension that aims to improve the experience of reading new
 
 ## How do I use it?
 
-1. Install the extension
+1. [Install the extension](https://chrome.google.com/webstore/detail/troogl/gjmdfaebiihflpknlgojcaaebnbegeop)
 1. Visit any news article ([try this](https://www.theguardian.com/politics/2022/jan/29/boris-johnson-could-receive-sue-gray-report-this-weekend))
 1. Explore the insights!
 
 ## What can I do with Troogl?
 
-Right now, Troogl primarily provides insights into the sentiment and subjectivity of sentences within the article. Current features include:
+Troogl currently provides insights into the sentiment and subjectivity of sentences within the article. Features include:
 
 - Colour-coded sentences based on sentiment / subjectivity.
-- Graph of changing sentiment / subjectivity over the course of the article.
+- A graph of changing sentiment / subjectivity over the course of the article.
 - Easy article navigation by jumping to points within the graph.
 - Full dashboard providing a summary and metrics (e.g. read time, keywords, etc.).
 
-### Privacy  
-  
-Troogl **doesn't store any data** and only runs on the tab you're actively viewing.
-  
-### Note  
-  
-Please keep in mind that this is just a fun, hacky project, so:  
-  
-- The metrics aren't super accurate right now.  
-- It doesn't work perfectly on every site (struggles to parse sentences on BBC News, etc.).  
+## Enable / disable article detection
 
-Have fun!
+Troogl will automatically analyse a page if it detects that it contains a news article (using the Open Graph page type). Analysis can also be triggered manually via the plugin popup.
+
+You can enable or disable this automatic analysis for certain sites (or for all sites) via the settings in the plugin popup.
+
+## Privacy
+
+Troogl **doesn't store any data** and only runs on the tab you're actively viewing.
+
+## Note
+
+Please keep in mind that this is just a fun, hacky project, so:
+
+- The metrics aren't super accurate right now.
+- It doesn't work perfectly on every site (struggles to parse sentences on BBC News, etc.).
