@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Troogl",
   "short_name": "Troogl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A new way to read the news",
   "permissions": [
     "tabs",
