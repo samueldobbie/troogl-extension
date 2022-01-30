@@ -28,7 +28,7 @@ function Popup(): JSX.Element {
   }, [activeUrl])
 
   return (
-    <ThemeProvider theme={theme}>≈
+    <ThemeProvider theme={theme}>
       <Paper
         sx={{
           height: "100%",
