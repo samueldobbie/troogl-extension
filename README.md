@@ -41,3 +41,5 @@ Please keep in mind that this is just a fun, hacky project, so:
 
 - The metrics aren't super accurate right now.
 - It doesn't work perfectly on every site (struggles to parse sentences on BBC News, etc.).
+
+<a href="https://www.producthunt.com/posts/troogl?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-troogl" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=329217&theme=light" alt="Troogl - Real-time insights into the news articles you read | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
