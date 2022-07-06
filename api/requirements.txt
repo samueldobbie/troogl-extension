@@ -18,7 +18,7 @@ Jinja2==3.0.3
 jmespath==0.10.0
 joblib==1.1.0
 kappa==0.6.0
-lxml==4.7.1
+lxml==4.9.1
 markdown2==2.4.2
 MarkupSafe==2.0.1
 nltk==3.6.7
