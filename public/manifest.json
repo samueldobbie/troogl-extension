@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Troogl",
   "short_name": "Troogl",
   "version": "1.0.1",
@@ -9,9 +9,10 @@
     "storage"
   ],
   "background": {
-    "service_worker": "background.js"
+    "scripts": [ "background.js" ],
+    "persistent": false
   },
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html"
   },
   "content_scripts": [{
